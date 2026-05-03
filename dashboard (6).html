@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가경T 진단 대시보드 — 학생군 분석</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#faf6ee;
+  --bg-paper:#fdfaf3;
+  --bg-deep:#f3ecdb;
+  --ink:#1a1a1a;
+  --ink-soft:#262219;
+  --ink-muted:#5a554c;
+  --line:#d8cfb8;
+  --line-soft:#e8e0c9;
+  --gold:#b8893d;
+  --gold-deep:#8c6620;
+  --olive:#556b4d;
+  --crimson:#8b3a3a;
+  --serif:'Nanum Myeongjo', serif;
+  --sans:'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.7;
+  font-weight:460;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle at 20% 30%, rgba(184,137,61,0.04) 0%, transparent 60%);
+}
+.container{max-width:1280px;margin:0 auto;padding:32px 24px;position:relative;z-index:1}
+
+/* 헤더 */
+.dash-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:32px;
+  flex-wrap:wrap;gap:16px;
+}
+.dash-title{font-family:var(--serif);font-weight:800;font-size:26px;letter-spacing:-.01em}
+.dash-subtitle{font-family:var(--serif);font-size:13px;color:var(--gold-deep);font-weight:700;letter-spacing:.04em;margin-bottom:4px}
+.dash-meta{font-size:13px;color:var(--ink-muted)}
+.dash-meta a{color:var(--olive);text-decoration:none;border-bottom:1px solid var(--line)}
+
+/* 인증 영역 */
+.auth-box{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:36px 40px;
+  max-width:520px;margin:60px auto;
+  text-align:center;
+}
+.auth-box h2{font-family:var(--serif);font-weight:800;font-size:22px;margin-bottom:12px}
+.auth-box p{color:var(--ink-soft);font-size:14px;margin-bottom:24px;line-height:1.85}
+.auth-box label{display:block;font-family:var(--serif);font-weight:700;font-size:13px;color:var(--ink-soft);margin-bottom:6px;text-align:left}
+.auth-box input{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);
+  padding:10px 0;font-size:16px;font-family:var(--sans);color:var(--ink);font-weight:500;
+  margin-bottom:18px;
+}
+.auth-box input:focus{outline:none;border-bottom-color:var(--gold)}
+.auth-box .url-input{font-size:13px}
+.btn{
+  font-family:var(--serif);font-weight:700;font-size:14px;letter-spacing:.04em;
+  padding:14px 32px;cursor:pointer;border:none;
+  background:var(--ink);color:var(--bg-paper);
+  transition:all .2s ease;
+}
+.btn:hover{background:var(--gold-deep);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line)}
+.btn-ghost:hover{background:var(--bg-paper);color:var(--ink);border-color:var(--ink-soft);transform:none}
+.btn-sm{padding:8px 16px;font-size:12px}
+
+.error-msg{color:var(--crimson);font-size:13px;margin-top:8px;display:none}
+
+/* 통계 카드 그리드 */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;
+}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:18px 20px;
+  position:relative;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:30px;height:2px;background:var(--gold)}
+.stat-card.risk::before{background:var(--crimson)}
+.stat-card.success::before{background:var(--olive)}
+.stat-label{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:var(--gold-deep);letter-spacing:.04em;margin-bottom:6px;text-transform:none;
+}
+.stat-card.risk .stat-label{color:var(--crimson)}
+.stat-card.success .stat-label{color:var(--olive)}
+.stat-value{font-family:var(--serif);font-weight:800;font-size:30px;line-height:1;color:var(--ink);margin-bottom:4px}
+.stat-sub{font-size:12px;color:var(--ink-muted)}
+
+/* 차트 그리드 */
+.chart-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:32px;
+}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+.chart-card{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:24px;
+}
+.chart-card h3{
+  font-family:var(--serif);font-weight:800;font-size:15px;
+  margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:baseline;gap:8px;
+}
+.chart-card h3 small{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-muted)}
+.chart-canvas-wrap{position:relative;height:280px}
+
+/* 위험 신호 */
+.risk-grid{
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:10px;
+}
+.risk-item{
+  background:var(--bg-paper);border-left:3px solid var(--crimson);
+  padding:10px 14px;
+}
+.risk-item .name{font-family:var(--serif);font-weight:800;font-size:13px;margin-bottom:2px}
+.risk-item .count{font-family:var(--serif);font-weight:800;font-size:18px;color:var(--gold-deep)}
+
+/* 학생 명단 */
+.student-table-wrap{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:0;
+  margin-bottom:32px;
+  overflow:hidden;
+}
+.table-controls{
+  display:flex;gap:10px;padding:14px 20px;
+  background:var(--bg-deep);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;align-items:center;
+}
+.table-controls input,.table-controls select{
+  background:var(--bg-paper);border:1px solid var(--line);
+  padding:6px 12px;font-size:13px;font-family:var(--sans);color:var(--ink);
+}
+.table-controls input{flex:1;min-width:160px}
+.table-controls input:focus,.table-controls select:focus{outline:none;border-color:var(--gold)}
+.table-controls .count-info{margin-left:auto;font-size:13px;color:var(--ink-muted)}
+.table-controls .count-info strong{font-family:var(--serif);color:var(--ink);font-weight:800}
+
+.student-table{width:100%;border-collapse:collapse;font-size:13px}
+.student-table thead{background:var(--ink);color:var(--bg-paper)}
+.student-table th{
+  padding:10px 14px;text-align:left;
+  font-family:var(--serif);font-weight:700;font-size:12px;
+  letter-spacing:.02em;cursor:pointer;
+  white-space:nowrap;
+}
+.student-table th:hover{background:var(--gold-deep)}
+.student-table th .sort-arrow{font-size:10px;opacity:.5;margin-left:4px}
+.student-table th.sorted .sort-arrow{opacity:1}
+.student-table tbody tr{border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .15s}
+.student-table tbody tr:hover{background:rgba(184,137,61,0.05)}
+.student-table tbody tr.risk{background:rgba(139,58,58,0.04)}
+.student-table tbody tr.risk:hover{background:rgba(139,58,58,0.08)}
+.student-table td{padding:10px 14px;vertical-align:middle}
+.student-table td.numeric{font-family:var(--serif);font-weight:700;color:var(--gold-deep)}
+.student-table td.name-cell{font-family:var(--serif);font-weight:800}
+.student-table td.risk-cell{color:var(--crimson);font-size:11px;max-width:200px}
+.student-table .pill{
+  display:inline-block;padding:2px 8px;font-size:11px;
+  background:rgba(184,137,61,0.1);color:var(--gold-deep);
+  font-family:var(--serif);font-weight:700;border:1px solid rgba(184,137,61,0.3);
+}
+.empty-state{text-align:center;padding:60px 20px;color:var(--ink-muted)}
+.empty-state h3{font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:8px;color:var(--ink-soft)}
+
+/* 모달 */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(26,26,26,0.6);z-index:100;
+  align-items:flex-start;justify-content:center;
+  padding:40px 20px;overflow-y:auto;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--bg);max-width:720px;width:100%;
+  border:1px solid var(--line);
+  position:relative;
+}
+.modal-head{
+  background:var(--ink);color:var(--bg-paper);
+  padding:20px 28px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.modal-head h3{font-family:var(--serif);font-weight:800;font-size:20px}
+.modal-head .close{
+  background:transparent;border:none;color:var(--bg-paper);
+  font-size:24px;cursor:pointer;padding:0;width:32px;height:32px;line-height:1;
+}
+.modal-body{padding:28px}
+.modal-section{margin-bottom:24px}
+.modal-section h4{
+  font-family:var(--serif);font-weight:800;font-size:14px;margin-bottom:8px;
+  padding-bottom:6px;border-bottom:1px solid var(--line);color:var(--gold-deep);
+}
+.modal-grid{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;font-size:13px}
+.modal-grid dt{font-family:var(--serif);font-weight:700;color:var(--ink-muted)}
+.modal-grid dd{color:var(--ink-soft)}
+.modal-scores{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;
+}
+.modal-scores .row{
+  display:grid;grid-template-columns:1fr auto;gap:10px;
+  font-size:13px;padding:6px 12px;
+  background:var(--bg-paper);border:1px solid var(--line-soft);
+}
+.modal-scores .row span:first-child{font-family:var(--serif);font-weight:700}
+.modal-scores .row span:last-child{font-family:var(--serif);font-weight:800;color:var(--gold-deep)}
+.modal-written-q{font-family:var(--serif);font-weight:700;font-size:13px;color:var(--olive);margin-bottom:4px}
+.modal-written-a{font-family:var(--serif);font-size:13px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px;padding:8px 12px;background:var(--bg-paper);border-left:2px solid var(--gold)}
+
+@media(max-width:560px){
+  .container{padding:24px 16px}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-value{font-size:24px}
+  .student-table{font-size:11px}
+  .student-table th,.student-table td{padding:8px 10px}
+  .modal-grid{grid-template-columns:1fr}
+  .modal-grid dt{margin-top:6px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- 인증 영역 (초기) -->
+<section id="auth-screen" class="auth-section">
+  <div class="auth-box">
+    <h2>가경T 진단 대시보드</h2>
+    <p>학생군 누적 데이터 분석을 보려면 Apps Script 웹 앱 URL과 인증 키를 입력해주세요.</p>
+    <label>Apps Script 웹 앱 URL</label>
+    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec">
+    <label>인증 키</label>
+    <input type="password" id="auth-key" placeholder="apps-script.gs의 CONFIG.apiKey 값">
+    <button class="btn" onclick="authenticate()">접속</button>
+    <div class="error-msg" id="auth-error"></div>
+    <p style="margin-top:24px;font-size:12px;text-align:left;background:var(--bg-deep);padding:12px 14px;border-left:2px solid var(--gold)">
+      ※ URL과 키는 한 번 입력하면 브라우저에 저장되어 다음에는 자동으로 불러옵니다.
+      재입력하려면 페이지 하단의 「로그아웃」을 클릭하세요.
+    </p>
+  </div>
+</section>
+
+<!-- 대시보드 본체 -->
+<section id="dashboard-screen" style="display:none">
+  <div class="dash-head">
+    <div>
+      <div class="dash-subtitle">가경 국어 연구소 · 오름 국어학원</div>
+      <h1 class="dash-title">진단 대시보드 — 학생군 분석</h1>
+      <p class="dash-meta">총 <strong id="meta-total">0</strong>명 · 마지막 새로고침 <span id="meta-time">—</span></p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="loadData()">↻ 새로고침</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <!-- 핵심 통계 카드 -->
+  <div class="stat-grid" id="stat-grid"></div>
+
+  <!-- 차트 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>4분면 유형 분포 <small>학생 학습 좌표</small></h3>
+      <div class="chart-canvas-wrap"><canvas id="chart-quadrant"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>16유형 분포 <small>학습 코드 조합</small></h3>
+      <div class="chart-canvas-wrap"><canvas id="chart-types"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>8개 영역 평균 <small>전체 학생 평균 점수</small></h3>
+      <div class="chart-canvas-wrap"><canvas id="chart-sections"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>학교별 학생 수 <small>응시 학교 분포</small></h3>
+      <div class="chart-canvas-wrap"><canvas id="chart-schools"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 위험 신호 -->
+  <div class="chart-card" style="margin-bottom:32px">
+    <h3>위험 신호 빈도 <small>학생군 전체</small></h3>
+    <div class="risk-grid" id="risk-grid"></div>
+  </div>
+
+  <!-- 학생 명단 -->
+  <div class="student-table-wrap">
+    <div class="table-controls">
+      <input type="search" id="search-input" placeholder="이름·학교 검색">
+      <select id="filter-quadrant">
+        <option value="">전체 4분면</option>
+        <option value="완성 전략가">완성 전략가</option>
+        <option value="성실 암기형">성실 암기형</option>
+        <option value="감각 직관형">감각 직관형</option>
+        <option value="기초 결손형">기초 결손형</option>
+      </select>
+      <select id="filter-risk">
+        <option value="">전체</option>
+        <option value="risk">위험군만</option>
+        <option value="safe">정상군만</option>
+      </select>
+      <div class="count-info">총 <strong id="filtered-count">0</strong>명</div>
+    </div>
+    <table class="student-table">
+      <thead>
+        <tr>
+          <th data-sort="제출일시">제출일시 <span class="sort-arrow">↕</span></th>
+          <th data-sort="이름">이름 <span class="sort-arrow">↕</span></th>
+          <th data-sort="학교">학교 <span class="sort-arrow">↕</span></th>
+          <th data-sort="학년">학년 <span class="sort-arrow">↕</span></th>
+          <th data-sort="4분면 유형">4분면 <span class="sort-arrow">↕</span></th>
+          <th data-sort="16유형 이름">16유형 <span class="sort-arrow">↕</span></th>
+          <th data-sort="내신 대응력">내신 <span class="sort-arrow">↕</span></th>
+          <th data-sort="수능 대응력">수능 <span class="sort-arrow">↕</span></th>
+          <th data-sort="주의 신호">주의 신호 <span class="sort-arrow">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="student-tbody"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <h3>해당 조건의 학생이 없습니다</h3>
+      <p>검색·필터를 조정해보세요.</p>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:var(--ink-muted);font-size:12px;margin-top:48px;border-top:1px solid var(--line);padding-top:20px">
+    가경 국어 연구소 · 오름 국어학원 · 진단 대시보드 v1.0
+  </p>
+</section>
+
+<!-- 학생 상세 모달 -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">학생 상세</h3>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const STORAGE_URL = 'oreum_dashboard_url';
+const STORAGE_KEY = 'oreum_dashboard_key';
+
+let allStudents = [];
+let analysisData = null;
+let charts = {};
+let sortState = { col: '제출일시', dir: 'desc' };
+
+// ─── 인증 ───
+window.addEventListener('DOMContentLoaded', () => {
+  const url = localStorage.getItem(STORAGE_URL);
+  const key = localStorage.getItem(STORAGE_KEY);
+  if (url && key) {
+    document.getElementById('auth-url').value = url;
+    document.getElementById('auth-key').value = key;
+    authenticate();
+  }
+});
+
+async function authenticate() {
+  const url = document.getElementById('auth-url').value.trim();
+  const key = document.getElementById('auth-key').value.trim();
+  const errEl = document.getElementById('auth-error');
+
+  if (!url || !key) {
+    errEl.textContent = 'URL과 키를 모두 입력해주세요.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  try {
+    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=list`);
+    const data = await resp.json();
+    if (data.error === 'forbidden') {
+      errEl.textContent = '인증 키가 일치하지 않습니다.';
+      errEl.style.display = 'block';
+      return;
+    }
+    // 성공
+    localStorage.setItem(STORAGE_URL, url);
+    localStorage.setItem(STORAGE_KEY, key);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard-screen').style.display = 'block';
+    allStudents = Array.isArray(data) ? data : [];
+    await loadAnalysis();
+    renderAll();
+  } catch (err) {
+    errEl.textContent = '연결 실패: ' + err.message + ' — URL이 올바른지, 웹 앱이 「모든 사용자」 액세스로 배포되었는지 확인해주세요.';
+    errEl.style.display = 'block';
+  }
+}
+
+function logout() {
+  if (!confirm('로그아웃하시겠습니까?')) return;
+  localStorage.removeItem(STORAGE_URL);
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('dashboard-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'block';
+  document.getElementById('auth-url').value = '';
+  document.getElementById('auth-key').value = '';
+}
+
+async function loadData() {
+  const url = localStorage.getItem(STORAGE_URL);
+  const key = localStorage.getItem(STORAGE_KEY);
+  if (!url || !key) return;
+  try {
+    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=list`);
+    allStudents = await resp.json();
+    if (!Array.isArray(allStudents)) allStudents = [];
+    await loadAnalysis();
+    renderAll();
+  } catch (err) {
+    alert('새로고침 실패: ' + err.message);
+  }
+}
+
+async function loadAnalysis() {
+  const url = localStorage.getItem(STORAGE_URL);
+  const key = localStorage.getItem(STORAGE_KEY);
+  try {
+    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=analysis`);
+    analysisData = await resp.json();
+  } catch (err) {
+    analysisData = null;
+  }
+}
+
+function renderAll() {
+  document.getElementById('meta-total').textContent = allStudents.length;
+  document.getElementById('meta-time').textContent = new Date().toLocaleString('ko-KR');
+  renderStats();
+  renderCharts();
+  renderRiskGrid();
+  applyFilters();
+  attachListeners();
+}
+
+function renderStats() {
+  if (!analysisData) return;
+  const total = analysisData.totalStudents || 0;
+  const risk = analysisData.riskCount || 0;
+  const sec = analysisData.sectionAvgs || {};
+  // 가장 약한 영역
+  const sortedSec = Object.entries(sec).sort((a, b) => a[1] - b[1]);
+  const SEC_NAMES = { A:'학습성향', B:'학습습관', C:'영역별이해도', D:'국어태도', E:'내신대비', F:'수능대비', G:'시험운영', H:'마인드셋' };
+  const weakestSection = sortedSec[0] ? `${SEC_NAMES[sortedSec[0][0]]} (${sortedSec[0][1]}점)` : '—';
+
+  // 4분면 가장 많은 유형
+  const qc = analysisData.quadrantCount || {};
+  const topQuadrant = Object.entries(qc).sort((a, b) => b[1] - a[1])[0];
+  const topQuadStr = topQuadrant ? `${topQuadrant[0]} (${topQuadrant[1]}명)` : '—';
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">총 진단 학생</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-sub">누적 응시자 수</div>
+    </div>
+    <div class="stat-card risk">
+      <div class="stat-label">위험군 학생</div>
+      <div class="stat-value">${risk}</div>
+      <div class="stat-sub">${total > 0 ? (risk / total * 100).toFixed(1) : 0}% — 우선 상담 필요</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-label">최다 4분면 유형</div>
+      <div class="stat-value" style="font-size:18px;line-height:1.2;padding-top:6px">${topQuadStr.split(' (')[0]}</div>
+      <div class="stat-sub">${topQuadrant ? topQuadrant[1] + '명 · ' + (topQuadrant[1] / total * 100).toFixed(1) + '%' : '—'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">가장 약한 영역</div>
+      <div class="stat-value" style="font-size:18px;line-height:1.2;padding-top:6px">${weakestSection.split(' (')[0]}</div>
+      <div class="stat-sub">${weakestSection.split(' (')[1] ? '평균 ' + weakestSection.split(' (')[1] : ''}</div>
+    </div>
+  `;
+}
+
+function renderCharts() {
+  if (!analysisData) return;
+
+  // 4분면
+  const qc = analysisData.quadrantCount || {};
+  drawDoughnut('chart-quadrant', Object.keys(qc), Object.values(qc), [
+    '#b8893d', '#556b4d', '#8c6620', '#8b3a3a'
+  ]);
+
+  // 16유형 (가로 막대)
+  const tc = analysisData.typeCount || {};
+  const tEntries = Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  drawBar('chart-types', tEntries.map(e => e[0]), tEntries.map(e => e[1]), 'horizontal');
+
+  // 8축 평균 (레이더)
+  const sec = analysisData.sectionAvgs || {};
+  const secLabels = ['학습성향', '학습습관', '영역별 이해도', '국어태도', '내신대비', '수능대비', '시험운영', '마인드셋'];
+  const secKeys = ['A','B','C','D','E','F','G','H'];
+  drawRadar('chart-sections', secLabels, secKeys.map(k => sec[k] || 0));
+
+  // 학교별
+  const sc = analysisData.schoolCount || {};
+  const sEntries = Object.entries(sc).sort((a, b) => b[1] - a[1]);
+  drawBar('chart-schools', sEntries.map(e => e[0]), sEntries.map(e => e[1]), 'vertical');
+}
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function drawDoughnut(canvasId, labels, data, colors) {
+  destroyChart(canvasId);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  charts[canvasId] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderColor: '#fdfaf3',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { font: { family: 'Pretendard', size: 12 }, color: '#1a1a1a' } }
+      }
+    }
+  });
+}
+
+function drawBar(canvasId, labels, data, orientation) {
+  destroyChart(canvasId);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const isH = orientation === 'horizontal';
+  charts[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: 'rgba(184,137,61,0.7)',
+        borderColor: '#8c6620', borderWidth: 1,
+      }]
+    },
+    options: {
+      indexAxis: isH ? 'y' : 'x',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { family: 'Pretendard', size: 11 }, color: '#5a554c' }, grid: { color: 'rgba(216,207,184,0.5)' } },
+        y: { ticks: { font: { family: 'Pretendard', size: 11 }, color: '#1a1a1a' }, grid: { color: 'rgba(216,207,184,0.3)' } }
+      }
+    }
+  });
+}
+
+function drawRadar(canvasId, labels, data) {
+  destroyChart(canvasId);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  charts[canvasId] = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        label: '평균 점수',
+        data,
+        backgroundColor: 'rgba(184,137,61,0.15)',
+        borderColor: '#b8893d', borderWidth: 2,
+        pointBackgroundColor: '#1a1a1a', pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { stepSize: 25, color: '#a0998a', font: { size: 9 } },
+          grid: { color: 'rgba(216,207,184,0.6)' },
+          angleLines: { color: 'rgba(216,207,184,0.8)' },
+          pointLabels: { color: '#1a1a1a', font: { family: 'Nanum Myeongjo', size: 11, weight: '700' } }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function renderRiskGrid() {
+  if (!analysisData) return;
+  const rsc = analysisData.riskSignalCount || {};
+  const sorted = Object.entries(rsc).sort((a, b) => b[1] - a[1]);
+  if (sorted.length === 0) {
+    document.getElementById('risk-grid').innerHTML = '<p style="color:var(--ink-muted);font-size:13px">위험 신호가 감지된 학생이 아직 없습니다.</p>';
+    return;
+  }
+  document.getElementById('risk-grid').innerHTML = sorted.map(([name, count]) => `
+    <div class="risk-item">
+      <div class="name">${name}</div>
+      <div class="count">${count}<span style="font-size:11px;color:var(--ink-muted);font-weight:500">&nbsp;명</span></div>
+    </div>
+  `).join('');
+}
+
+// ─── 학생 테이블 ───
+function applyFilters() {
+  const search = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const fq = document.getElementById('filter-quadrant').value;
+  const fr = document.getElementById('filter-risk').value;
+
+  let filtered = allStudents.filter(s => {
+    if (search) {
+      const blob = `${s['이름']||''} ${s['학교']||''}`.toLowerCase();
+      if (!blob.includes(search)) return false;
+    }
+    if (fq && s['4분면 유형'] !== fq) return false;
+    if (fr === 'risk' && !(s['주의 신호'] && String(s['주의 신호']).trim())) return false;
+    if (fr === 'safe' && s['주의 신호'] && String(s['주의 신호']).trim()) return false;
+    return true;
+  });
+
+  // 정렬
+  filtered.sort((a, b) => {
+    let va = a[sortState.col], vb = b[sortState.col];
+    if (typeof va === 'number' && typeof vb === 'number') {
+      return sortState.dir === 'asc' ? va - vb : vb - va;
+    }
+    va = String(va || ''); vb = String(vb || '');
+    return sortState.dir === 'asc' ? va.localeCompare(vb, 'ko') : vb.localeCompare(va, 'ko');
+  });
+
+  document.getElementById('filtered-count').textContent = filtered.length;
+  const tbody = document.getElementById('student-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  document.getElementById('empty-state').style.display = 'none';
+
+  tbody.innerHTML = filtered.map((s, i) => {
+    const isRisk = s['주의 신호'] && String(s['주의 신호']).trim();
+    const ts = s['제출일시'] ? new Date(s['제출일시']).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' }) : '—';
+    return `
+      <tr class="${isRisk ? 'risk' : ''}" data-idx="${allStudents.indexOf(s)}">
+        <td>${ts}</td>
+        <td class="name-cell">${s['이름'] || '—'}</td>
+        <td>${s['학교'] || '—'}</td>
+        <td>${s['학년'] || '—'}</td>
+        <td>${s['4분면 유형'] ? '<span class="pill">' + s['4분면 유형'] + '</span>' : '—'}</td>
+        <td>${s['16유형 이름'] || '—'}</td>
+        <td class="numeric">${s['내신 대응력'] || 0}</td>
+        <td class="numeric">${s['수능 대응력'] || 0}</td>
+        <td class="risk-cell">${s['주의 신호'] || ''}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // 행 클릭 → 모달
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const idx = parseInt(tr.dataset.idx);
+      openModal(allStudents[idx]);
+    });
+  });
+}
+
+function attachListeners() {
+  document.getElementById('search-input').addEventListener('input', applyFilters);
+  document.getElementById('filter-quadrant').addEventListener('change', applyFilters);
+  document.getElementById('filter-risk').addEventListener('change', applyFilters);
+
+  document.querySelectorAll('.student-table th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.sort;
+      if (sortState.col === col) sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      else { sortState.col = col; sortState.dir = 'desc'; }
+      document.querySelectorAll('.student-table th').forEach(t => t.classList.remove('sorted'));
+      th.classList.add('sorted');
+      th.querySelector('.sort-arrow').textContent = sortState.dir === 'asc' ? '↑' : '↓';
+      applyFilters();
+    });
+  });
+}
+
+// ─── 학생 상세 모달 ───
+function openModal(s) {
+  if (!s) return;
+  const ts = s['제출일시'] ? new Date(s['제출일시']).toLocaleString('ko-KR') : '—';
+  let written = {};
+  try { written = JSON.parse(s['서술형 JSON'] || '{}'); } catch (e) {}
+
+  let writtenHTML = '';
+  const wEntries = Object.entries(written).filter(([k, v]) => v && String(v).trim());
+  if (wEntries.length > 0) {
+    const W_LABELS = {
+      S1: '국어 시험에서 가장 자주 막히는 순간은?',
+      S2: '국어 문제를 틀렸을 때, 보통 어떤 이유로 틀린다고 생각하나요?',
+      S3: '내신 국어 공부할 때 가장 많이 쓰는 방법은?',
+      S4: '수능형 국어에서 가장 어려운 영역과 그 이유는?',
+      S5: '오답 정리할 때 실제로 종이에 적는 내용은?',
+      S6: '지금 가장 바꿔야 할 국어 공부 습관 한 가지는?',
+      S7: '국어 공부에서 가장 답답한 점은?'
+    };
+    writtenHTML = `
+      <div class="modal-section">
+        <h4>서술형 응답</h4>
+        ${wEntries.map(([k, v]) => `
+          <div class="modal-written-q">${k}. ${W_LABELS[k] || ''}</div>
+          <div class="modal-written-a">${String(v).replace(/\n/g, '<br>')}</div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  document.getElementById('modal-title').textContent = `${s['이름'] || '익명'} — ${s['4분면 유형'] || ''}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-section">
+      <h4>학생 정보</h4>
+      <dl class="modal-grid">
+        <dt>제출일시</dt><dd>${ts}</dd>
+        <dt>학교 / 학년</dt><dd>${s['학교'] || '—'} ${s['학년'] || ''}</dd>
+        <dt>국어 등급</dt><dd>${s['국어 등급'] || '—'}</dd>
+        <dt>학교 점수 / 모의고사</dt><dd>${s['학교 점수'] || '—'} / ${s['모의고사 점수'] || '—'}</dd>
+        <dt>학생 연락처</dt><dd>${s['학생 연락처'] || '—'}</dd>
+        <dt>학부모 연락처</dt><dd>${s['학부모 연락처'] || '—'}</dd>
+      </dl>
+    </div>
+    <div class="modal-section">
+      <h4>진단 결과</h4>
+      <dl class="modal-grid">
+        <dt>4분면 유형</dt><dd><strong>${s['4분면 유형'] || '—'}</strong></dd>
+        <dt>16유형</dt><dd>${s['16유형 이름'] || '—'} (${s['16유형 코드'] || ''})</dd>
+        <dt>내신 / 수능 대응력</dt><dd>${s['내신 대응력'] || 0} / ${s['수능 대응력'] || 0}</dd>
+        <dt>버전</dt><dd>${s['버전'] || '—'}</dd>
+      </dl>
+    </div>
+    <div class="modal-section">
+      <h4>8개 영역 점수</h4>
+      <div class="modal-scores">
+        <div class="row"><span>A 학습성향</span><span>${s['A.학습성향'] || 0}</span></div>
+        <div class="row"><span>B 학습습관</span><span>${s['B.학습습관'] || 0}</span></div>
+        <div class="row"><span>C 영역별 이해도</span><span>${s['C.영역별이해도'] || 0}</span></div>
+        <div class="row"><span>D 국어태도</span><span>${s['D.국어태도'] || 0}</span></div>
+        <div class="row"><span>E 내신대비</span><span>${s['E.내신대비'] || 0}</span></div>
+        <div class="row"><span>F 수능대비</span><span>${s['F.수능대비'] || 0}</span></div>
+        <div class="row"><span>G 시험운영</span><span>${s['G.시험운영'] || 0}</span></div>
+        <div class="row"><span>H 마인드셋</span><span>${s['H.마인드셋'] || 0}</span></div>
+      </div>
+    </div>
+    ${s['주의 신호'] ? `
+      <div class="modal-section">
+        <h4 style="color:var(--crimson);border-bottom-color:var(--crimson)">주의 신호</h4>
+        <p style="color:var(--crimson);font-family:var(--serif);font-weight:700;font-size:14px;padding:10px 14px;background:rgba(139,58,58,0.05);border-left:2px solid var(--crimson)">${s['주의 신호']}</p>
+      </div>
+    ` : ''}
+    ${writtenHTML}
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+</script>
+
+</body>
+</html>
