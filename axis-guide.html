@@ -10,20 +10,23 @@
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
 <style>
 :root{
-  --bg:#faf6ee;
-  --bg-paper:#fdfaf3;
-  --bg-deep:#f3ecdb;
-  --ink:#1a1a1a;
-  --ink-soft:#262219;
-  --ink-muted:#5a554c;
-  --line:#d8cfb8;
-  --line-soft:#e8e0c9;
-  --gold:#b8893d;
-  --gold-deep:#8c6620;
-  --olive:#556b4d;
-  --crimson:#8b3a3a;
+  --bg:#1a1a1a;
+  --bg-paper:#232323;
+  --bg-deep:#2e2e2e;
+  --bg-elevated:#2a2a2a;
+  --ink:#f0ede4;
+  --ink-soft:#e8e6df;
+  --ink-muted:#9a9a9a;
+  --ink-faint:#6a6a6a;
+  --line:#3a3a3a;
+  --line-soft:#2e2e2e;
+  --line-strong:#4a4a4a;
+  --gold:#d4a85a;
+  --gold-deep:#b8893d;
+  --gold-soft:#e8c275;
+  --olive:#9bb38e;
+  --crimson:#e57373;
   --serif:'Nanum Myeongjo', serif;
-
   --sans:'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -39,15 +42,17 @@ body{
 }
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:radial-gradient(circle at 15% 20%, rgba(184,137,61,0.04) 0%, transparent 60%),
-                   radial-gradient(circle at 85% 80%, rgba(85,107,77,0.03) 0%, transparent 50%);
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(212,168,90,0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgba(212,168,90,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(155,179,142,0.03) 0%, transparent 60%);
 }
 .container{max-width:880px;margin:0 auto;padding:48px 24px;position:relative;z-index:1}
 
 /* ─── 헤더 ─── */
 .brand-mark{
   font-family:var(--serif);font-weight:800;
-  letter-spacing:.04em;color:var(--gold-deep);
+  letter-spacing:.04em;color:var(--gold);
   font-size:13px;
   display:flex;align-items:center;gap:10px;
 }
@@ -58,35 +63,40 @@ body::before{
   border-bottom:1px solid var(--line);padding-bottom:1px;
   transition:all .2s;
 }
-.back-link:hover{color:var(--gold-deep);border-color:var(--gold)}
+.back-link:hover{color:var(--gold);border-color:var(--gold)}
 
 .hero{padding:48px 0 32px;border-bottom:1px solid var(--line);margin-bottom:48px}
 .hero-num{
   font-family:var(--serif);font-weight:700;
-  font-size:13px;color:var(--gold-deep);letter-spacing:.05em;margin-bottom:16px;
+  font-size:13px;color:var(--gold);letter-spacing:.05em;margin-bottom:16px;
 }
 .hero h1{
   font-family:var(--serif);font-weight:800;font-size:42px;
   letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;
+  color:var(--ink);
+  text-shadow:0 2px 24px rgba(212,168,90,0.15);
 }
 .hero-sub{font-family:var(--serif);font-size:17px;color:var(--olive);font-weight:400;margin-bottom:8px}
 .hero-meta{font-size:13px;color:var(--ink-muted);letter-spacing:.05em}
 
 .lead-block{
-  background:var(--bg-paper);
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
   border:1px solid var(--line);
   padding:28px 32px;
   margin-bottom:48px;
   position:relative;
+  box-shadow:0 4px 24px -8px rgba(0,0,0,0.5);
 }
 .lead-block::before{
-  content:'';position:absolute;top:0;left:0;width:60px;height:3px;background:var(--gold);
+  content:'';position:absolute;top:0;left:0;width:60px;height:3px;
+  background:linear-gradient(90deg, var(--gold) 0%, var(--gold-deep) 100%);
+  box-shadow:0 0 12px rgba(212,168,90,0.5);
 }
 .lead-block p{
   font-family:var(--serif);font-size:15px;line-height:1.95;color:var(--ink-soft);
 }
 .lead-block p+p{margin-top:14px}
-.lead-block strong{color:var(--ink);font-weight:800}
+.lead-block strong{color:var(--gold-soft);font-weight:800}
 
 /* ─── TOC ─── */
 .toc{
@@ -104,14 +114,15 @@ body::before{
 }
 .toc-item:hover{
   border-color:var(--gold);
-  background:rgba(184,137,61,0.04);
+  background:rgba(212,168,90,0.10);
   transform:translateX(2px);
+  box-shadow:0 4px 16px -6px rgba(212,168,90,0.25);
 }
 .toc-num{
   font-family:var(--serif);font-weight:700;
-  font-size:18px;color:var(--gold-deep);flex:0 0 auto;
+  font-size:18px;color:var(--gold);flex:0 0 auto;
 }
-.toc-name{font-family:var(--serif);font-weight:700;font-size:15px;flex:1}
+.toc-name{font-family:var(--serif);font-weight:700;font-size:15px;flex:1;color:var(--ink-soft)}
 .toc-count{
   font-family:var(--serif);font-weight:700;font-size:12px;
   color:var(--ink-muted);
@@ -120,17 +131,17 @@ body::before{
 /* ─── 카테고리 섹션 ─── */
 .category{margin-bottom:64px}
 .category-header{
-  border-bottom:1px solid var(--ink);
+  border-bottom:1px solid var(--gold);
   padding-bottom:14px;margin-bottom:28px;
   display:flex;align-items:baseline;gap:14px;
 }
 .category-num{
   font-family:var(--serif);font-weight:800;
-  font-size:32px;color:var(--gold-deep);line-height:1;
+  font-size:32px;color:var(--gold);line-height:1;
 }
 .category-title{
   font-family:var(--serif);font-weight:800;font-size:24px;
-  letter-spacing:-.01em;
+  letter-spacing:-.01em;color:var(--ink);
 }
 .category-sub{
   font-family:var(--serif);font-size:13px;color:var(--olive);
@@ -140,15 +151,20 @@ body::before{
 /* ─── 진단축 카드 ─── */
 .axis-grid{display:grid;gap:18px}
 .axis-card{
-  background:var(--bg-paper);
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
   border:1px solid var(--line);
   padding:22px 26px;
   position:relative;
   transition:all .2s;
+  box-shadow:0 2px 12px -4px rgba(0,0,0,0.3);
 }
-.axis-card:hover{border-color:var(--gold);box-shadow:0 6px 20px -10px rgba(184,137,61,0.2)}
+.axis-card:hover{
+  border-color:var(--gold);
+  box-shadow:0 8px 28px -10px rgba(212,168,90,0.30), 0 0 0 1px rgba(212,168,90,0.1);
+  transform:translateY(-2px);
+}
 .axis-card.reverse{border-left:3px solid var(--crimson)}
-.axis-card.reverse:hover{border-color:var(--crimson)}
+.axis-card.reverse:hover{border-color:var(--crimson);box-shadow:0 8px 28px -10px rgba(229,115,115,0.25)}
 
 .axis-head{
   display:flex;align-items:baseline;gap:12px;margin-bottom:10px;
@@ -161,10 +177,10 @@ body::before{
 .axis-tag{display:none;
   font-family:var(--serif);font-size:10px;font-weight:700;
   letter-spacing:.03em;
-  background:rgba(184,137,61,0.1);color:var(--gold-deep);
-  padding:2px 8px;border:1px solid rgba(184,137,61,0.3);
+  background:rgba(212,168,90,0.15);color:var(--gold-deep);
+  padding:2px 8px;border:1px solid rgba(212,168,90,0.40);
 }
-.axis-tag.reverse{background:rgba(139,58,58,0.06);color:var(--crimson);border-color:rgba(139,58,58,0.3)}
+.axis-tag.reverse{background:rgba(229,115,115,0.10);color:var(--crimson);border-color:rgba(229,115,115,0.30)}
 .axis-qids{
   font-family:var(--serif);font-weight:700;font-size:12px;
   color:var(--ink-muted);margin-left:auto;
@@ -174,10 +190,10 @@ body::before{
   font-size:14px;line-height:1.85;color:var(--ink-soft);
   margin-bottom:10px;
 }
-.axis-meaning strong{color:var(--ink);font-weight:700;font-family:var(--serif)}
+.axis-meaning strong{color:var(--gold-soft);font-weight:700;font-family:var(--serif)}
 
 .axis-prescription{
-  background:var(--bg-deep);
+  background:rgba(155,179,142,0.08);
   padding:12px 16px;
   font-size:13px;line-height:1.8;color:var(--ink-soft);
   border-left:2px solid var(--olive);
@@ -196,7 +212,7 @@ body::before{
   text-align:center;padding:48px 0 24px;color:var(--ink-muted);
   font-size:12px;border-top:1px solid var(--line);margin-top:60px;
 }
-.footer-mark{font-family:var(--serif);font-weight:800;color:var(--gold-deep);letter-spacing:.03em;margin-bottom:6px}
+.footer-mark{font-family:var(--serif);font-weight:800;color:var(--gold);letter-spacing:.03em;margin-bottom:6px}
 
 @media(max-width:560px){
   .container{padding:32px 18px}
@@ -209,10 +225,21 @@ body::before{
 
 /* 인쇄 */
 @media print{
+  *,*::before,*::after{
+    background:#fff !important;
+    color:#1a1a1a !important;
+    box-shadow:none !important;
+    text-shadow:none !important;
+  }
+  body{background:#fff;font-size:10pt}
   body::before{display:none}
   .container{max-width:100%;padding:20px}
-  .axis-card{break-inside:avoid;page-break-inside:avoid}
+  .axis-card{break-inside:avoid;page-break-inside:avoid;border:1px solid #d8cfb8 !important}
   .category{break-after:auto}
+  .category-header,.lead-block::before,.axis-card::before{border-color:#8c6620 !important}
+  .axis-card.reverse{border-left:3px solid #8b3a3a !important}
+  .axis-prescription{background:#f5f1e6 !important;border-left:2px solid #556b4d !important}
+  .hero-num,.toc-num,.category-num,.brand-mark,.footer-mark{color:#8c6620 !important}
 }
 </style>
 </head>
