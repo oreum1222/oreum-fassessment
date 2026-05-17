@@ -3091,6 +3091,16 @@ body::before{
 
 <script>
 /* ════════════════════════════════════════════════════════════
+   CONFIG — 백엔드 연동 설정
+   sheetUrl: Apps Script 배포 후 받은 웹앱 URL
+   apiKey: dashboard.html에서 같은 키 사용
+   ════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  sheetUrl: 'https://script.google.com/macros/s/AKfycbwkY8LONzBTMJujU54NPBDko7QykW4JaTtvw4CQtA1S99cO6ajUb1nwshgXc_KDLraF/exec',
+  apiKey: 'kakyungT-oreum-2026',
+};
+
+/* ════════════════════════════════════════════════════════════
    QUESTIONS DATA — 112 객관식 + 7 서술형
    각 문항은 { id, text, axis, axisFull, reverse, level, section } 형식
    level: 'core' (간편형 40), 'standard' (+표준형 40), 'precision' (+정밀형 32)
