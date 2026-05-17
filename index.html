@@ -139,7 +139,7 @@ body::before{
   font-family:var(--serif);font-weight:700;
   font-size:34px;color:var(--gold-deep);line-height:1;
 }
-.version-info h4{font-family:var(--serif);font-size:18px;font-weight:800;margin-bottom:4px}
+.version-info h4{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-0.015em;line-height:1.3;margin-bottom:6px}
 .version-info p{font-size:13px;color:var(--ink-muted);line-height:1.6}
 .version-meta{
   font-family:var(--serif);font-weight:700;
@@ -707,6 +707,631 @@ body::before{
   padding:2px 6px;border-radius:3px;
   vertical-align:middle;margin-left:6px;
 }
+
+/* 5. 특별판 (한티 MEXX 한정) */
+.version-card.special{
+  border:1px solid #3a5ba8;
+  background:
+    linear-gradient(180deg, rgba(58,91,168,0.06) 0%, var(--bg-elevated) 100%);
+  position:relative;
+  overflow:hidden;
+  transition:all .25s ease;
+}
+.version-card.special::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, #3a5ba8 0%, #5b8def 50%, #3a5ba8 100%);
+  box-shadow:0 0 10px rgba(91,141,239,0.5);
+  transition:height .25s ease, box-shadow .25s ease;
+}
+.version-card.special::after{
+  content:'';position:absolute;top:0;right:0;width:120px;height:120px;
+  background:radial-gradient(circle at top right, rgba(91,141,239,0.10) 0%, transparent 70%);
+  pointer-events:none;
+  transition:width .35s ease, height .35s ease, background .35s ease;
+}
+.version-card.special .version-num{color:#5b8def;font-weight:800;transition:color .25s ease, text-shadow .25s ease}
+.version-card.special h4{color:#dde6ff}
+
+/* hover — 두드러지게 */
+.version-card.special:hover{
+  border-color:#8fb0ff;
+  background:
+    linear-gradient(180deg, rgba(91,141,239,0.14) 0%, var(--bg-elevated) 100%);
+  box-shadow:
+    0 14px 48px -12px rgba(91,141,239,0.60),
+    0 0 0 1px rgba(143,176,255,0.30),
+    inset 0 0 60px -20px rgba(91,141,239,0.20);
+  transform:translateY(-2px);
+}
+.version-card.special:hover::before{
+  height:3px;
+  box-shadow:0 0 20px rgba(143,176,255,0.85), 0 0 8px rgba(91,141,239,0.7);
+  background:linear-gradient(90deg, #5b8def 0%, #8fb0ff 50%, #5b8def 100%);
+}
+.version-card.special:hover::after{
+  width:220px;height:220px;
+  background:radial-gradient(circle at top right, rgba(143,176,255,0.22) 0%, transparent 70%);
+}
+.version-card.special:hover .version-num{
+  color:#8fb0ff;
+  text-shadow:0 0 16px rgba(143,176,255,0.6);
+}
+.version-card.special:hover .version-badge-special{
+  background:linear-gradient(135deg, #5b8def 0%, #8fb0ff 100%);
+  box-shadow:0 4px 16px -2px rgba(143,176,255,0.7), 0 0 0 1px rgba(143,176,255,0.4);
+  transform:translateY(-1px);
+}
+
+.version-card.special .version-meta strong{color:#5b8def}
+
+/* 한티 MEXX 한정 배지 — 더 크게, 더 존재감 있게 */
+.version-badge-special{
+  display:inline-block;
+  font-family:var(--serif);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.04em;
+  background:linear-gradient(135deg, #3a5ba8 0%, #5b8def 100%);
+  color:#0a1530;
+  padding:5px 12px;
+  border-radius:4px;
+  vertical-align:middle;
+  margin-left:10px;
+  box-shadow:0 3px 12px -2px rgba(91,141,239,0.55), 0 0 0 1px rgba(143,176,255,0.20);
+  text-shadow:0 1px 0 rgba(255,255,255,0.15);
+  transition:all .25s ease;
+}
+
+/* 특별판 인증 모달 */
+.modal-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:1000;
+  align-items:center;justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.active{display:flex}
+.special-access-modal{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid #3a5ba8;
+  padding:44px 40px;
+  max-width:480px;width:100%;
+  position:relative;
+  box-shadow:0 16px 64px -16px rgba(0,0,0,0.8), 0 0 0 1px rgba(91,141,239,0.20), 0 0 80px -20px rgba(91,141,239,0.30);
+  text-align:center;
+}
+.special-access-modal::before{
+  content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:3px;
+  background:linear-gradient(90deg, #3a5ba8 0%, #5b8def 50%, #3a5ba8 100%);
+  box-shadow:0 0 16px rgba(91,141,239,0.7);
+}
+.special-access-stamp{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:#5b8def;letter-spacing:.12em;
+  margin-bottom:14px;
+}
+.special-access-title{
+  font-family:var(--serif);font-weight:800;font-size:28px;
+  color:#dde6ff;margin-bottom:8px;
+  text-shadow:0 2px 24px rgba(91,141,239,0.30);
+}
+.special-access-sub{
+  font-family:var(--serif);font-size:13px;color:var(--ink-muted);
+  margin-bottom:32px;letter-spacing:.02em;
+}
+.special-access-form{margin-bottom:24px;text-align:left}
+.special-access-form label{
+  display:block;
+  font-family:var(--serif);font-weight:700;font-size:12px;
+  color:#5b8def;letter-spacing:.06em;
+  margin-bottom:10px;
+}
+.special-access-form input{
+  width:100%;
+  background:transparent;border:none;
+  border-bottom:1.5px solid var(--line);
+  padding:12px 0;
+  font-family:var(--serif);font-weight:700;font-size:20px;
+  color:#dde6ff;letter-spacing:.10em;
+  text-align:center;
+}
+.special-access-form input:focus{
+  outline:none;border-bottom-color:#5b8def;
+}
+.special-access-actions{
+  display:flex;gap:12px;justify-content:center;margin-bottom:18px;
+}
+.btn-primary.special{
+  background:linear-gradient(135deg, #3a5ba8 0%, #5b8def 100%);
+  color:#1a1a1a;
+  box-shadow:0 4px 16px -4px rgba(91,141,239,0.50);
+}
+.btn-primary.special:hover{
+  background:linear-gradient(135deg, #5b8def 0%, #8fb0ff 100%);
+  box-shadow:0 6px 24px -4px rgba(91,141,239,0.65);
+}
+.special-access-hint{
+  font-size:12px;color:var(--ink-muted);line-height:1.7;
+  border-top:1px dashed var(--line-soft);padding-top:18px;
+  margin-top:18px;
+}
+
+/* ═══════════════════════════════════════════════
+   특별판 진단 (한티 MEXX) 전용 스타일
+   ═══════════════════════════════════════════════ */
+
+.special-title{
+  color:#dde6ff;
+  text-shadow:0 2px 32px rgba(91,141,239,0.30);
+}
+.special-tag{
+  color:#5b8def;font-weight:700;letter-spacing:.08em;font-size:12px;
+}
+.special-stamp{color:#5b8def !important}
+
+.special-intro{
+  border-top:3px solid #3a5ba8;
+  position:relative;
+}
+.special-intro::after{
+  content:'';position:absolute;top:0;right:0;width:120px;height:120px;
+  background:radial-gradient(circle at top right, rgba(91,141,239,0.10) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* 매칭 대상 학교 (인트로 화면) */
+.special-target-schools{margin:32px 0}
+.school-trio{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+}
+@media(max-width:680px){.school-trio{grid-template-columns:1fr}}
+.school-trio-item{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid var(--line);
+  border-top:2px solid #3a5ba8;
+  padding:18px 16px;
+  text-align:center;
+}
+.school-trio-tag{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:#5b8def;letter-spacing:.06em;margin-bottom:8px;
+}
+.school-trio-names{
+  font-family:var(--serif);font-weight:800;font-size:14px;
+  color:var(--ink-soft);line-height:1.4;
+}
+
+/* 응답 화면 — 보라 톤 */
+.q-progress-fill.special{
+  background:linear-gradient(90deg, #3a5ba8 0%, #5b8def 100%);
+  box-shadow:0 0 8px rgba(91,141,239,0.5);
+}
+.q-mode.special-mode{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:#5b8def;letter-spacing:.06em;
+  margin-left:auto;
+  padding:4px 10px;
+  border:1px solid #3a5ba8;
+  background:rgba(58,91,168,0.10);
+}
+
+.info-note.special{
+  margin-top:24px;
+  background:linear-gradient(180deg, rgba(58,91,168,0.06) 0%, var(--bg-elevated) 100%);
+  border-left:3px solid #3a5ba8;
+  padding:16px 20px;
+  font-size:13px;line-height:1.85;color:var(--ink-soft);
+}
+.info-note.special strong{color:#5b8def;font-weight:700}
+
+/* 결과지 — 보라 톤 verdict */
+.report-header.special{
+  border-bottom:2px solid #3a5ba8;
+}
+.report-stamp.special{color:#5b8def}
+
+.verdict-card.special{
+  border:1px solid #3a5ba8;
+  box-shadow:0 0 60px -12px rgba(91,141,239,0.25), 0 8px 32px -8px rgba(0,0,0,0.6);
+}
+.verdict-card.special::before{
+  background:linear-gradient(90deg, #3a5ba8 0%, #5b8def 50%, #3a5ba8 100%);
+  box-shadow:0 0 16px rgba(91,141,239,0.6);
+}
+.verdict-card.special .verdict-stamp{color:#5b8def}
+.verdict-title.special{color:#dde6ff;text-shadow:0 2px 24px rgba(91,141,239,0.25)}
+
+/* 학교 매칭 카드 */
+.school-match-card{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid #3a5ba8;
+  padding:24px 28px;
+  margin-bottom:16px;
+  position:relative;
+  box-shadow:0 4px 24px -8px rgba(0,0,0,0.5);
+}
+.school-match-card::before{
+  content:'';position:absolute;top:0;left:0;width:60px;height:2px;
+  background:linear-gradient(90deg, #3a5ba8 0%, transparent 100%);
+}
+.school-match-rank{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:#5b8def;letter-spacing:.08em;
+  margin-bottom:10px;
+}
+.school-match-head{
+  display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap;
+}
+.school-match-names{
+  font-family:var(--serif);font-weight:800;font-size:22px;
+  color:var(--ink);letter-spacing:-.01em;flex:1;
+}
+.school-match-score{
+  font-family:var(--serif);font-weight:800;font-size:18px;
+  color:#5b8def;
+}
+.school-match-axis{
+  font-family:var(--serif);font-style:italic;font-size:14px;
+  color:var(--ink-muted);margin-bottom:14px;
+}
+.school-match-style,.school-match-desc{
+  font-size:14px;line-height:1.85;color:var(--ink-soft);
+  margin-bottom:10px;
+}
+.school-match-style strong,.school-match-desc strong{color:var(--gold-soft);font-weight:700}
+.school-match-char{
+  font-size:13px;line-height:1.7;color:var(--ink-soft);
+  padding-top:12px;border-top:1px dashed var(--line-soft);
+  margin-top:14px;
+}
+.char-tag{
+  display:inline-block;
+  font-family:var(--serif);font-weight:700;font-size:10px;
+  color:#5b8def;letter-spacing:.06em;
+  padding:2px 6px;margin-right:8px;
+  background:rgba(58,91,168,0.10);
+  border:1px solid rgba(58,91,168,0.30);
+}
+.school-match-empty{
+  background:var(--bg-paper);border:1px dashed var(--line-strong);
+  padding:24px;text-align:center;color:var(--ink-muted);font-size:14px;line-height:1.85;
+}
+
+/* 관심 학교 매칭 분석 */
+.school-interest-card{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid var(--line);
+  padding:22px 26px;
+  margin-top:18px;
+  position:relative;
+}
+.school-interest-card.match{border-left:3px solid var(--olive)}
+.school-interest-card.mismatch{border-left:3px solid var(--crimson)}
+.interest-tag{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  letter-spacing:.06em;margin-bottom:12px;
+}
+.school-interest-card.match .interest-tag{color:var(--olive)}
+.school-interest-card.mismatch .interest-tag{color:var(--crimson)}
+.interest-body{
+  font-size:14px;line-height:1.85;color:var(--ink-soft);
+  margin-bottom:10px;
+}
+.interest-verdict{
+  font-size:14px;line-height:1.85;color:var(--ink-soft);
+  padding-top:10px;border-top:1px dashed var(--line-soft);
+}
+
+/* 진단 축 점수 */
+.axis-score-row{margin-bottom:22px}
+.axis-score-head{
+  display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap;
+}
+.axis-score-name{flex:1;line-height:1.4}
+.axis-score-name strong{
+  font-family:var(--serif);font-weight:800;font-size:16px;
+  color:var(--ink);display:block;margin-bottom:2px;
+}
+.axis-score-name small{
+  font-size:12px;color:var(--ink-muted);
+}
+.axis-score-value{
+  font-family:var(--serif);font-weight:800;font-size:24px;
+  color:var(--gold);line-height:1;
+  display:flex;align-items:baseline;gap:10px;
+}
+.axis-score-value small{
+  font-size:13px;color:var(--ink-muted);font-weight:400;
+}
+.axis-score-value.strong{color:var(--olive)}
+.axis-score-value.weak{color:var(--crimson)}
+.axis-score-value.mid{color:var(--gold-soft)}
+.axis-score-value.unknown{color:var(--ink-muted)}
+.axis-score-label{
+  display:inline-block;
+  font-family:var(--serif);font-weight:700;font-size:10px;
+  letter-spacing:.06em;
+  padding:3px 8px;border-radius:3px;
+  margin-left:4px;
+}
+.axis-score-label.strong{background:rgba(155,179,142,0.15);color:var(--olive);border:1px solid rgba(155,179,142,0.40)}
+.axis-score-label.weak{background:rgba(229,115,115,0.10);color:var(--crimson);border:1px solid rgba(229,115,115,0.35)}
+.axis-score-label.mid,.axis-score-label{background:rgba(212,168,90,0.10);color:var(--gold);border:1px solid rgba(212,168,90,0.35)}
+.axis-score-label.unknown{background:rgba(154,154,154,0.10);color:var(--ink-muted);border:1px dashed var(--line-strong)}
+.axis-score-bar-bg{
+  position:relative;height:10px;
+  background:var(--bg-elevated);border:1px solid var(--line-soft);
+  overflow:hidden;
+}
+.axis-score-bar-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%);
+  box-shadow:0 0 8px rgba(212,168,90,0.4);
+  transition:width .8s ease;
+}
+.axis-score-bar-fill.strong{
+  background:linear-gradient(90deg, var(--olive) 0%, #b8d0aa 100%);
+  box-shadow:0 0 8px rgba(155,179,142,0.4);
+}
+.axis-score-bar-fill.weak{
+  background:linear-gradient(90deg, var(--crimson) 0%, #f4a8a8 100%);
+  box-shadow:0 0 8px rgba(229,115,115,0.4);
+}
+.axis-score-bar-fill.mid{
+  background:linear-gradient(90deg, var(--gold-deep) 0%, var(--gold) 100%);
+}
+.axis-score-bar-fill.unknown{
+  background:repeating-linear-gradient(45deg, rgba(154,154,154,0.15), rgba(154,154,154,0.15) 6px, transparent 6px, transparent 12px);
+  box-shadow:none;
+}
+.axis-score-note{
+  font-size:11px;color:var(--ink-muted);margin-top:4px;font-style:italic;
+}
+
+/* 12개 세부 지표 */
+.sub-group{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:18px 22px;
+  margin-bottom:14px;
+}
+.sub-group-title{
+  font-family:var(--serif);font-weight:800;font-size:14px;
+  color:var(--gold);letter-spacing:.02em;
+  margin-bottom:14px;padding-bottom:8px;
+  border-bottom:1px solid var(--line-soft);
+}
+.sub-indicator-row{
+  display:grid;grid-template-columns:140px 1fr 80px;
+  gap:14px;align-items:center;margin-bottom:10px;
+}
+@media(max-width:560px){
+  .sub-indicator-row{grid-template-columns:1fr;gap:6px}
+}
+.sub-indicator-label{
+  font-size:13px;color:var(--ink-soft);
+}
+.sub-indicator-bar-bg{
+  position:relative;height:8px;
+  background:var(--bg-elevated);border:1px solid var(--line-soft);overflow:hidden;
+}
+.sub-indicator-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%);
+  transition:width .6s ease;
+}
+.sub-indicator-fill.strong{background:linear-gradient(90deg, var(--olive) 0%, #b8d0aa 100%)}
+.sub-indicator-fill.weak{background:linear-gradient(90deg, var(--crimson) 0%, #f4a8a8 100%)}
+.sub-indicator-fill.mid{background:linear-gradient(90deg, var(--gold-deep) 0%, var(--gold) 100%)}
+.sub-indicator-fill.unknown{
+  background:repeating-linear-gradient(45deg, rgba(154,154,154,0.15), rgba(154,154,154,0.15) 4px, transparent 4px, transparent 8px);
+}
+.sub-indicator-score{
+  font-family:var(--serif);font-weight:700;font-size:12px;
+  color:var(--gold);text-align:right;
+}
+.sub-indicator-score.strong{color:var(--olive)}
+.sub-indicator-score.weak{color:var(--crimson)}
+.sub-indicator-score.mid{color:var(--gold-soft)}
+.sub-indicator-score.unknown{color:var(--ink-muted)}
+
+/* 보정 지표 */
+.correction-item{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid var(--line);
+  padding:18px 22px;
+  margin-bottom:12px;
+  position:relative;
+}
+.correction-item.good{border-left:3px solid var(--olive)}
+.correction-item.mid{border-left:3px solid var(--gold)}
+.correction-item.warn{border-left:3px solid var(--crimson)}
+.correction-head{
+  display:flex;align-items:baseline;gap:14px;margin-bottom:8px;
+}
+.correction-title{
+  font-family:var(--serif);font-weight:800;font-size:14px;
+  color:var(--ink);flex:1;
+}
+.correction-num{
+  font-family:var(--serif);font-weight:800;font-size:18px;
+}
+.correction-item.good .correction-num{color:var(--olive)}
+.correction-item.mid .correction-num{color:var(--gold-soft)}
+.correction-item.warn .correction-num{color:var(--crimson)}
+.correction-body{
+  font-size:13px;line-height:1.85;color:var(--ink-soft);
+}
+.correction-body strong{color:var(--gold-soft);font-weight:700}
+
+.confidence-note{
+  background:rgba(58,91,168,0.06);
+  border:1px solid rgba(58,91,168,0.30);
+  padding:14px 18px;
+  margin-top:18px;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+}
+.confidence-tag{
+  font-family:var(--serif);font-weight:800;font-size:11px;
+  color:#5b8def;letter-spacing:.06em;
+  flex:0 0 auto;
+}
+.confidence-body{
+  font-size:13px;color:var(--ink-soft);line-height:1.7;flex:1;
+}
+
+/* btn-primary.special 진단 시작 버튼 (모달 외 일반 페이지용) */
+.btn-primary.special{
+  background:linear-gradient(135deg, #3a5ba8 0%, #5b8def 100%);
+  color:#1a1a1a;
+  box-shadow:0 4px 16px -4px rgba(91,141,239,0.50);
+}
+.btn-primary.special:hover{
+  background:linear-gradient(135deg, #5b8def 0%, #8fb0ff 100%);
+  box-shadow:0 6px 24px -4px rgba(91,141,239,0.65);
+  transform:translateY(-1px);
+}
+
+/* 학생/학부모 선택 화면 */
+.role-choice{
+  display:grid;gap:14px;
+  max-width:680px;margin:0 auto;
+}
+.role-choice .version-card{cursor:pointer}
+.role-choice .version-card.special.parent{
+  border-color:#5b8def;
+}
+.role-choice .version-card.special.parent::before{
+  background:linear-gradient(90deg, #5b8def 0%, #8fb0ff 50%, #5b8def 100%);
+}
+.role-choice .version-num{
+  font-family:var(--serif);font-weight:800;font-size:16px;
+  color:#5b8def;letter-spacing:.04em;
+  min-width:60px;
+}
+
+/* D 영역(위험 신호) 문항 카드 */
+.quiz-card.risk-zone{
+  border-top:2px solid var(--crimson);
+}
+.risk-tag{
+  display:inline-block;
+  font-family:var(--serif);font-weight:700;font-size:10px;
+  color:var(--crimson);letter-spacing:.08em;
+  background:rgba(229,115,115,0.10);
+  border:1px solid rgba(229,115,115,0.35);
+  padding:3px 10px;
+  margin-bottom:12px;
+}
+
+/* 위험 신호 결과지 섹션 */
+.risk-summary{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid var(--line);
+  padding:22px 26px;
+  margin-bottom:18px;
+}
+.risk-summary.good{border-left:3px solid var(--olive)}
+.risk-summary.caution{border-left:3px solid var(--gold)}
+.risk-summary.warn{border-left:3px solid var(--crimson)}
+.risk-summary.critical{
+  border:1px solid var(--crimson);
+  border-left:4px solid var(--crimson);
+  box-shadow:0 0 32px -8px rgba(229,115,115,0.30);
+}
+.risk-summary-head{
+  display:flex;align-items:baseline;gap:14px;margin-bottom:14px;flex-wrap:wrap;
+}
+.risk-summary-tag{
+  font-family:var(--serif);font-weight:800;font-size:11px;
+  letter-spacing:.08em;
+}
+.risk-summary.good .risk-summary-tag{color:var(--olive)}
+.risk-summary.caution .risk-summary-tag{color:var(--gold)}
+.risk-summary.warn .risk-summary-tag,
+.risk-summary.critical .risk-summary-tag{color:var(--crimson)}
+.risk-summary-score{
+  font-family:var(--serif);font-weight:800;font-size:26px;
+  color:var(--gold-soft);line-height:1;
+}
+.risk-summary.warn .risk-summary-score,
+.risk-summary.critical .risk-summary-score{color:var(--crimson)}
+.risk-summary.good .risk-summary-score{color:var(--olive)}
+.risk-summary-rate{
+  font-family:var(--serif);font-weight:700;font-size:14px;
+  color:var(--ink-muted);
+}
+.risk-summary-body{
+  font-size:14px;line-height:1.85;color:var(--ink-soft);margin:0;
+}
+
+.risk-patterns{
+  background:var(--bg-paper);
+  border:1px solid var(--line);
+  padding:20px 24px;
+  margin-bottom:18px;
+}
+.risk-patterns-title{
+  font-family:var(--serif);font-weight:800;font-size:14px;
+  color:var(--ink);margin-bottom:14px;
+  padding-bottom:8px;border-bottom:1px solid var(--line-soft);
+}
+.risk-pattern-list{list-style:none;padding:0;margin:0}
+.risk-pattern-item{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed var(--line-soft);
+  font-size:14px;color:var(--ink-soft);
+}
+.risk-pattern-item:last-child{border-bottom:none}
+.risk-pattern-item strong{color:var(--ink);font-weight:700}
+.risk-pattern-dot{
+  width:8px;height:8px;background:var(--crimson);
+  border-radius:50%;flex:0 0 auto;
+  box-shadow:0 0 8px rgba(229,115,115,0.6);
+}
+.risk-pattern-count{
+  margin-left:auto;font-size:12px;color:var(--crimson);
+  font-family:var(--serif);font-weight:700;
+}
+
+.risk-quotes{
+  background:linear-gradient(180deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
+  border:1px solid var(--crimson);
+  border-left:3px solid var(--crimson);
+  padding:24px 28px;
+  margin-bottom:18px;
+}
+.risk-quotes-title{
+  font-family:var(--serif);font-weight:800;font-size:13px;
+  color:var(--crimson);letter-spacing:.04em;
+  margin-bottom:16px;
+}
+.risk-quote-list{list-style:none;padding:0;margin:0 0 14px}
+.risk-quote-item{
+  padding:14px 0 14px 18px;
+  border-left:2px solid rgba(229,115,115,0.40);
+  margin-bottom:14px;
+  position:relative;
+}
+.risk-quote-item:last-child{margin-bottom:0}
+.risk-quote-text{
+  font-family:var(--serif);font-size:14px;line-height:1.7;
+  color:var(--ink-soft);margin-bottom:6px;
+}
+.risk-quote-text strong{color:var(--crimson);font-weight:700}
+.risk-quote-score{
+  font-family:var(--serif);font-weight:700;font-size:11px;
+  color:var(--crimson);letter-spacing:.04em;
+}
+.risk-quotes-note{
+  font-size:13px;line-height:1.85;color:var(--ink-soft);
+  margin:0;padding-top:14px;
+  border-top:1px dashed var(--line-soft);
+}
+.risk-quotes-note strong{color:var(--crimson);font-weight:700}
 
 /* 거울 진단 인트로 */
 .mirror-intro{
@@ -1534,8 +2159,9 @@ body::before{
   body{background:#fff;font-size:10pt}
   body::before{display:none}
   .container{max-width:100%;padding:8mm}
-  .screen{display:none}
-  #results.screen{display:block !important;animation:none}
+  /* 모든 screen 숨기고, 현재 활성 screen만 표시 */
+  .screen{display:none !important}
+  .screen.active{display:block !important;animation:none}
   .q-header,.btn,.btn-row,.report-actions,.submit-area,.brand-mark{display:none !important}
   /* 가경T 전용 영역은 인쇄 시 숨김 */
   #teacher-only{display:none !important}
@@ -1625,8 +2251,7 @@ body::before{
   .axis-chip{border:1px solid #b8893d !important;color:#8c6620 !important}
   .flag-item{border-left:3px solid currentColor !important}
 
-  /* 거울 진단 결과지 인쇄 */
-  #mirror-results.screen{display:block !important;animation:none}
+  /* 거울 진단 결과지 인쇄 스타일 */
   .verdict-card.mirror{border:2px solid #8c6620 !important;padding:24px 20px !important}
   .match-score-num{color:#8c6620 !important;font-size:48pt !important}
   .impact-card{
@@ -1674,10 +2299,8 @@ body::before{
 
 <!-- ═══════════════════════════════════ 1. 시작 화면 ═══════════════════════════════════ -->
 <section id="welcome" class="screen active">
-  <div class="brand-mark"><span>가경 국어 연구소 · 오름 국어학원</span></div>
   <div style="height:32px"></div>
   <h1 class="title-serif hero-title">국어 정밀 진단</h1>
-  <p class="hero-meta">고1 · 2026 정규반 · 가경T 설계</p>
 
   <div class="intro-card">
     <h3>이 진단은 무엇을 보는가</h3>
@@ -1686,18 +2309,6 @@ body::before{
       누군가는 <strong>선지 판단이 약한 학생</strong>이며, 누군가는 <strong>시간 운영이 무너진 학생</strong>입니다.
       이 진단은 8개 영역과 40여 개 진단축으로 그 차이를 가려냅니다.
     </p>
-    <div class="axes-preview">
-      <span class="axis-chip">메타인지</span>
-      <span class="axis-chip">학습된 무력감</span>
-      <span class="axis-chip">거시구조 인식</span>
-      <span class="axis-chip">선지 부분/전체 판별</span>
-      <span class="axis-chip">과잉진술 인지</span>
-      <span class="axis-chip">단권화 습관</span>
-      <span class="axis-chip">작업기억</span>
-      <span class="axis-chip">시험 메타인지</span>
-      <span class="axis-chip">고정/성장 마인드셋</span>
-      <span class="axis-chip" style="opacity:.5">외 30+</span>
-    </div>
   </div>
 
   <div class="divider-dot">◆</div>
@@ -1709,7 +2320,7 @@ body::before{
       <div class="version-num">1</div>
       <div class="version-info">
         <h4>간편형</h4>
-        <p>핵심 40문항. 10~15분. 첫 상담 전 빠른 스크리닝.</p>
+        <p>핵심 40문항 · 5분 소요<br>첫 상담 전 빠르게 알아보기</p>
       </div>
       <div class="version-meta"><strong>40</strong><br>questions</div>
     </div>
@@ -1718,28 +2329,38 @@ body::before{
       <div class="version-num">2</div>
       <div class="version-info">
         <h4>표준형</h4>
-        <p>객관식 80 + 서술형 5. 25~35분. 신규생 레벨 진단·반 배정 자료.</p>
+        <p>핵심 80문항 · 10분 소요<br>신규 학생 진단</p>
       </div>
-      <div class="version-meta"><strong>85</strong><br>questions</div>
+      <div class="version-meta"><strong>80</strong><br>questions</div>
     </div>
 
     <div class="version-card" data-version="precision">
       <div class="version-num">3</div>
       <div class="version-info">
         <h4>정밀형</h4>
-        <p>객관식 112 + 서술형 7. 40~55분. 학기 초 종합 진단·심층 상담용.</p>
+        <p>핵심 100문항 · 15분 소요<br>국어 학습의 약점 진단, 심층 상담용</p>
       </div>
-      <div class="version-meta"><strong>119</strong><br>questions</div>
+      <div class="version-meta"><strong>100</strong><br>questions</div>
     </div>
 
     <div class="version-card mirror" data-version="mirror">
       <div class="version-num">4</div>
       <div class="version-info">
-        <h4>거울 진단 <span class="version-badge">NEW</span></h4>
-        <p>부모·자녀 메타인지 테스트. 31문항. 자녀와 학부모가 가족 코드로 따로 응답.</p>
+        <h4>거울형 <span class="version-badge">NEW</span></h4>
+        <p>부모와 자녀 간 메타인지 진단<br>"내가 보는 나, 부모님이 보는 자녀"</p>
       </div>
-      <div class="version-meta"><strong>31</strong><br>questions</div>
+      <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
+
+    <div class="version-card special" data-version="special">
+      <div class="version-num">5</div>
+      <div class="version-info">
+        <h4>특별판 <span class="version-badge-special">한티 MEXX 한정</span></h4>
+        <p>2026.05.27(수) 한티 MEXX 설명회 참여자 한정 진단<br>자녀 학습 성향에 따른 고등학교 추천</p>
+      </div>
+      <div class="version-meta"><strong>—</strong><br>questions</div>
+    </div>
+  </div>
   </div>
 
   <p style="text-align:center;margin-top:36px;font-size:13px;color:var(--ink-muted)">
@@ -2115,6 +2736,233 @@ body::before{
   </div>
 </section>
 
+<!-- ═══════════════════════════════════ 특별판 인증 모달 ═══════════════════════════════════ -->
+<div id="special-access-modal" class="modal-overlay">
+  <div class="special-access-modal">
+    <div class="special-access-stamp">한티 MEXX 설명회</div>
+    <h2 class="special-access-title">특별판 진단</h2>
+    <p class="special-access-sub">2026.05.27(수) 설명회 참여자 한정</p>
+
+    <div class="special-access-form">
+      <label for="special-access-input">참가자 인증 코드</label>
+      <input type="text" id="special-access-input" placeholder="설명회에서 안내받은 코드" autocomplete="off"
+             onkeypress="if(event.key==='Enter') verifySpecialAccess()">
+      <div id="special-access-status" class="code-status"></div>
+    </div>
+
+    <div class="special-access-actions">
+      <button class="btn btn-ghost" onclick="closeSpecialAccess()">취소</button>
+      <button class="btn btn-primary special" onclick="verifySpecialAccess()">인증하기</button>
+    </div>
+
+    <p class="special-access-hint">설명회에 참여하셨다면 안내문에 적힌 인증 코드를 입력해주세요.<br>코드가 없으시다면 가경T로 문의 부탁드립니다.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 특별판 역할 선택 ═══════════════════════════════════ -->
+<section id="special-role-select" class="screen">
+  <div class="brand-mark"><span>가경 국어 연구소 · 오름 국어학원</span></div>
+  <div style="height:32px"></div>
+  <p class="hero-meta special-tag" style="text-align:center">한티 MEXX 한정 · 2026.05.27(수)</p>
+  <h1 class="title-serif hero-title special-title">특별판 진단</h1>
+  <p class="hero-meta" style="text-align:center;font-style:italic">예비고1 고교 선택 국어 적합도 진단</p>
+
+  <div class="divider-dot">◆</div>
+
+  <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">누가 응답하시나요?</h3>
+
+  <div class="role-choice">
+    <div class="version-card special" onclick="specialChooseRole('student')">
+      <div class="version-num">학생</div>
+      <div class="version-info">
+        <h4>학생이 직접 응답합니다</h4>
+        <p>본인의 학습 처리 방식을 36문항으로 진단합니다. 자기 학습 방식이 어느 학교 출제 스타일과 잘 맞는지 분석합니다.</p>
+      </div>
+      <div class="version-meta"><strong>36</strong><br>questions</div>
+    </div>
+
+    <div class="version-card special parent" onclick="specialChooseRole('parent')">
+      <div class="version-num">학부모</div>
+      <div class="version-info">
+        <h4>학부모님이 응답합니다</h4>
+        <p>일상에서 관찰한 자녀의 모습을 50문항으로 진단합니다. 자녀의 학습 처리 방식과 학교 매칭, 그리고 고등 내신 위험 신호까지 분석합니다.</p>
+      </div>
+      <div class="version-meta"><strong>50</strong><br>questions</div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:36px">
+    <button class="btn btn-ghost" onclick="goScreen('welcome')">← 뒤로</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 특별판 안내 ═══════════════════════════════════ -->
+<section id="special-intro" class="screen">
+  <div class="brand-mark"><span>가경 국어 연구소 · 오름 국어학원</span></div>
+  <div style="height:32px"></div>
+  <p class="hero-meta special-tag" style="text-align:center">한티 MEXX 한정 · 2026.05.27(수)</p>
+  <h1 class="title-serif hero-title special-title">특별판 진단</h1>
+  <p class="hero-meta" style="text-align:center;font-style:italic" id="special-intro-sub">자녀에게 맞는 고등학교 출제 스타일을 찾아드립니다</p>
+
+  <div class="intro-card special-intro">
+    <h3 id="special-intro-title">이 진단은 무엇인가요</h3>
+    <div id="special-intro-body">
+      <p>
+        고등학교마다 국어 출제 방식은 서로 다릅니다.
+        어떤 학교는 <strong>교과서·프린트·수업 디테일</strong>을 빠짐없이 묻고, 어떤 학교는 <strong>낯선 지문과 외부 자료</strong>를 던지며, 또 어떤 학교는 <strong>복합 자료와 서답형 조건</strong>으로 변별합니다.
+      </p>
+      <p>
+        특별판 진단은 자녀의 학습 처리 방식이 <strong>어느 학교 출제 스타일과 가장 잘 맞는지</strong>를 분석합니다.
+        결과는 자녀의 고등학교 선택과 학습 설계에 직접 도움이 됩니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:36px">
+    <button class="btn btn-ghost" onclick="goScreen('special-role-select')">← 뒤로</button>
+    <button class="btn btn-primary special" onclick="goSpecialInfo()">진단 시작 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 특별판 정보 입력 ═══════════════════════════════════ -->
+<section id="special-info" class="screen">
+  <div class="brand-mark"><span>가경 국어 연구소 · 오름 국어학원</span></div>
+  <div style="height:24px"></div>
+  <div class="form-stamp special-stamp">한티 MEXX 한정</div>
+  <h2 class="screen-title">자녀 정보를 알려주세요</h2>
+  <p class="screen-sub">결과지 매칭과 상담 안내에만 사용됩니다.</p>
+
+  <div class="info-form">
+    <div class="field">
+      <label>학생 이름 <span class="required">*</span></label>
+      <input type="text" id="special-info-name" placeholder="예: 홍길동" required>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>현재 재학 중학교 <span class="required">*</span></label>
+        <input type="text" id="special-info-school" placeholder="예: 도곡중학교" required>
+      </div>
+      <div class="field">
+        <label>학년 <span class="required">*</span></label>
+        <select id="special-info-grade" required>
+          <option value="">선택해주세요</option>
+          <option value="중3">중3</option>
+          <option value="중2">중2</option>
+          <option value="중1">중1</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>응답일</label>
+        <input type="date" id="special-info-date" min="2026-01-01" max="2026-12-31">
+      </div>
+      <div class="field">
+        <label>학부모 연락처 <small>(상담 안내용)</small></label>
+        <input type="tel" id="special-info-parent-phone" placeholder="예: 010-9876-5432">
+      </div>
+    </div>
+    <div class="field">
+      <label>관심 있는 고등학교 <small>(있다면 — 결과지에서 별도 매칭 분석)</small></label>
+      <select id="special-info-interest">
+        <option value="">선택 안 함</option>
+        <option value="경기고">경기고</option>
+        <option value="숙명여고">숙명여고</option>
+        <option value="휘문고">휘문고</option>
+        <option value="진선여고">진선여고</option>
+        <option value="중대부고">중대부고</option>
+        <option value="단대부고">단대부고</option>
+        <option value="기타">기타 (결과지에 종합 매칭 제공)</option>
+      </select>
+    </div>
+    <div id="special-info-error" class="info-error"></div>
+  </div>
+
+  <div class="info-note special">
+    <strong>응답은 학부모님께서 자녀의 학습 모습을 떠올리며 답해주세요.</strong> 자녀가 직접 답하셔도 됩니다. 정확히 답하기 어려운 항목은 <strong>"잘 모르겠습니다"</strong>를 선택해주세요 — 모름 자체가 진단의 신호입니다.
+  </div>
+
+  <div class="btn-row" style="margin-top:32px">
+    <button class="btn btn-ghost" onclick="goScreen('special-intro')">← 이전</button>
+    <button class="btn btn-primary special" onclick="startSpecialQuiz()">응답 시작 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 특별판 응답 화면 ═══════════════════════════════════ -->
+<section id="special-quiz" class="screen">
+  <div class="brand-mark"><span>가경 국어 연구소 · 오름 국어학원</span></div>
+  <div class="q-header">
+    <div class="q-counter" id="special-q-counter">1 / 36</div>
+    <div class="q-progress-bar"><div class="q-progress-fill special" id="special-q-progress"></div></div>
+    <div class="q-mode special-mode" id="special-q-mode">특별판</div>
+  </div>
+
+  <div id="special-q-area"></div>
+
+  <div class="btn-row" style="margin-top:24px">
+    <button class="btn btn-ghost" id="special-q-prev" onclick="specialPrevQ()">← 이전</button>
+    <button class="btn btn-primary special" id="special-q-next" onclick="specialNextQ()">다음 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 특별판 결과지 ═══════════════════════════════════ -->
+<section id="special-results" class="screen">
+  <div class="report">
+    <div class="report-header special">
+      <div class="report-stamp special">특별판 진단 결과 보고서 · 한티 MEXX</div>
+      <h1 class="report-title" id="special-r-name">— 학생의 학교 매칭 분석</h1>
+      <p class="report-meta" id="special-r-meta">○○중학교 · 2026.05.27 · 가경T</p>
+    </div>
+
+    <!-- 1. 매칭 진단 카드 -->
+    <div class="verdict-card special" id="special-verdict-card"></div>
+
+    <!-- 2. 매칭 학교 카드 -->
+    <h2 class="section-title"><span class="section-num">1.</span> 자녀에게 맞는 고등학교</h2>
+    <p class="section-lead">자녀의 학습 처리 방식과 가장 잘 맞는 학교 출제 스타일입니다.</p>
+    <div id="special-school-match"></div>
+
+    <!-- 3. 3개 진단 축 점수 -->
+    <h2 class="section-title"><span class="section-num">2.</span> 3개 진단 축 점수</h2>
+    <p class="section-lead">자료 장악형 · 사고 적용형 · 조건 변별형 — 각 축의 강도입니다.</p>
+    <div id="special-axis-scores"></div>
+
+    <!-- 4. 12개 세부 지표 (학생용에만) -->
+    <h2 class="section-title"><span class="section-num">3.</span> 12개 세부 지표</h2>
+    <p class="section-lead">각 진단 축을 구성하는 세부 역량입니다.</p>
+    <div id="special-detail-indicators"></div>
+
+    <!-- 4'. 위험 신호 (학부모용에만) -->
+    <h2 class="section-title"><span class="section-num">3.</span> 고등 내신 위험 신호</h2>
+    <p class="section-lead">학교 매칭과 별개로 살펴봐야 할 자녀의 학습 패턴입니다.</p>
+    <div id="special-risk-signals"></div>
+
+    <!-- 5. 보정 지표 -->
+    <h2 class="section-title"><span class="section-num">4.</span> 보정 지표 — 약점 분석</h2>
+    <p class="section-lead">점수 너머의 학습 처리 방식 분석입니다.</p>
+    <div id="special-correction"></div>
+
+    <!-- 6. 가경T 진단 -->
+    <h2 class="section-title"><span class="section-num">5.</span> 가경T의 진단</h2>
+    <div id="special-prescription"></div>
+
+    <!-- 마무리 -->
+    <div id="special-closing"></div>
+
+    <!-- 액션 -->
+    <div class="report-actions">
+      <button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>
+      <button class="btn btn-ghost" onclick="goScreen('welcome')">↻ 처음 화면으로</button>
+    </div>
+
+    <div class="footer">
+      <div class="footer-mark">가경 국어 연구소 · 오름 국어학원</div>
+      <div>특별판 진단 · 한티 MEXX 설명회 한정 · v1.0</div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════ 5. 결과 리포트 ═══════════════════════════════════ -->
 <section id="results" class="screen">
   <div class="report">
@@ -2123,6 +2971,7 @@ body::before{
       <h1 class="report-title" id="r-name">— 의 국어 진단 리포트</h1>
       <p class="report-meta" id="r-meta">○○고등학교 · 2026.05.03 · 가경T</p>
     </div>
+
 
     <!-- ═══════════════════════════════════════════════
          ★ 진단명 카드 — 한 줄로 본 이 학생
@@ -2272,7 +3121,6 @@ const QUESTIONS = [
   {id:'B7', text:'주 1회 이상 정해진 복습 시간이 있다', axis:'복습루틴', level:'standard', section:'B'},
   {id:'B8', text:'인강은 1.5배속 이상으로 듣는다', axis:'정독', reverse:true, level:'precision', section:'B'},
   {id:'B9', text:'모르는 단어가 나오면 그 자리에서 찾아본다', axis:'어휘 즉시처리', level:'standard', section:'B'},
-  {id:'B10', text:'음악을 듣지 않으면 집중이 안 된다', axis:'집중환경', reverse:true, level:'precision', section:'B'},
   {id:'B11', text:'숙제할 때 답만 맞히고 넘어가는 경우가 많다', axis:'학습된 무력감', reverse:true, level:'core', section:'B'},
   {id:'B12', text:'숙제를 해도 실력이 느는지 잘 모르겠어서 대충 하게 된다', axis:'학습된 무력감', reverse:true, level:'core', section:'B'},
 
@@ -2282,9 +3130,7 @@ const QUESTIONS = [
   {id:'C3', text:'비유·상징·반어를 보면 무엇이 무엇에 빗대어졌는지 추론한다', axis:'수사법 적용', level:'standard', section:'C-문학'},
   {id:'C4', text:'갈래(시·소설·극·수필)별로 감상 포인트가 다르다는 걸 안다', axis:'갈래 인식', level:'standard', section:'C-문학'},
   {id:'C5', text:'고전시가의 고어/한자어가 나와도 의미를 추측해본다', axis:'고전 적응력', level:'core', section:'C-문학'},
-  {id:'C6', text:'시를 읽을 때 분위기/정서 파악보다 수사법 찾기가 더 쉽다', axis:'정서 감수성', reverse:true, level:'precision', section:'C-문학'},
   {id:'C7', text:'소설을 읽을 때 인물 관계도와 사건 전개를 머릿속으로 그리며 읽는다', axis:'구조화 독해', level:'standard', section:'C-문학'},
-  {id:'C8', text:'작품의 주제나 작가의 의도가 궁금해진다', axis:'문학적 호기심', level:'precision', section:'C-문학'},
 
   // ── C-독서 (8) ──
   {id:'C9', text:'한 문단의 핵심을 한 문장으로 줄일 수 있다', axis:'요약력', level:'core', section:'C-독서'},
@@ -2307,27 +3153,19 @@ const QUESTIONS = [
   // ── C-화작 (5) ──
   {id:'C23', text:'토론의 입론과 반론 구조를 안다', axis:'화법 인식', level:'standard', section:'C-화작'},
   {id:'C24', text:'자료를 보고 글의 개요를 짤 수 있다', axis:'작문 구조화', level:'precision', section:'C-화작'},
-  {id:'C25', text:'매체별(인쇄·방송·인터넷) 특성 차이를 안다', axis:'매체 인식', level:'precision', section:'C-화작'},
-  {id:'C26', text:'발표 자료를 만들 때 청중을 고려한다', axis:'화법 의식', level:'precision', section:'C-화작'},
   {id:'C27', text:'글을 쓰면서 통일성·응집성을 점검한다', axis:'작문 점검', level:'precision', section:'C-화작'},
 
   // ── C-어휘 (5) ──
   {id:'C28', text:"'관념적·사변적·유기적' 같은 추상어의 뜻을 정확히 안다", axis:'추상어 어휘력', level:'standard', section:'C-어휘'},
   {id:'C29', text:'한자어/추상어/개념어가 많은 문장을 읽으면 이해가 느려진다', axis:'개념어 처리', reverse:true, level:'core', section:'C-어휘'},
   {id:'C30', text:'긴 문장을 읽을 때 주어와 서술어 관계를 파악한다', axis:'통사 구조 독해', level:'standard', section:'C-어휘'},
-  {id:'C31', text:'인문·사회·과학 도서를 1년에 3권 이상 읽는다', axis:'독서 이력', level:'precision', section:'C-어휘'},
-  {id:'C32', text:'신문 칼럼이나 사설을 읽는다', axis:'시사 노출', level:'precision', section:'C-어휘'},
 
   // ── D. 국어 태도·정서 (10) ──
   {id:'D1', text:'책을 읽는 일이 즐겁다', axis:'독서 정서', level:'standard', section:'D'},
-  {id:'D2', text:'글을 쓰는 것이 두렵지 않다', axis:'작문 정서', level:'precision', section:'D'},
   {id:'D3', text:'영상보다 글로 정보를 얻는 게 편하다', axis:'문자 친화', level:'precision', section:'D'},
   {id:'D4', text:'모르는 단어를 만나면 사전을 찾는다', axis:'어휘 능동성', level:'standard', section:'D'},
-  {id:'D5', text:'책·영화에 대해 친구와 이야기하는 걸 좋아한다', axis:'담론 욕구', level:'precision', section:'D'},
-  {id:'D6', text:'일기나 메모를 쓰는 습관이 있다', axis:'작문 일상', level:'precision', section:'D'},
   {id:'D7', text:'국어 시간에 졸린 적이 거의 없다', axis:'수업 몰입', level:'core', section:'D'},
   {id:'D8', text:'국어 지문을 읽을 때 쉽게 지루함을 느낀다', axis:'지문 인내', reverse:true, level:'standard', section:'D'},
-  {id:'D9', text:"'시험에 안 나오니까'라는 이유로 공부를 건너뛴 적이 있다", axis:'외재동기', reverse:true, level:'precision', section:'D'},
   {id:'D10', text:'국어는 결국 감(感)이라고 생각한다', axis:'감 의존', reverse:true, level:'core', section:'D'},
 
   // ── E. 내신 대비 (13) ──
@@ -2355,7 +3193,6 @@ const QUESTIONS = [
   {id:'F7', text:'매력적 오답에 자주 속는다', axis:'매력적 오답', reverse:true, level:'standard', section:'F'},
   {id:'F8', text:'푼 뒤 지문을 다시 읽으며 분석하는 시간을 갖는다', axis:'사후 분석', level:'standard', section:'F'},
   {id:'F9', text:'EBS 수능특강/수능완성이 무엇인지 안다', axis:'수능 인지', level:'core', section:'F'},
-  {id:'F10', text:"'등급컷' 개념을 정확히 안다", axis:'수능 인지', level:'precision', section:'F'},
   {id:'F11', text:'마지막에 두 개 선지 사이에서 갈등하다가 자주 틀린다', axis:'선지 비교', reverse:true, level:'core', section:'F'},
   {id:'F12', text:'〈보기〉의 조건을 지문과 연결해 추론하는 게 어렵지 않다', axis:'보기 활용력', level:'core', section:'F'},
   {id:'F13', text:"풀고 나서 '왜 이게 답인지' 지문 어느 줄에서 근거가 나오는지 짚을 수 있다", axis:'근거 찾기', level:'core', section:'F'},
@@ -2459,6 +3296,8 @@ document.querySelectorAll('.version-card').forEach(c=>{
   c.addEventListener('click', (e)=>{
     // mirror-choice 영역 안의 카드는 이 핸들러가 처리하지 않음 (자체 onclick)
     if(c.closest('.mirror-choice')) return;
+    // role-choice 영역 안의 카드도 제외 (자체 onclick="specialChooseRole(...)")
+    if(c.closest('.role-choice')) return;
 
     const ver = c.dataset.version;
     state.version = ver;
@@ -2466,6 +3305,12 @@ document.querySelectorAll('.version-card').forEach(c=>{
     // ★ 거울 진단은 별도 흐름으로
     if(ver === 'mirror'){
       startMirrorDiagnosis();
+      return;
+    }
+
+    // ★ 특별판은 참가자 인증 코드 입력 필요
+    if(ver === 'special'){
+      promptSpecialAccess();
       return;
     }
 
@@ -2478,6 +3323,1169 @@ document.querySelectorAll('.version-card').forEach(c=>{
     goScreen('info');
   });
 });
+
+// ════════════════════════════════════════════════════════════
+//  특별판 — 한티 MEXX 설명회 참여자 인증 + 진단 시작
+// ════════════════════════════════════════════════════════════
+
+// 참가자 인증 코드 (운영 시 변경)
+const SPECIAL_ACCESS_CODE = 'MEXX2026';
+
+function promptSpecialAccess(){
+  // 이미 인증된 세션이면 바로 진단 시작
+  if(sessionStorage.getItem('specialAccess') === 'granted'){
+    startSpecialDiagnosis();
+    return;
+  }
+
+  // 인증 모달 표시
+  document.getElementById('special-access-modal').classList.add('active');
+  setTimeout(()=>{
+    const input = document.getElementById('special-access-input');
+    if(input) input.focus();
+  }, 100);
+}
+
+function closeSpecialAccess(){
+  document.getElementById('special-access-modal').classList.remove('active');
+  document.getElementById('special-access-status').textContent = '';
+  document.getElementById('special-access-input').value = '';
+}
+
+function verifySpecialAccess(){
+  const input = document.getElementById('special-access-input').value.trim().toUpperCase();
+  const status = document.getElementById('special-access-status');
+
+  if(!input){
+    status.className = 'code-status error';
+    status.textContent = '인증 코드를 입력해주세요.';
+    return;
+  }
+
+  if(input !== SPECIAL_ACCESS_CODE){
+    status.className = 'code-status error';
+    status.textContent = '올바르지 않은 인증 코드입니다. 설명회 안내문을 다시 확인해주세요.';
+    return;
+  }
+
+  // 인증 통과
+  sessionStorage.setItem('specialAccess', 'granted');
+  status.className = 'code-status success';
+  status.textContent = '✓ 인증되었습니다.';
+  setTimeout(()=>{
+    closeSpecialAccess();
+    startSpecialDiagnosis();
+  }, 600);
+}
+
+function startSpecialDiagnosis(){
+  goScreen('special-role-select');
+}
+
+// 학생/학부모 선택 후 특별판 안내 화면으로
+function specialChooseRole(role){
+  specialState.role = role; // 'student' | 'parent'
+  goScreen('special-intro');
+}
+
+/* ════════════════════════════════════════════════════════════
+   ★★★ 특별판 진단 — 한티 MEXX 한정
+   학교-학생 매칭 진단 (자료장악 / 사고적용 / 조건변별)
+   ════════════════════════════════════════════════════════════ */
+
+// ─── 학생용 36문항 (기존) — 3축 × 4지표 × 3문항 ───
+const SPECIAL_QUESTIONS = [
+  // ━━ A. 자료 장악형 ━━━━━━━━━━━━━━━━━━━━
+  // A-1. 교과서 밀착도
+  { id:'SP1',  axis:'A', sub:'A1', q:'교과서 본문뿐 아니라 날개·학습활동·어휘까지 시험 범위로 보고 공부합니다.' },
+  { id:'SP2',  axis:'A', sub:'A1', q:'시험을 준비할 때 교과서의 단원 정리와 활동 문제를 따로 다시 확인합니다.' },
+  { id:'SP3',  axis:'A', sub:'A1', q:'작품 해설을 외웠더라도 교과서에 실린 표현과 질문 방식을 다시 살펴봅니다.' },
+  // A-2. 수업 정보 보존력
+  { id:'SP4',  axis:'A', sub:'A2', q:'수업 중 선생님이 강조한 표현이나 예시를 따로 표시해 둡니다.' },
+  { id:'SP5',  axis:'A', sub:'A2', q:'칠판 필기나 구두 설명 중 시험에 나올 만한 부분을 구분해 정리합니다.' },
+  { id:'SP6',  axis:'A', sub:'A2', q:'같은 작품이라도 학교 선생님이 어떤 관점으로 설명했는지 기억하려 합니다.' },
+  // A-3. 유인물·프린트 관리력
+  { id:'SP7',  axis:'A', sub:'A3', q:'학교 프린트를 순서대로 모아 두는 데서 끝내지 않고 출제 가능 내용을 다시 분류합니다.' },
+  { id:'SP8',  axis:'A', sub:'A3', q:'유인물에 실린 외부 작품이나 지문도 교과서 내용과 연결해 정리합니다.' },
+  { id:'SP9',  axis:'A', sub:'A3', q:'시험 직전에는 프린트의 세부 표현, 각주, 예시까지 다시 확인합니다.' },
+  // A-4. 감점 방어력
+  { id:'SP10', axis:'A', sub:'A4', q:'서답형 문제를 풀 때 조건을 먼저 표시하고 답안을 씁니다.' },
+  { id:'SP11', axis:'A', sub:'A4', q:'복수 정답 문제에서는 선지 하나하나에 근거를 확인한 뒤 답을 고릅니다.' },
+  { id:'SP12', axis:'A', sub:'A4', q:'답을 알고 있어도 키워드·표현·분량 조건을 놓치지 않았는지 다시 봅니다.' },
+
+  // ━━ B. 사고 적용형 ━━━━━━━━━━━━━━━━━━━━
+  // B-1. 낯선 지문 진입력
+  { id:'SP13', axis:'B', sub:'B1', q:'처음 보는 지문이 나와도 당황하기보다 화제와 구조부터 잡으려 합니다.' },
+  { id:'SP14', axis:'B', sub:'B1', q:'낯선 문학 작품이 나오면 인물·화자·상황·정서를 먼저 정리합니다.' },
+  { id:'SP15', axis:'B', sub:'B1', q:'독서 지문이 어려워도 중심 개념과 관계를 잡으면 문제를 풀 수 있다고 느낍니다.' },
+  // B-2. 긴 선지 판별력
+  { id:'SP16', axis:'B', sub:'B2', q:'긴 선지를 읽을 때 한 번에 판단하지 않고 앞부분과 뒷부분을 나누어 봅니다.' },
+  { id:'SP17', axis:'B', sub:'B2', q:'선지 안의 원인과 결과, 조건과 결론이 맞게 연결되었는지 확인합니다.' },
+  { id:'SP18', axis:'B', sub:'B2', q:'그럴듯한 선지라도 지문 근거가 없으면 답으로 고르지 않습니다.' },
+  // B-3. 〈보기〉 적용력
+  { id:'SP19', axis:'B', sub:'B3', q:'〈보기〉가 붙은 문제에서 보기의 핵심 개념을 먼저 정리합니다.' },
+  { id:'SP20', axis:'B', sub:'B3', q:'외부 자료가 제시되면 지문과 어떤 지점에서 연결되는지 찾습니다.' },
+  { id:'SP21', axis:'B', sub:'B3', q:'문학 작품에 외적 준거가 붙어도 작품 안의 표현과 연결해 판단하려 합니다.' },
+  // B-4. 원리 기반 이해력
+  { id:'SP22', axis:'B', sub:'B4', q:'문법 문제를 풀 때 예문을 외우기보다 규칙이 어떻게 적용되는지 따져 봅니다.' },
+  { id:'SP23', axis:'B', sub:'B4', q:'문학 문제를 풀 때 해설 암기보다 표현 방식과 문맥을 근거로 판단합니다.' },
+  { id:'SP24', axis:'B', sub:'B4', q:'독서 문제를 풀 때 단어만 찾기보다 개념 간 관계를 이해하려 합니다.' },
+
+  // ━━ C. 조건 변별형 ━━━━━━━━━━━━━━━━━━━━
+  // C-1. 복합 자료 처리력
+  { id:'SP25', axis:'C', sub:'C1', q:'교과서·부교재·프린트가 함께 나오면 각 자료가 어떤 역할인지 구분합니다.' },
+  { id:'SP26', axis:'C', sub:'C1', q:'문제에 여러 지문이 묶여 나오면 지문별 핵심 차이를 먼저 표시합니다.' },
+  { id:'SP27', axis:'C', sub:'C1', q:'외부지문이 붙어도 기존 수업 내용과 연결할 지점을 찾으려 합니다.' },
+  // C-2. 비교·대조 구성력
+  { id:'SP28', axis:'C', sub:'C2', q:'여러 문학 작품을 공부할 때 내용만 외우지 않고 공통점과 차이점을 정리합니다.' },
+  { id:'SP29', axis:'C', sub:'C2', q:'시어·화자 태도·표현 방식·주제 의식 등을 비교표로 정리하는 편입니다.' },
+  { id:'SP30', axis:'C', sub:'C2', q:'비슷한 선지가 여러 개 나오면 판단 기준을 세워 차이를 구분합니다.' },
+  // C-3. 서답형 조건 수행력
+  { id:'SP31', axis:'C', sub:'C3', q:'서답형 문제를 보면 답을 쓰기 전에 반드시 조건부터 해석합니다.' },
+  { id:'SP32', axis:'C', sub:'C3', q:'답안을 쓴 뒤 조건을 하나씩 충족했는지 다시 확인합니다.' },
+  { id:'SP33', axis:'C', sub:'C3', q:'표현은 맞는 것 같은데 조건이 부족하면 점수를 잃을 수 있다고 생각합니다.' },
+  // C-4. 실전 시간 운영력
+  { id:'SP34', axis:'C', sub:'C4', q:'시험 중 한 문제에 오래 묶이면 과감히 표시하고 넘어갈 수 있습니다.' },
+  { id:'SP35', axis:'C', sub:'C4', q:'문학·문법·독서 중 어떤 영역에 시간을 더 쓸지 시험 중 조절합니다.' },
+  { id:'SP36', axis:'C', sub:'C4', q:'시간이 부족했던 시험은 어떤 영역에서 막혔는지 따로 분석합니다.' },
+];
+
+// ─── 학부모용 50문항 — 일상 관찰형 (A 13 + B 13 + C 14 + D 10) ───
+const SPECIAL_PARENT_QUESTIONS = [
+  // ━━ A. 자료 장악형 (13문항) ━━━━━━━━━━━━━━━━━━━━
+  { id:'PP1',  axis:'A', q:'시험 기간이 다가오면 학원 교재보다 <strong>학교 교과서·프린트·수업 노트</strong>를 먼저 꺼내는 편입니다. "이건 학교에서 준 거라 먼저 봐야 돼"라는 식의 태도가 보입니다.' },
+  { id:'PP2',  axis:'A', q:'학교나 학원에서 받은 프린트가 가방 속에서 구겨진 채 방치되기보다, 비교적 정리된 상태로 보관되어 있습니다.' },
+  { id:'PP3',  axis:'A', q:'시험 범위표나 수행평가 안내문을 받으면, 부모가 먼저 묻기 전에 "이번 범위 여기까지야" 정도는 알고 있습니다.' },
+  { id:'PP4',  axis:'A', q:'시험 기간이 아닐 때도 학교에서 받은 자료를 가방에서 꺼내 정리하는 모습을 본 적이 있습니다. 꼭 완벽하게 정리하지는 않아도 "이건 버리면 안 돼"라는 감각이 있습니다.' },
+  { id:'PP5',  axis:'A', q:'아이가 학교 수업 후 <strong>"오늘 선생님이 이건 중요하다고 했어"</strong>, "이 표현은 외우래"처럼 수업 중 강조점을 집에 와서 말한 적이 있습니다.' },
+  { id:'PP6',  axis:'A', q:'시험 직전에 학교 노트나 필기를 다시 살피는 모습이 보입니다. "쌤이 뭐라고 했더라" 하며 학교 수업 내용을 다시 확인하려 합니다.' },
+  { id:'PP7',  axis:'A', q:'학교 수업과 학원 수업에서 들은 내용을 섞지 않고, <strong>"학교 쌤은 이렇게 말했고, 학원에서는 이렇게 설명했어"</strong>처럼 구분해 말하는 편입니다.' },
+  { id:'PP8',  axis:'A', q:'시험 직전 아이의 프린트나 노트에 밑줄, 별표, 접힌 자국, 메모처럼 <strong>반복해서 본 흔적</strong>이 남아 있습니다.' },
+  { id:'PP9',  axis:'A', q:'아이가 정리를 아주 예쁘게 하지는 않더라도, 최소한 "그 프린트 어디 있어?"라고 물었을 때 자기가 필요한 자료를 찾아낼 수 있습니다.' },
+  { id:'PP10', axis:'A', q:'쉬운 일도 마지막에 한 번 확인하는 습관이 있습니다. 제출물, 준비물, 답안 표시 등을 두고 "잠깐만, 한 번만 더 볼게" 하는 편입니다.' },
+  { id:'PP11', axis:'A', q:'수행평가나 과제에서 "내용은 했는데 형식 때문에 감점됐다"는 일이 많지 않습니다.' },
+  { id:'PP12', axis:'A', q:'시험 후 틀린 문제를 봤을 때 "아예 몰랐어"인지, "조건을 잘못 봤어"인지, "표현을 놓쳤어"인지 구분하려는 편입니다.' },
+  { id:'PP13', axis:'A', q:'시험이 끝난 뒤 "선생님이 말한 거 나왔는데 내가 안 봤어"라는 말을 반복하는 편은 아닙니다.' },
+
+  // ━━ B. 사고 적용형 (13문항) ━━━━━━━━━━━━━━━━━━━━
+  { id:'PP14', axis:'B', q:'처음 가는 장소, 처음 보는 책, 새로운 활동처럼 낯선 상황에서 겁부터 내기보다 "뭔데?" 하고 궁금해하는 편입니다.' },
+  { id:'PP15', axis:'B', q:'처음 보는 문제나 상황이 생겼을 때 바로 "몰라, 못 해" 하기보다 일단 읽고 이해해 보려 합니다.' },
+  { id:'PP16', axis:'B', q:'문제를 풀다 모르는 것이 나와도 금방 덮지 않고 "잠깐만, 다시 읽어볼게" 하며 조금 더 들여다보는 편입니다.' },
+  { id:'PP17', axis:'B', q:'긴 문장이나 복잡한 설명을 들을 때 중간에 끊고 "그래서 결론이 뭔데?"만 묻기보다 끝까지 들어보려는 편입니다.' },
+  { id:'PP18', axis:'B', q:'긴 학원 공지나 안내문을 볼 때, 바로 "엄마, 이거 뭐 하라는 거야?"라고 묻기보다 스스로 읽고 핵심을 파악하려는 편입니다.' },
+  { id:'PP19', axis:'B', q:'책, 기사, 영상, 대화 내용을 보고 "무슨 내용이야?"라고 물으면 "그냥 재밌었어"에서 끝나지 않고 핵심 줄거리나 갈등을 비교적 잘 설명합니다.' },
+  { id:'PP20', axis:'B', q:'모르는 단어나 표현이 나오면 그냥 넘기기보다 "이게 무슨 뜻이야?"라고 묻거나 앞뒤 맥락으로 추측하려 합니다.' },
+  { id:'PP21', axis:'B', q:'부모와 대화할 때 "왜?" "그게 무슨 뜻이야?" "그러면 어떻게 돼?"처럼 이유나 관계를 묻는 편입니다.' },
+  { id:'PP22', axis:'B', q:'새로운 내용을 접했을 때 <strong>"이거 전에 배운 거랑 비슷한데?"</strong>처럼 이미 아는 내용과 연결하는 말을 자주 합니다.' },
+  { id:'PP23', axis:'B', q:'한 분야에서 배운 내용을 다른 분야나 일상 상황에 적용해 말하는 모습을 본 적이 있습니다. 예를 들어 "이거 과학 시간에 배운 거랑 비슷하다"처럼 연결합니다.' },
+  { id:'PP24', axis:'B', q:'아이가 대화나 콘텐츠를 보며 <strong>"비슷해 보이는데 이건 좀 달라"</strong>처럼 미묘한 차이를 짚어내는 말을 한 적이 있습니다.' },
+  { id:'PP25', axis:'B', q:'답만 맞히는 것보다 "왜 그 답인지"를 설명하려는 경향이 있습니다. "그냥 맞았어"보다 "이래서 맞는 것 같아"에 가깝습니다.' },
+  { id:'PP26', axis:'B', q:'무엇을 외울 때 "왜 이렇게 되는 거야?"라고 이유를 묻거나, 이해가 되어야 외워지는 편입니다. "그냥 외우라니까 외워"가 잘 통하지 않습니다.' },
+
+  // ━━ C. 조건 변별형 (14문항) ━━━━━━━━━━━━━━━━━━━━
+  { id:'PP27', axis:'C', q:'해야 할 일이 여러 개 있을 때, 아무거나 붙잡기보다 "뭐부터 해야 하지?" 하고 우선순위를 정하려는 편입니다.' },
+  { id:'PP28', axis:'C', q:'복잡한 지시를 들었을 때 한 번에 못 알아들어도 "그러니까 첫 번째는 이거고, 두 번째는 이거지?"처럼 조건을 나누어 확인하려 합니다.' },
+  { id:'PP29', axis:'C', q:'시간이 부족한 상황에서도 멈춰 버리기보다 "일단 할 수 있는 것부터 할게" 하고 움직이는 편입니다.' },
+  { id:'PP30', axis:'C', q:'어려운 과제나 문제 하나에 오래 붙잡혀 전체를 망치는 일이 비교적 적습니다. 막히면 "이건 표시해 두고 다음 거 먼저 할게"라는 판단을 할 수 있습니다.' },
+  { id:'PP31', axis:'C', q:'여러 자료나 설명이 섞여 있을 때 각각이 무슨 역할인지 구분하려 합니다. "이건 학교 프린트고, 이건 학원 추가 자료야"처럼 나눠 보는 편입니다.' },
+  { id:'PP32', axis:'C', q:'학교, 학원, 친구, 부모에게서 들은 정보가 섞여도 "그건 학교에서 들은 거고, 이건 학원에서 말한 거야"처럼 누가 한 말인지 비교적 정확히 구분합니다.' },
+  { id:'PP33', axis:'C', q:'책상에 여러 책이나 자료를 펼쳐 놓고 비교하며 보는 모습이 있습니다. 단순히 펼쳐놓기만 하는 것이 아니라 "이거랑 저거랑 뭐가 다르지?" 하고 확인합니다.' },
+  { id:'PP34', axis:'C', q:'친구, 선생님, 물건, 콘텐츠 등을 비교하며 "이건 이런데 저건 다르다"는 식으로 차이를 짚어내는 편입니다.' },
+  { id:'PP35', axis:'C', q:'영화, 드라마, 책을 보고 "전에 본 거랑 비슷한데, 여기는 이런 점이 달라"라고 말하는 편입니다.' },
+  { id:'PP36', axis:'C', q:'공통점과 차이점을 나누어 설명하는 데 비교적 익숙합니다. "둘 다 비슷해"에서 끝나지 않고 "비슷한 건 이거고, 다른 건 이거야"라고 말할 수 있습니다.' },
+  { id:'PP37', axis:'C', q:'부모가 "이렇게 해 와"라고 지시했을 때, 조건을 빠뜨리지 않으려는 편입니다. "몇 시까지?" "어디에?" "어떤 방식으로?" 같은 확인을 하기도 합니다.' },
+  { id:'PP38', axis:'C', q:'글쓰기 숙제나 자기소개 같은 과제를 할 때 요구 사항을 다시 확인하는 모습이 보입니다. "몇 줄 이상이야?" "이거 꼭 넣어야 돼?"처럼 조건을 확인합니다.' },
+  { id:'PP39', axis:'C', q:'실수했을 때 "문제를 몰라서"인지 "조건을 놓쳐서"인지 "시간이 부족해서"인지 구분하려는 편입니다.' },
+  { id:'PP40', axis:'C', q:'시험 후 "이번에는 문학에서 시간이 오래 걸렸어", "뒤쪽 문제를 못 봤어"처럼 시간이 부족했던 구간을 구체적으로 말한 적이 있습니다.' },
+
+  // ━━ D. 고등 내신 위험 신호 (10문항) — 역점수: 높을수록 위험 ━━━━━━━━━━━━━━━━━━━━
+  { id:'PP41', axis:'D', reverse:true, q:'아이가 책상 앞에 앉아 있는 시간은 긴데, 막상 "오늘 뭐 끝냈어?"라고 물으면 대답이 흐릿합니다.' },
+  { id:'PP42', axis:'D', reverse:true, q:'"공부했어?"라고 물으면 "했어"라고 답하지만, "뭘 했는데?"라고 물으면 구체적으로 설명하지 못합니다.' },
+  { id:'PP43', axis:'D', reverse:true, q:'시험 범위나 수행평가 날짜를 아이보다 부모가 더 정확히 알고 있는 경우가 많습니다. 아이는 "엄마가 알잖아"라는 식으로 넘기는 편입니다.' },
+  { id:'PP44', axis:'D', reverse:true, q:'아이가 "다 했어"라고 말했는데 막상 확인해 보면 조건 하나나 제출 형식 하나가 빠져 있는 경우가 있습니다.' },
+  { id:'PP45', axis:'D', reverse:true, q:'긴 학원 공지나 안내문을 끝까지 읽지 않고 바로 <strong>"엄마, 이거 뭐 하라는 거야?"</strong>라고 묻는 편입니다.' },
+  { id:'PP46', axis:'D', reverse:true, q:'문제를 읽기도 전에 지문 길이를 보고 "너무 길어", "아, 싫어", "이거 안 풀래"부터 말하는 경우가 많습니다.' },
+  { id:'PP47', axis:'D', reverse:true, q:'답을 맞혀도 "왜 그렇게 생각했어?"라고 물으면 "그냥 그런 것 같아서"라고 말하는 경우가 많습니다.' },
+  { id:'PP48', axis:'D', reverse:true, q:'해설을 읽고 "아, 알겠어"라고 하지만 다음에 비슷한 문제를 또 틀립니다. 이해한 것처럼 보이지만 자기 것으로 정리되지는 않는 편입니다.' },
+  { id:'PP49', axis:'D', reverse:true, q:'어려운 문제 하나에 붙잡혀 뒤에 풀 수 있는 문제까지 놓친 경험이 있습니다. 시험 후 <strong>"그거 하나 보다가 시간이 다 갔어"</strong>라고 말한 적이 있습니다.' },
+  { id:'PP50', axis:'D', reverse:true, q:'시험 후 틀린 이유를 물어보면 개념 부족인지, 조건 누락인지, 시간 부족인지 구분하지 못하고 그냥 <strong>"실수했어"</strong>라고 말합니다.' },
+];
+
+// ─── 학교 매칭 데이터 ───
+const SPECIAL_SCHOOLS = {
+  A: {
+    name: '자료 장악형',
+    schools: ['경기고', '숙명여고'],
+    style: '교과서·프린트·수업 디테일의 누락 없는 축적',
+    description: '학교에서 제공한 모든 자료를 끝까지 챙기고 정리하는 학생에게 잘 맞는 출제 스타일입니다.',
+    characteristic: '수업 디테일과 유인물 반영도가 높음. 외운 사람이 유리한 시험.',
+  },
+  B: {
+    name: '사고 적용형',
+    schools: ['휘문고', '진선여고'],
+    style: '낯선 지문·긴 선지·외부 보기의 근거 중심 처리',
+    description: '학교 자료를 넘어 처음 보는 글도 스스로 읽어낼 수 있는 학생에게 잘 맞는 출제 스타일입니다.',
+    characteristic: '사고 서술형·외부 지문·고난도 분석이 변별 포인트. 적용력이 점수를 만듦.',
+  },
+  C: {
+    name: '조건 변별형',
+    schools: ['중대부고', '단대부고'],
+    style: '복합 자료·서답형 조건의 정확한 처리',
+    description: '여러 자료가 섞이고 조건이 까다로워도 끝까지 풀어내는 학생에게 잘 맞는 출제 스타일입니다.',
+    characteristic: '서답형 조건·독서 변별·자료 조합형 문제가 결정적. 실전력이 변별.',
+  },
+};
+
+// ─── 특별판 state ───
+const specialState = {
+  info: {},
+  responses: {},
+  qIdx: 0,
+  role: 'student',  // 'student' | 'parent' — specialChooseRole에서 설정
+};
+
+// 현재 role에 맞는 문항 리스트 반환
+function getSpecialQuestionList(){
+  return specialState.role === 'parent' ? SPECIAL_PARENT_QUESTIONS : SPECIAL_QUESTIONS;
+}
+
+// 정보 입력 화면으로
+function goSpecialInfo(){
+  // 오늘 날짜 자동
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('special-info-date').value = `${yyyy}-${mm}-${dd}`;
+  goScreen('special-info');
+}
+
+// 응답 시작
+function startSpecialQuiz(){
+  const name = document.getElementById('special-info-name').value.trim();
+  const school = document.getElementById('special-info-school').value.trim();
+  const grade = document.getElementById('special-info-grade').value;
+  const date = document.getElementById('special-info-date').value || new Date().toISOString().slice(0,10);
+  const parentPhone = document.getElementById('special-info-parent-phone').value.trim();
+  const interest = document.getElementById('special-info-interest').value;
+  const errEl = document.getElementById('special-info-error');
+
+  if(!name || !school || !grade){
+    errEl.textContent = '이름·학교·학년은 필수입니다.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  specialState.info = { name, school, grade, date, parentPhone, interest };
+  specialState.responses = {};
+  specialState.qIdx = 0;
+
+  goScreen('special-quiz');
+  renderSpecialQuestion();
+}
+
+// 문항 렌더
+function renderSpecialQuestion(){
+  const list = getSpecialQuestionList();
+  const total = list.length;
+  const idx = specialState.qIdx;
+  const q = list[idx];
+  if(!q) return;
+
+  document.getElementById('special-q-counter').textContent = `${idx+1} / ${total}`;
+  document.getElementById('special-q-progress').style.width = `${(idx+1)/total*100}%`;
+
+  // 응답 모드 표시 (학생 vs 학부모)
+  const modeEl = document.getElementById('special-q-mode');
+  if(modeEl){
+    modeEl.textContent = specialState.role === 'parent' ? '학부모 응답' : '학생 응답';
+  }
+
+  const scaleLabels = specialState.role === 'parent'
+    ? ['거의 그렇지 않다', '가끔 그렇다', '보통이다', '자주 그렇다', '매우 그렇다']
+    : ['전혀 그렇지 않다', '별로 그렇지 않다', '보통이다', '대체로 그렇다', '매우 그렇다'];
+  const isUnknown = specialState.responses[q.id] === 'unknown';
+
+  // D 영역(위험 신호) 표시
+  const isRiskZone = q.axis === 'D';
+
+  // 모름 옵션 — 학부모용에만 표시
+  const showUnknown = specialState.role === 'parent';
+
+  const html = `
+    <div class="quiz-card${isRiskZone ? ' risk-zone' : ''}">
+      <div class="quiz-q-num">${idx+1}.</div>
+      ${isRiskZone ? '<div class="risk-tag">고등 내신 위험 신호 영역</div>' : ''}
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="scale-row">
+        ${[1,2,3,4,5].map(v => `
+          <button class="scale-btn ${specialState.responses[q.id] === v ? 'selected' : ''}" onclick="specialPickScale('${q.id}', ${v})">
+            <span class="scale-num">${v}</span>
+            <span class="scale-label">${scaleLabels[v-1]}</span>
+          </button>
+        `).join('')}
+      </div>
+      ${showUnknown ? `
+        <button class="unknown-btn ${isUnknown ? 'selected' : ''}" onclick="specialPickUnknown('${q.id}')">
+          잘 모르겠습니다
+          <span class="unknown-hint">자녀에 대해 정확히 답하기 어려운 항목은 솔직히 모름으로 답해주세요. 모름 자체가 진단의 신호입니다.</span>
+        </button>
+      ` : ''}
+    </div>
+  `;
+  document.getElementById('special-q-area').innerHTML = html;
+
+  document.getElementById('special-q-prev').disabled = (idx === 0);
+  document.getElementById('special-q-next').textContent = (idx === total-1) ? '응답 완료 →' : '다음 →';
+}
+
+function specialPickScale(id, v){ specialState.responses[id] = v; renderSpecialQuestion(); }
+function specialPickUnknown(id){ specialState.responses[id] = 'unknown'; renderSpecialQuestion(); }
+
+function specialPrevQ(){
+  if(specialState.qIdx > 0){ specialState.qIdx--; renderSpecialQuestion(); }
+}
+
+function specialNextQ(){
+  const list = getSpecialQuestionList();
+  const q = list[specialState.qIdx];
+  if(!(q.id in specialState.responses)){
+    alert('응답을 선택해주세요.');
+    return;
+  }
+  if(specialState.qIdx < list.length - 1){
+    specialState.qIdx++;
+    renderSpecialQuestion();
+  } else {
+    finishSpecialQuiz();
+  }
+}
+
+// 응답 완료 → 백엔드 전송 + 결과지
+async function finishSpecialQuiz(){
+  // 백엔드 전송 시도 (있으면)
+  await sendSpecialToBackend();
+  // 결과지 렌더
+  renderSpecialResults();
+  goScreen('special-results');
+}
+
+async function sendSpecialToBackend(){
+  if(typeof CONFIG === 'undefined' || !CONFIG.sheetUrl) return;
+  try {
+    const formData = new FormData();
+    formData.append('action', 'specialSave');
+    formData.append('role', specialState.role);
+    formData.append('info', JSON.stringify(specialState.info));
+    formData.append('responses', JSON.stringify(specialState.responses));
+    formData.append('analysis', JSON.stringify(buildSpecialAnalysis()));
+    formData.append('apiKey', CONFIG.apiKey || '');
+    await fetch(CONFIG.sheetUrl, { method:'POST', body:formData, mode:'no-cors' });
+  } catch(e){
+    console.warn('백엔드 전송 실패:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   특별판 분석 로직 — 3축 점수, 12지표, 보정 지표 5개
+   ════════════════════════════════════════════════════════════ */
+
+function buildSpecialAnalysis(){
+  const r = specialState.responses;
+  const isParent = specialState.role === 'parent';
+  const list = getSpecialQuestionList();
+
+  // 축별 점수
+  const axisScores = { A:0, B:0, C:0, D:0 };
+  const axisCounts = { A:0, B:0, C:0, D:0 };
+  const axisUnknowns = { A:0, B:0, C:0, D:0 };
+  // 세부 지표 (학생용에만 적용)
+  const subScores = {};
+  const subCounts = {};
+  const subUnknowns = {};
+
+  list.forEach(q => {
+    const v = r[q.id];
+    if(v === undefined) return;
+    if(v === 'unknown'){
+      axisUnknowns[q.axis]++;
+      if(q.sub){
+        if(!subUnknowns[q.sub]) subUnknowns[q.sub] = 0;
+        subUnknowns[q.sub]++;
+      }
+      return;
+    }
+    axisScores[q.axis] += v;
+    axisCounts[q.axis]++;
+    if(q.sub){
+      if(!subScores[q.sub]){ subScores[q.sub] = 0; subCounts[q.sub] = 0; }
+      subScores[q.sub] += v;
+      subCounts[q.sub]++;
+    }
+  });
+
+  // 축별 점수 환산 (1~5 평균 → 60점 만점)
+  // D 영역(학부모)도 동일하게 60점 만점이지만 의미는 "위험도"
+  const axisList = isParent ? ['A','B','C','D'] : ['A','B','C'];
+  const axisOut = {};
+  axisList.forEach(ax => {
+    if(axisCounts[ax] === 0){
+      axisOut[ax] = { score:null, raw:0, max:60, count:0, unknowns:axisUnknowns[ax] };
+    } else {
+      const avg = axisScores[ax] / axisCounts[ax];
+      const score = Math.round(((avg - 1) / 4) * 60);
+      axisOut[ax] = {
+        score,
+        raw: axisScores[ax],
+        max: 60,
+        count: axisCounts[ax],
+        unknowns: axisUnknowns[ax],
+      };
+    }
+  });
+
+  // 세부 지표 환산 (학생용만)
+  const subOut = {};
+  if(!isParent){
+    const subKeys = ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4'];
+    subKeys.forEach(sub => {
+      if(!subCounts[sub]){
+        subOut[sub] = { score:null, unknowns: subUnknowns[sub] || 0 };
+      } else {
+        const avg = subScores[sub] / subCounts[sub];
+        const score = Math.round(((avg - 1) / 4) * 15);
+        subOut[sub] = { score, unknowns: subUnknowns[sub] || 0 };
+      }
+    });
+  }
+
+  // 우세 축 결정 (A/B/C만 — D는 매칭 대상이 아니라 위험 신호)
+  const validAxes = ['A','B','C'].filter(ax => axisOut[ax].score !== null);
+  const sorted = validAxes.sort((a,b) => axisOut[b].score - axisOut[a].score);
+  const top = sorted[0];
+  const second = sorted[1];
+  const topScore = top ? axisOut[top].score : 0;
+  const secondScore = second ? axisOut[second].score : 0;
+  const thirdScore = sorted[2] ? axisOut[sorted[2]].score : 0;
+
+  // 판정
+  let typeResult;
+  if(!top){
+    // 모든 응답이 모름이거나 비어있을 때
+    typeResult = { kind:'unstable', label:'응답 부족 — 진단 불가', primary:null, secondary:null };
+  } else if(topScore >= 45 && secondScore >= 45 && thirdScore >= 45){
+    typeResult = { kind:'balanced', label:'균형형 상위권', primary:top, secondary:null };
+  } else if(topScore <= 35 && secondScore <= 35 && thirdScore <= 35){
+    typeResult = { kind:'unstable', label:'기초 전략 재설계 필요', primary:top, secondary:null };
+  } else if(top && second && (topScore - secondScore) <= 5 && SPECIAL_SCHOOLS[top] && SPECIAL_SCHOOLS[second]){
+    typeResult = { kind:'complex', label:`${SPECIAL_SCHOOLS[top].name}-${SPECIAL_SCHOOLS[second].name} 복합형`, primary:top, secondary:second };
+  } else if(SPECIAL_SCHOOLS[top]){
+    typeResult = { kind:'single', label:`${SPECIAL_SCHOOLS[top].name} 우세`, primary:top, secondary:null };
+  } else {
+    typeResult = { kind:'unstable', label:'분석 불가', primary:null, secondary:null };
+  }
+
+  // ─── 보정 지표 ───
+  const aScore = axisOut.A.score || 0;
+  const bScore = axisOut.B.score || 0;
+  const cScore = axisOut.C.score || 0;
+  const dScore = isParent ? (axisOut.D.score || 0) : null;
+  const memApplyGap = aScore - bScore;
+
+  let correction;
+  if(isParent){
+    // 학부모용 — 12지표가 없어서 보정 지표는 축 평균과 D 영역 기반
+    // 수업자료 누락률 = (60 - A score) 비율 + D 영역 강도 반영
+    const lossRate = Math.round(((60 - aScore) / 60) * 100);
+    // 서답형 감점 위험도 = (60 - C score) 비율
+    const seoLossRate = Math.round(((60 - cScore) / 60) * 100);
+    // 실전 시간 손실 = D 영역에서 PP49(시간 관리)·PP50(실수 진단) 직접 반영
+    const pp49 = (r['PP49'] && r['PP49'] !== 'unknown') ? r['PP49'] : 0;
+    const pp50 = (r['PP50'] && r['PP50'] !== 'unknown') ? r['PP50'] : 0;
+    const timeWeakness = pp49 + pp50; // 0~10
+    // D 영역 위험도
+    const dRisk = dScore; // 0~60, 높을수록 위험
+    const dRiskRate = Math.round((dScore / 60) * 100);
+
+    // 매칭 신뢰도
+    const gap = topScore - secondScore;
+    let confidence;
+    if(typeResult.kind === 'balanced') confidence = '중간 — 세 축이 모두 강해 단일 학교 추천보다 종합 추천 권장';
+    else if(typeResult.kind === 'unstable') confidence = '낮음 — 전반적 학습 처리력 강화가 학교 선택보다 우선';
+    else if(dRisk >= 40) confidence = '낮음 — 위험 신호 영역이 강해 학교 매칭보다 처방이 우선';
+    else if(gap >= 12 && topScore >= 45) confidence = '매우 높음 — 단일 유형 우세가 또렷함';
+    else if(gap >= 8 && topScore >= 40) confidence = '높음';
+    else if(gap >= 5) confidence = '보통';
+    else confidence = '낮음 — 두 축이 비등해 복합형으로 보는 게 정확';
+
+    correction = {
+      memApplyGap, lossRate, seoLossRate,
+      timeWeakness, dRisk, dRiskRate,
+      confidence, isParent: true,
+    };
+  } else {
+    // 학생용 — 기존 12지표 기반 보정
+    const a2 = subOut.A2.score || 0;
+    const a3 = subOut.A3.score || 0;
+    const lossA23 = 30 - (a2 + a3);
+    const lossRate = Math.round((lossA23 / 30) * 100);
+    const a4 = subOut.A4.score || 0;
+    const c3 = subOut.C3.score || 0;
+    const lossA4C3 = 30 - (a4 + c3);
+    const seoLossRate = Math.round((lossA4C3 / 30) * 100);
+    const c4 = subOut.C4.score || 0;
+    const timeWeakness = 15 - c4;
+
+    const gap = topScore - secondScore;
+    let confidence;
+    if(typeResult.kind === 'balanced') confidence = '중간 — 세 축이 모두 강해 단일 학교 추천보다 종합 추천 권장';
+    else if(typeResult.kind === 'unstable') confidence = '낮음 — 전반적 학습 처리력 강화가 학교 선택보다 우선';
+    else if(gap >= 12 && topScore >= 45) confidence = '매우 높음 — 단일 유형 우세가 또렷함';
+    else if(gap >= 8 && topScore >= 40) confidence = '높음';
+    else if(gap >= 5) confidence = '보통';
+    else confidence = '낮음 — 두 축이 비등해 복합형으로 보는 게 정확';
+
+    correction = {
+      memApplyGap,
+      lossA23, lossRate,
+      lossA4C3, seoLossRate,
+      timeWeakness, c4,
+      confidence, isParent: false,
+    };
+  }
+
+  // ─── D 영역 위험 신호 (학부모만) — 핵심 위험 문항 추출 ───
+  let riskSignals = null;
+  if(isParent){
+    const riskQuestions = SPECIAL_PARENT_QUESTIONS.filter(q => q.axis === 'D');
+    const strongRisks = []; // 4~5점 응답
+    const moderateRisks = []; // 3점 응답
+    riskQuestions.forEach(q => {
+      const v = r[q.id];
+      if(v === undefined || v === 'unknown') return;
+      if(v >= 4) strongRisks.push({ id: q.id, q: q.q, v });
+      else if(v === 3) moderateRisks.push({ id: q.id, q: q.q, v });
+    });
+    // 위험 패턴 분류 — 어느 그룹에 강한 신호가 몰려 있는지
+    const patterns = {
+      noFocus: [r.PP41, r.PP42].filter(v => v >= 4).length, // 학습 시간 vs 산출 격차
+      noPlan: [r.PP43, r.PP44].filter(v => v >= 4).length,  // 일정·조건 누락
+      noEntry: [r.PP45, r.PP46].filter(v => v >= 4).length, // 긴 글 진입 실패
+      noBasis: [r.PP47, r.PP48].filter(v => v >= 4).length, // 근거 없는 답·이해 착시
+      noTime: [r.PP49].filter(v => v >= 4).length,           // 시간 운영 실패
+      noDiagnose: [r.PP50].filter(v => v >= 4).length,       // 자기 진단 실패
+    };
+    riskSignals = { strongRisks, moderateRisks, patterns };
+  }
+
+  return {
+    info: specialState.info,
+    role: specialState.role,
+    isParent,
+    axisScores: axisOut,
+    subScores: subOut,
+    sorted, typeResult,
+    correction,
+    riskSignals,
+  };
+}
+
+/* ────── 결과지 렌더링 ────── */
+
+const SPECIAL_SUB_NAMES = {
+  A1:'교과서 밀착도',  A2:'수업 정보 보존력',  A3:'유인물·프린트 관리력', A4:'감점 방어력',
+  B1:'낯선 지문 진입력', B2:'긴 선지 판별력',    B3:'〈보기〉 적용력',       B4:'원리 기반 이해력',
+  C1:'복합 자료 처리력', C2:'비교·대조 구성력',  C3:'서답형 조건 수행력',   C4:'실전 시간 운영력',
+};
+
+function specialScoreClass(score, max){
+  if(score === null) return 'unknown';
+  const pct = score / max;
+  if(pct >= 0.80) return 'strong';
+  if(pct >= 0.60) return '';
+  if(pct >= 0.40) return 'mid';
+  return 'weak';
+}
+
+function specialScoreLabel(score, max){
+  if(score === null) return '응답 부족';
+  const pct = score / max;
+  if(pct >= 0.80) return '강점';
+  if(pct >= 0.60) return '안정';
+  if(pct >= 0.40) return '불안정';
+  return '보완 필요';
+}
+
+function renderSpecialResults(){
+  const a = buildSpecialAnalysis();
+  const info = a.info;
+
+  // 헤더
+  document.getElementById('special-r-name').textContent = `${info.name} 학생의 학교 매칭 분석`;
+  const meta = [info.school, info.grade, info.date, '가경T'].filter(Boolean).join(' · ');
+  document.getElementById('special-r-meta').textContent = meta;
+
+  renderSpecialVerdict(a);
+  renderSpecialSchoolMatch(a);
+  renderSpecialAxisScores(a);
+
+  // 12지표는 학생용에만 표시
+  const detailEl = document.getElementById('special-detail-indicators');
+  const detailSection = detailEl ? detailEl.parentElement : null;
+  if(a.isParent){
+    // 학부모용 — 12지표 섹션 숨기고 위험 신호 섹션 표시
+    if(detailEl) detailEl.innerHTML = '';
+    hideSpecialSection('special-detail-indicators');
+    renderSpecialRiskSignals(a);
+  } else {
+    showSpecialSection('special-detail-indicators');
+    hideSpecialSection('special-risk-signals');
+    renderSpecialDetailIndicators(a);
+  }
+
+  renderSpecialCorrection(a);
+  renderSpecialPrescription(a);
+  renderSpecialClosing(a);
+}
+
+// 결과지 섹션 보이기/숨기기 (해당 섹션 + 직전 h2/p)
+function hideSpecialSection(elId){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.style.display = 'none';
+  let prev = el.previousElementSibling;
+  // 직전 <p class="section-lead">와 <h2 class="section-title"> 숨기기
+  while(prev && (prev.classList.contains('section-lead') || prev.classList.contains('section-title'))){
+    prev.style.display = 'none';
+    prev = prev.previousElementSibling;
+    if(prev && prev.classList.contains('section-title')){
+      prev.style.display = 'none';
+      break;
+    }
+  }
+}
+function showSpecialSection(elId){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.style.display = '';
+  let prev = el.previousElementSibling;
+  while(prev && (prev.classList.contains('section-lead') || prev.classList.contains('section-title'))){
+    prev.style.display = '';
+    prev = prev.previousElementSibling;
+    if(prev && prev.classList.contains('section-title')){
+      prev.style.display = '';
+      break;
+    }
+  }
+}
+
+// 위험 신호 렌더 (학부모용)
+function renderSpecialRiskSignals(a){
+  const el = document.getElementById('special-risk-signals');
+  if(!el) return;
+  el.style.display = '';
+  // 섹션 헤더 보이기
+  let prev = el.previousElementSibling;
+  while(prev && (prev.classList.contains('section-lead') || prev.classList.contains('section-title'))){
+    prev.style.display = '';
+    prev = prev.previousElementSibling;
+    if(prev && prev.classList.contains('section-title')){
+      prev.style.display = '';
+      break;
+    }
+  }
+
+  const rs = a.riskSignals;
+  const dScore = a.axisScores.D ? a.axisScores.D.score : 0;
+  const c = a.correction;
+
+  // 패턴 분류
+  const patternLabels = {
+    noFocus: '학습 시간 vs 산출 격차',
+    noPlan: '일정·조건 누락 패턴',
+    noEntry: '긴 글 진입 거부',
+    noBasis: '근거 없는 답 / 이해 착시',
+    noTime: '실전 시간 운영 실패',
+    noDiagnose: '자기 진단 실패 ("그냥 실수")',
+  };
+  const triggered = Object.entries(rs.patterns)
+    .filter(([k,v]) => v > 0)
+    .sort((a,b) => b[1] - a[1]);
+
+  // D 점수 강도 멘트
+  let dLevelText, dLevelClass;
+  if(c.dRiskRate >= 60){
+    dLevelText = '심각 — 고등 내신에서 무너질 가능성이 매우 큰 패턴이 굳어져 있습니다.';
+    dLevelClass = 'critical';
+  } else if(c.dRiskRate >= 40){
+    dLevelText = '경고 — 보완하지 않으면 고등 내신에서 점수가 흘러나갈 패턴이 있습니다.';
+    dLevelClass = 'warn';
+  } else if(c.dRiskRate >= 25){
+    dLevelText = '주의 — 일부 위험 신호가 보입니다. 굳어지기 전에 잡으면 회복 가능.';
+    dLevelClass = 'caution';
+  } else {
+    dLevelText = '안정 — 위험 신호가 두드러지지 않습니다. 현재 학습 처리 방식이 비교적 건강합니다.';
+    dLevelClass = 'good';
+  }
+
+  let html = `
+    <div class="risk-summary ${dLevelClass}">
+      <div class="risk-summary-head">
+        <span class="risk-summary-tag">위험도</span>
+        <span class="risk-summary-score">${dScore}/60</span>
+        <span class="risk-summary-rate">${c.dRiskRate}%</span>
+      </div>
+      <p class="risk-summary-body">${dLevelText}</p>
+    </div>
+  `;
+
+  if(triggered.length > 0){
+    html += `
+      <div class="risk-patterns">
+        <h4 class="risk-patterns-title">자녀에게 나타난 핵심 위험 패턴</h4>
+        <ul class="risk-pattern-list">
+          ${triggered.map(([key, count]) => `
+            <li class="risk-pattern-item">
+              <span class="risk-pattern-dot"></span>
+              <strong>${patternLabels[key]}</strong>
+              <span class="risk-pattern-count">${count}개 항목 일치</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  // 가장 강한 위험 문항 3개 인용
+  if(rs.strongRisks.length > 0){
+    const top3 = rs.strongRisks.slice(0, 3);
+    html += `
+      <div class="risk-quotes">
+        <h4 class="risk-quotes-title">학부모님께서 강하게 동의하신 위험 신호 (자주 그렇다·매우 그렇다)</h4>
+        <ul class="risk-quote-list">
+          ${top3.map(item => `
+            <li class="risk-quote-item">
+              <div class="risk-quote-text">${item.q}</div>
+              <div class="risk-quote-score">${item.v}점 응답</div>
+            </li>
+          `).join('')}
+        </ul>
+        <p class="risk-quotes-note">이 문항들이 보여주는 것은 단순한 학습 습관 문제가 아닙니다. <strong>고등 내신 1·2학년에서 결정적 점수 손실로 이어지는 패턴</strong>입니다. 굳어지기 전에 잡아야 합니다.</p>
+      </div>
+    `;
+  } else if(rs.moderateRisks.length >= 5){
+    html += `
+      <div class="risk-quotes">
+        <h4 class="risk-quotes-title">중간 강도 위험 신호 다수 응답</h4>
+        <p class="risk-quotes-note">"매우 그렇다"는 아니지만 "보통이다" 수준의 위험 신호가 ${rs.moderateRisks.length}개 항목에서 보입니다. 한 영역에 몰리면 결국 굳어질 가능성이 있으니 한 번 점검해보시는 것을 권합니다.</p>
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="risk-quotes">
+        <p class="risk-quotes-note">강하게 동의하신 위험 신호 항목이 적습니다. 현재 자녀의 학습 처리 방식은 비교적 건강한 편입니다.</p>
+      </div>
+    `;
+  }
+
+  el.innerHTML = html;
+}
+
+function renderSpecialVerdict(a){
+  const t = a.typeResult;
+  const info = a.info;
+
+  let title, quote;
+  if(t.kind === 'single'){
+    const s = SPECIAL_SCHOOLS[t.primary];
+    title = `${info.name} 학생은 <strong style="color:var(--gold-soft)">${s.name}</strong>입니다`;
+    quote = `<strong>${s.schools.join(' · ')}</strong>처럼 ${s.style}이 변별 포인트인 학교 출제 스타일과 잘 맞습니다.`;
+  } else if(t.kind === 'complex'){
+    const p = SPECIAL_SCHOOLS[t.primary];
+    const s = SPECIAL_SCHOOLS[t.secondary];
+    title = `${info.name} 학생은 <strong style="color:var(--gold-soft)">${p.name}-${s.name} 복합형</strong>입니다`;
+    quote = `두 출제 스타일이 모두 강한 유형. <strong>${p.schools.join('·')}</strong>도, <strong>${s.schools.join('·')}</strong>도 자녀에게 잘 맞습니다.`;
+  } else if(t.kind === 'balanced'){
+    title = `${info.name} 학생은 <strong style="color:var(--gold-soft)">세 축이 모두 강한 균형형 상위권</strong>입니다`;
+    quote = `자료 장악·사고 적용·조건 변별 세 축이 모두 살아 있습니다. 어느 학교에서도 안정적으로 갈 수 있는 유형이며, <strong>학교 선택보다 자녀가 더 흥미를 갖는 출제 방식</strong>을 기준으로 정하시면 됩니다.`;
+  } else {
+    title = `${info.name} 학생은 <strong style="color:var(--gold-soft)">기초 학습 전략 재설계가 우선</strong>인 단계입니다`;
+    quote = `현재는 어느 학교 출제 스타일에도 명확히 맞는다고 보기 어렵습니다. <strong>학교 선택보다 기본 학습 처리력 강화가 먼저</strong>입니다.`;
+  }
+
+  const html = `
+    <div class="verdict-stamp">특별판 진단 — ${info.name}</div>
+    <h2 class="verdict-title special">${title}</h2>
+    <p class="verdict-quote">${quote}</p>
+  `;
+  document.getElementById('special-verdict-card').innerHTML = html;
+}
+
+function renderSpecialSchoolMatch(a){
+  const t = a.typeResult;
+
+  let html = '';
+
+  if(t.kind === 'unstable'){
+    html = `
+      <div class="school-match-empty">
+        <p>현재 응답 결과로는 특정 학교 추천이 적절하지 않습니다. 우선 자녀의 학습 처리력 전반을 함께 점검하시는 것을 권합니다.</p>
+      </div>
+    `;
+  } else {
+    const primary = SPECIAL_SCHOOLS[t.primary];
+    html += renderSchoolMatchCard(primary, '1순위 매칭', a.axisScores[t.primary].score);
+
+    if(t.kind === 'complex' && t.secondary){
+      const secondary = SPECIAL_SCHOOLS[t.secondary];
+      html += renderSchoolMatchCard(secondary, '2순위 매칭', a.axisScores[t.secondary].score);
+    } else if(t.kind === 'balanced'){
+      // 균형형은 세 학교 다 표시
+      ['A','B','C'].forEach(ax => {
+        if(ax === t.primary) return;
+        html += renderSchoolMatchCard(SPECIAL_SCHOOLS[ax], '대안 매칭', a.axisScores[ax].score);
+      });
+    }
+  }
+
+  // 학부모가 입력한 관심 학교 매칭 분석
+  if(a.info.interest && a.info.interest !== '기타'){
+    const interestSchool = a.info.interest;
+    let matchedAxis = null;
+    for(const ax of ['A','B','C']){
+      const sc = SPECIAL_SCHOOLS[ax];
+      if(sc && sc.schools && sc.schools.includes(interestSchool)){
+        matchedAxis = ax;
+        break;
+      }
+    }
+    if(matchedAxis && SPECIAL_SCHOOLS[matchedAxis]){
+      const isMatch = (matchedAxis === t.primary) || (t.kind === 'complex' && matchedAxis === t.secondary);
+      const score = a.axisScores[matchedAxis].score;
+      html += `
+        <div class="school-interest-card ${isMatch ? 'match' : 'mismatch'}">
+          <div class="interest-tag">학부모님이 관심 두신 학교 — ${interestSchool}</div>
+          <p class="interest-body">
+            <strong>${interestSchool}</strong>은 <strong style="color:var(--gold)">${SPECIAL_SCHOOLS[matchedAxis].name}</strong>(${SPECIAL_SCHOOLS[matchedAxis].schools.join('·')}) 계열입니다.
+            자녀의 ${SPECIAL_SCHOOLS[matchedAxis].name} 점수는 <strong>${score}/60</strong>입니다.
+          </p>
+          <p class="interest-verdict">
+            ${isMatch ?
+              `자녀의 매칭 학교군과 <strong style="color:var(--olive)">일치합니다</strong>. 자녀의 학습 처리 방식과 ${interestSchool}의 출제 스타일이 잘 맞을 가능성이 큽니다.` :
+              `자녀의 매칭 학교군과 <strong style="color:var(--crimson)">다릅니다</strong>. ${interestSchool}이 요구하는 ${SPECIAL_SCHOOLS[matchedAxis].name}이 자녀에게 약한 영역일 수 있으므로, 진학 시 해당 영역 보강이 필요합니다.`
+            }
+          </p>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById('special-school-match').innerHTML = html;
+}
+
+function renderSchoolMatchCard(school, rank, score){
+  return `
+    <div class="school-match-card">
+      <div class="school-match-rank">${rank}</div>
+      <div class="school-match-head">
+        <div class="school-match-names">${school.schools.join(' · ')}</div>
+        <div class="school-match-score">${score}/60</div>
+      </div>
+      <div class="school-match-axis">${school.name}</div>
+      <p class="school-match-style"><strong>출제 스타일:</strong> ${school.style}</p>
+      <p class="school-match-desc">${school.description}</p>
+      <p class="school-match-char"><span class="char-tag">특징</span> ${school.characteristic}</p>
+    </div>
+  `;
+}
+
+function renderSpecialAxisScores(a){
+  const axes = ['A','B','C'];
+  const html = axes.map(ax => {
+    const sc = a.axisScores[ax];
+    const school = SPECIAL_SCHOOLS[ax];
+    const cls = specialScoreClass(sc.score, 60);
+    const label = specialScoreLabel(sc.score, 60);
+    const widthPct = sc.score === null ? 0 : (sc.score / 60 * 100);
+    return `
+      <div class="axis-score-row">
+        <div class="axis-score-head">
+          <div class="axis-score-name">
+            <strong>${school.name}</strong>
+            <small>${school.schools.join(' · ')}</small>
+          </div>
+          <div class="axis-score-value ${cls}">
+            ${sc.score === null ? '—' : sc.score}<small>/60</small>
+            <span class="axis-score-label ${cls}">${label}</span>
+          </div>
+        </div>
+        <div class="axis-score-bar-bg">
+          <div class="axis-score-bar-fill ${cls}" style="width:${widthPct}%"></div>
+        </div>
+        ${sc.unknowns > 0 ? `<div class="axis-score-note">모름 ${sc.unknowns}개</div>` : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('special-axis-scores').innerHTML = html;
+}
+
+function renderSpecialDetailIndicators(a){
+  const groups = [
+    { axis:'A', name:'자료 장악형', subs:['A1','A2','A3','A4'] },
+    { axis:'B', name:'사고 적용형', subs:['B1','B2','B3','B4'] },
+    { axis:'C', name:'조건 변별형', subs:['C1','C2','C3','C4'] },
+  ];
+
+  const html = groups.map(g => {
+    const subsHtml = g.subs.map(sub => {
+      const s = a.subScores[sub];
+      const cls = specialScoreClass(s.score, 15);
+      const widthPct = s.score === null ? 0 : (s.score / 15 * 100);
+      return `
+        <div class="sub-indicator-row">
+          <div class="sub-indicator-label">${SPECIAL_SUB_NAMES[sub]}</div>
+          <div class="sub-indicator-bar-bg">
+            <div class="sub-indicator-fill ${cls}" style="width:${widthPct}%"></div>
+          </div>
+          <div class="sub-indicator-score ${cls}">${s.score === null ? '—' : s.score + '/15'}</div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="sub-group">
+        <h4 class="sub-group-title">${g.name}</h4>
+        ${subsHtml}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('special-detail-indicators').innerHTML = html;
+}
+
+function renderSpecialCorrection(a){
+  const c = a.correction;
+  const isParent = a.isParent;
+
+  // 1. 암기-적용 간극
+  let memApplyText, memApplyTone;
+  if(Math.abs(c.memApplyGap) <= 5){
+    memApplyText = `자료 정리력과 적용력이 비슷한 수준으로 균형. 어느 한쪽으로 무너질 위험이 낮습니다.`;
+    memApplyTone = 'good';
+  } else if(c.memApplyGap > 5){
+    memApplyText = `자료 정리력이 ${c.memApplyGap}점 강합니다. <strong>외운 것을 낯선 문제에 적용하는 훈련</strong>이 필요합니다.`;
+    memApplyTone = 'warn';
+  } else {
+    memApplyText = `적용력이 ${Math.abs(c.memApplyGap)}점 강합니다. <strong>학교 자료 정밀 정리가 약점</strong>일 가능성이 있습니다. 내신 감점 위험.`;
+    memApplyTone = 'warn';
+  }
+
+  // 2. 수업자료 누락률
+  let lossText, lossTone;
+  if(c.lossRate >= 40){
+    lossText = `수업·프린트 자료를 ${c.lossRate}% 정도 놓치고 있습니다. <strong>경기고·숙명여고처럼 자료 밀착도가 중요한 학교</strong>에서는 결정적 약점이 됩니다.`;
+    lossTone = 'warn';
+  } else if(c.lossRate >= 20){
+    lossText = `자료 누락이 ${c.lossRate}% 수준으로 평균적. 학교 시험 출제 디테일에서 일부 손실 가능.`;
+    lossTone = 'mid';
+  } else {
+    lossText = `자료 누락이 ${c.lossRate}%로 낮음. 수업·프린트 정리력이 안정적입니다.`;
+    lossTone = 'good';
+  }
+
+  // 3. 서답형 감점 위험도
+  let seoText, seoTone;
+  if(c.seoLossRate >= 40){
+    seoText = `서답형 조건 처리 약점이 ${c.seoLossRate}% 수준. <strong>중대부고·단대부고 같은 서답형 비중 높은 학교</strong>에서 점수를 흘릴 가능성이 큽니다.`;
+    seoTone = 'warn';
+  } else if(c.seoLossRate >= 20){
+    seoText = `서답형 처리력이 평균 수준. 조건 분석·답안 검토 루틴을 굳히면 안정됩니다.`;
+    seoTone = 'mid';
+  } else {
+    seoText = `서답형 조건 처리력이 안정적. 감점 위험이 낮은 편입니다.`;
+    seoTone = 'good';
+  }
+
+  // 4. 실전 시간 손실
+  let timeText, timeTone, timeNum;
+  if(isParent){
+    // 학부모용: PP49+PP50 합산 (0~10)
+    if(c.timeWeakness >= 7){
+      timeText = `자녀가 시험 후 \"그거 하나 보다가 시간이 다 갔어\" 또는 \"그냥 실수했어\"라고 말하는 패턴이 강합니다. <strong>실전 시간 운영과 자기 진단 능력이 모두 약합니다</strong>. 모의 시험 환경에서의 시간 압박 훈련이 필요합니다.`;
+      timeTone = 'warn';
+    } else if(c.timeWeakness >= 4){
+      timeText = `실전 시간 관리에 약한 신호가 보입니다. 시간 압박 상황에서 무너지는 패턴이 굳어지지 않도록 점검이 필요합니다.`;
+      timeTone = 'mid';
+    } else {
+      timeText = `실전 시간 운영이 비교적 안정적. 시험장에서 무너지지 않는 학생으로 관찰됩니다.`;
+      timeTone = 'good';
+    }
+    timeNum = `${c.timeWeakness}/10`;
+  } else {
+    // 학생용: 기존 (c4 기준 0~15)
+    if(c.timeWeakness >= 9){
+      timeText = `실전 시간 운영력이 약합니다. <strong>시험 중 한 영역에서 무너지는 패턴</strong>이 굳어져 있을 가능성. 모의 시험 환경 노출이 필요합니다.`;
+      timeTone = 'warn';
+    } else if(c.timeWeakness >= 5){
+      timeText = `시간 운영력이 보통 수준. 문제별 시간 배분 루틴 훈련이 도움이 됩니다.`;
+      timeTone = 'mid';
+    } else {
+      timeText = `시간 운영력이 안정적. 시험장에서 무너지지 않는 학생입니다.`;
+      timeTone = 'good';
+    }
+    timeNum = `${c.c4}/15`;
+  }
+
+  const items = [
+    { title:'암기-적용 간극', body:memApplyText, tone:memApplyTone, num:c.memApplyGap > 0 ? `+${c.memApplyGap}` : `${c.memApplyGap}` },
+    { title:'수업자료 누락률', body:lossText, tone:lossTone, num:`${c.lossRate}%` },
+    { title:'서답형 감점 위험도', body:seoText, tone:seoTone, num:`${c.seoLossRate}%` },
+    { title:'실전 시간 손실', body:timeText, tone:timeTone, num:timeNum },
+  ];
+
+  const itemsHtml = items.map(i => `
+    <div class="correction-item ${i.tone}">
+      <div class="correction-head">
+        <span class="correction-title">${i.title}</span>
+        <span class="correction-num">${i.num}</span>
+      </div>
+      <p class="correction-body">${i.body}</p>
+    </div>
+  `).join('');
+
+  const confidenceHtml = `
+    <div class="confidence-note">
+      <span class="confidence-tag">매칭 신뢰도</span>
+      <span class="confidence-body">${c.confidence}</span>
+    </div>
+  `;
+
+  document.getElementById('special-correction').innerHTML = itemsHtml + confidenceHtml;
+}
+
+function renderSpecialPrescription(a){
+  const c = a.correction;
+  const t = a.typeResult;
+  const isParent = a.isParent;
+  const actions = [];
+
+  // ── 학부모용 — D 영역 위험 신호 처방 (최우선) ──
+  if(isParent && c.dRiskRate >= 40){
+    actions.push({
+      title:'고등 진학 전 위험 패턴부터 잡아야 합니다',
+      body:'학교 매칭은 그 다음입니다. 현재 자녀는 <strong>책상에 앉아 있는 시간과 실제 산출물 사이의 격차</strong>, <strong>"그냥 실수했어"로 끝나는 자기 진단 부재</strong> 등의 패턴이 보입니다. 이 패턴이 굳어진 채 고등에 진입하면 어느 학교에 가도 점수가 흘러나갑니다.',
+    });
+  }
+  if(isParent && a.riskSignals && a.riskSignals.patterns){
+    if(a.riskSignals.patterns.noFocus >= 1){
+      actions.push({
+        title:'\"책상 앞 시간 vs 실제 산출\" 격차 점검',
+        body:'매일 30초만, 자녀에게 \"오늘 뭐 끝냈어? 한 가지만 말해줘\"라고 물어보세요. 대답이 흐릿한 날이 며칠인지 학부모님이 직접 세 보세요. 격차가 보이기 시작합니다.',
+      });
+    }
+    if(a.riskSignals.patterns.noDiagnose >= 1){
+      actions.push({
+        title:'\"실수했어\"의 정체를 함께 풀기',
+        body:'시험 후 \"실수했어\"라는 말이 나오면 멈춰 세우고 \"개념을 몰랐어? 조건을 놓쳤어? 시간이 부족했어?\" 셋 중 하나를 고르게 해주세요. 자기 진단이 안 되면 처방이 안 됩니다.',
+      });
+    }
+    if(a.riskSignals.patterns.noEntry >= 1){
+      actions.push({
+        title:'긴 글 진입력 회복',
+        body:'\"이거 뭐 하라는 거야?\"가 나올 때 바로 답하지 마시고 \"한 번 읽어보고 와\"로 돌려보내주세요. 긴 글 앞에서 무너지는 패턴은 고등 모의고사부터 본격적인 점수 손실로 이어집니다.',
+      });
+    }
+  }
+
+  // 우세 유형에 따른 강점 활용 제안
+  if(t.kind === 'single' || t.kind === 'complex'){
+    const p = SPECIAL_SCHOOLS[t.primary];
+    actions.push({
+      title:`${p.name} 강점을 키워가세요`,
+      body:`자녀는 ${p.style}을 잘하는 학생입니다. 진학 후에도 이 강점이 점수를 만들 가능성이 큽니다. ${p.schools.join('·')}을 우선 고려하시되, 약점 보강을 함께 진행하면 더 안정됩니다.`,
+    });
+  }
+
+  // 약점에 따른 처방
+  if(c.memApplyGap > 10){
+    actions.push({
+      title:'외운 것을 낯선 문제에 적용하는 훈련',
+      body:'자료를 잘 정리하는 학생일수록 익숙한 문제에 강하고 낯선 문제에 흔들립니다. 평가원 비기출 지문, 외부 작품 분석을 주 1편씩 노출하는 것이 시작입니다.',
+    });
+  }
+  if(c.memApplyGap < -10){
+    actions.push({
+      title:'학교 자료 단권화 — 한 권에 모으기',
+      body:'사고력은 좋은데 학교 자료 디테일이 빠지는 학생. 수업 필기·프린트·교과서 본문을 한 권에 모아 단권화하는 루틴이 필요합니다. 내신 점수의 결정적 약점.',
+    });
+  }
+  if(c.lossRate >= 40 && !isParent){
+    actions.push({
+      title:'수업 직후 5분 정리 루틴',
+      body:'수업이 끝난 직후 5분만 본인의 필기와 프린트를 한 번 훑어보는 습관. 누락을 막는 가장 단순하고 효과적인 방법입니다.',
+    });
+  }
+  if(c.seoLossRate >= 40 && !isParent){
+    actions.push({
+      title:'서답형 답안 검토 루틴',
+      body:'답안을 쓴 뒤 1분만 \"조건을 다 채웠는가\"를 확인합니다. 표현이 맞아도 조건 누락이면 점수가 안 나옵니다. 이 1분이 점수를 만듭니다.',
+    });
+  }
+  // 시간 손실 처방 — 학생/학부모 분기
+  if(!isParent && c.timeWeakness >= 9){
+    actions.push({
+      title:'시간 측정 모의 풀이 주 1회',
+      body:'집에서라도 50분 타이머 켜고 모의고사 풀이. 시험장에서 무너지지 않으려면 시험 환경에 익숙해져 있어야 합니다.',
+    });
+  }
+  if(isParent && c.timeWeakness >= 7){
+    actions.push({
+      title:'시간 압박 환경 노출 — 주 1회 모의',
+      body:'집에서 50분 타이머 켜고 풀어보게 하세요. 시간 운영 실패는 굳어지면 회복이 가장 어렵습니다. 중3 지금이 마지막 회복 시점입니다.',
+    });
+  }
+
+  if(t.kind === 'unstable'){
+    actions.push({
+      title:'기초 처리력부터 다시 잡기',
+      body:'학교 선택보다 우선입니다. 문제를 푸는 시간을 줄이고, 자료를 정리하는 시간을 늘려야 합니다. 외워야 할 것과 적용할 것을 구분하는 학습 습관이 시작점입니다.',
+    });
+  }
+
+  // 처방이 너무 적으면
+  if(actions.length === 0){
+    actions.push({
+      title:'현재 강점을 잘 유지하고 있는 학생입니다',
+      body:'세 축이 모두 안정적이라 특별한 약점 보강이 시급하지 않습니다. 흥미 있는 학교 출제 스타일을 기준으로 선택하시면 됩니다.',
+    });
+  }
+
+  const html = `
+    <div class="family-prescription">
+      ${actions.slice(0, 4).map((a, i) => `
+        <div class="fp-item">
+          <div class="fp-num">${i+1}.</div>
+          <div class="fp-content">
+            <div class="fp-title">${a.title}</div>
+            <div class="fp-body">${a.body}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('special-prescription').innerHTML = html;
+}
+
+function renderSpecialClosing(a){
+  document.getElementById('special-closing').innerHTML = `
+    <div class="closing-hook">
+      <p>이 진단지는 ${a.info.name} 학생의 학습 처리 방식을 한 시점에서 비춘 거울입니다.</p>
+      <p>학교 선택은 점수 하나로 결정되지 않습니다 — <strong>자녀의 학습 방식과 학교 출제 스타일의 어울림</strong>이 점수를 만듭니다.</p>
+      <p style="font-size:14px;color:var(--ink-muted);margin-top:18px">자녀에 대해 진단지로 다 말할 수 없는 부분이 있다면, 가경T가 1:1 상담에서 함께 보겠습니다.</p>
+      <div class="sign">— 가경T · 한티 MEXX 설명회</div>
+    </div>
+  `;
+}
 
 function startQuestions(){
   // 필수 입력 검증
@@ -2729,7 +4737,6 @@ const MIRROR_QUESTIONS = {
     // A-3. 시험 · 정서 반응 (4)
     { id: 'M9', area: 'emotion', q_student: '시험 전날 평소보다 잠을 못 자나요?', q_parent: '자녀는 시험 전날 평소보다 잠을 못 자나요?', type: 'scale' },
     { id: 'M10', area: 'emotion', q_student: '시험 직후 본인 시험에 대해 얼마나 솔직하게 말하나요?', q_parent: '자녀는 시험 직후 시험에 대해 얼마나 솔직하게 말하나요?', type: 'select', options: ['전혀 말 안 함', '거의 말 안 함', '일부만 말함', '대부분 말함', '다 말함'] },
-    { id: 'M11', area: 'emotion', q_student: '모의고사 결과를 학교 시험만큼 진지하게 받아들이나요?', q_parent: '자녀는 모의고사 결과를 학교 시험만큼 진지하게 받아들이나요?', type: 'scale' },
     { id: 'M12', area: 'emotion', q_student: '점수가 떨어졌을 때, 본인은 그것을 무엇 탓으로 돌리는 편인가요?', q_parent: '자녀의 점수가 떨어졌을 때, 자녀는 그것을 무엇 탓으로 돌리나요?', type: 'select', options: ['본인 노력 부족', '컨디션·운', '시험 난이도', '주변 환경', '특별한 이유 없음'] },
 
     // A-4. 일상 행동 (3)
