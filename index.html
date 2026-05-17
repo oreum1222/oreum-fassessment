@@ -3711,7 +3711,7 @@ async function finishSpecialQuiz(){
 
 async function sendSpecialToBackend(){
   if(typeof CONFIG === 'undefined' || !CONFIG.sheetUrl) {
-    alert('⚠ DEBUG: CONFIG 없음 (sheetUrl 미설정)');
+    alert('⚠ DEBUG: CONFIG 없음');
     return;
   }
   try {
@@ -3723,15 +3723,19 @@ async function sendSpecialToBackend(){
     formData.append('analysis', JSON.stringify(buildSpecialAnalysis()));
     formData.append('apiKey', CONFIG.apiKey || '');
 
-    // mode:'no-cors'로 보내면 response 못 읽는데, 디버그를 위해 일단 cors 모드로 시도
+    // FormData 대신 URL 파라미터 방식으로 보내기 (Apps Script가 e.parameter로 받기 좋음)
+    const params = new URLSearchParams();
+    formData.forEach((v, k) => params.append(k, v));
+
     const res = await fetch(CONFIG.sheetUrl, {
       method:'POST',
-      body:formData,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+      body: params.toString(),
     });
     const txt = await res.text();
     alert('✓ DEBUG: 전송 응답\n\n' + txt.slice(0, 500));
   } catch(e){
-    alert('⚠ DEBUG: 전송 실패\n\n' + e.toString() + '\n\nURL: ' + CONFIG.sheetUrl);
+    alert('⚠ DEBUG: 전송 실패\n\n' + e.toString());
   }
 }
 
