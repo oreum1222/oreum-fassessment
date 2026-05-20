@@ -115,7 +115,7 @@ body::before{
 
 /* ─── 가경T 프로필 (welcome 화면) ─── */
 .teacher-profile{
-  display:flex; gap:24px; align-items:stretch;
+  display:flex; gap:24px; align-items:center;
   background:linear-gradient(135deg, var(--bg-paper) 0%, var(--bg-elevated) 100%);
   border:1px solid var(--line);
   border-left:3px solid var(--gold);
@@ -193,7 +193,16 @@ body::before{
   font-size:13px; line-height:1.55;
   color:var(--ink-soft);
   display:flex; align-items:baseline; gap:8px;
+  word-break:keep-all; overflow-wrap:break-word;
 }
+.teacher-profile-list li > span:not(.t-tag){
+  flex:1; min-width:0;
+}
+/* 모바일·노트북 좁은 화면에서 깔끔하게 떨어지도록 */
+.career-line{
+  word-break:keep-all; overflow-wrap:break-word;
+}
+.career-grade{white-space:nowrap}
 .t-tag{
   flex:0 0 auto;
   font-family:var(--serif); font-weight:700;
@@ -212,11 +221,23 @@ body::before{
   border:1px solid var(--line-soft);
 }
 
-/* 모바일 - 사진 위, 텍스트 아래 */
+/* 태블릿·노트북 좁은 화면 - 경력 2열을 1열로 (900px 이하) */
+@media (max-width:900px){
+  .teacher-profile-careers{
+    flex-direction:column; gap:16px;
+  }
+  .career-col-title{
+    margin-bottom:6px; padding-bottom:5px;
+  }
+  .teacher-profile-list{gap:4px}
+  .teacher-profile-list li{font-size:12.5px}
+}
+
+/* 모바일 - 사진 위, 텍스트 아래 (560px 이하) */
 @media (max-width:560px){
   .teacher-profile{
     flex-direction:column; gap:18px;
-    padding:22px 22px;
+    padding:22px 20px;
   }
   .teacher-profile-photo{
     flex:0 0 auto;
@@ -224,11 +245,14 @@ body::before{
     margin-bottom:4px;
   }
   .teacher-profile-photo img{
-    width:140px; height:auto;
+    width:120px; height:auto;
   }
-  .teacher-profile-name{font-size:22px}
+  .teacher-profile-name{font-size:22px; line-height:1.25}
   .teacher-profile-sub{display:block; margin-left:0; margin-top:4px; font-size:12px}
-  .teacher-profile-careers{flex-direction:column; gap:18px}
+  .teacher-profile-intro{font-size:12.5px; line-height:1.7}
+  .teacher-profile-list li{font-size:12.5px; line-height:1.6}
+  .t-tag{font-size:9.5px; padding:1px 6px}
+  .career-col-title{font-size:10.5px; letter-spacing:.10em}
 }
 
 .intro-card{
@@ -2638,7 +2662,7 @@ body::before{
           <ul class="teacher-profile-list">
             <li><span class="t-tag now">現</span> 한티 MEXX 종합반 국어 강사</li>
             <li><span class="t-tag now">現</span> (주) 오름교육 대표</li>
-            <li><span class="t-tag prev">前</span> 메가스터디 러셀 국어과 전임 강사 (고1~고3)</li>
+            <li><span class="t-tag prev">前</span> <span class="career-line">메가스터디 러셀 국어과 전임 강사 <span class="career-grade">(고1~고3)</span></span></li>
             <li><span class="t-tag prev">前</span> 메가스터디 평촌 국어과 강사</li>
             <li><span class="t-tag prev">前</span> 세화여고·서울고·영동일고 전담 강사</li>
           </ul>
@@ -4137,11 +4161,19 @@ function specialNextQ(){
 
 // 응답 완료 → 백엔드 전송 + 결과지
 async function finishSpecialQuiz(){
-  // 백엔드 전송 시도 (있으면)
-  await sendSpecialToBackend();
-  // 결과지 렌더
-  renderSpecialResults();
-  goScreen('special-results');
+  // 결과지 먼저 렌더 (백엔드 전송 결과 안 기다림 — 모바일에서 백엔드 응답 지연되면 화면 안 뜨는 문제 방지)
+  try {
+    renderSpecialResults();
+    goScreen('special-results');
+  } catch(e){
+    console.error('결과지 렌더 실패:', e);
+    alert('결과지 화면 표시 중 오류가 발생했습니다.\n페이지를 새로고침하거나 다시 시도해주세요.\n\n오류: ' + (e.message || e));
+    return;
+  }
+  // 백엔드 전송은 백그라운드에서 (await 안 함)
+  sendSpecialToBackend().catch(err => {
+    console.warn('백엔드 전송 실패 (결과지는 정상 표시됨):', err);
+  });
 }
 
 async function sendSpecialToBackend(){
@@ -4494,31 +4526,35 @@ function renderSpecialResults(){
   const info = a.info;
 
   // 헤더
-  document.getElementById('special-r-name').textContent = `${info.name} 학생의 학교 매칭 분석`;
-  const meta = [info.school, info.grade, info.date, '가경T'].filter(Boolean).join(' · ');
-  document.getElementById('special-r-meta').textContent = meta;
+  try {
+    document.getElementById('special-r-name').textContent = `${info.name} 학생의 학교 매칭 분석`;
+    const meta = [info.school, info.grade, info.date, '가경T'].filter(Boolean).join(' · ');
+    document.getElementById('special-r-meta').textContent = meta;
+  } catch(e){ console.error('header 렌더 실패:', e); }
 
-  renderSpecialVerdict(a);
-  renderSpecialSchoolMatch(a);
-  renderSpecialAxisScores(a);
+  // 각 섹션을 개별 try/catch로 — 하나 실패해도 나머지는 보여짐
+  try { renderSpecialVerdict(a); } catch(e){ console.error('verdict 렌더 실패:', e); }
+  try { renderSpecialSchoolMatch(a); } catch(e){ console.error('schoolMatch 렌더 실패:', e); }
+  try { renderSpecialAxisScores(a); } catch(e){ console.error('axisScores 렌더 실패:', e); }
 
   // 12지표는 학생용에만 표시
-  const detailEl = document.getElementById('special-detail-indicators');
-  const detailSection = detailEl ? detailEl.parentElement : null;
-  if(a.isParent){
-    // 학부모용 — 12지표 섹션 숨기고 위험 신호 섹션 표시
-    if(detailEl) detailEl.innerHTML = '';
-    hideSpecialSection('special-detail-indicators');
-    renderSpecialRiskSignals(a);
-  } else {
-    showSpecialSection('special-detail-indicators');
-    hideSpecialSection('special-risk-signals');
-    renderSpecialDetailIndicators(a);
-  }
+  try {
+    const detailEl = document.getElementById('special-detail-indicators');
+    if(a.isParent){
+      // 학부모용 — 12지표 섹션 숨기고 위험 신호 섹션 표시
+      if(detailEl) detailEl.innerHTML = '';
+      hideSpecialSection('special-detail-indicators');
+      renderSpecialRiskSignals(a);
+    } else {
+      showSpecialSection('special-detail-indicators');
+      hideSpecialSection('special-risk-signals');
+      renderSpecialDetailIndicators(a);
+    }
+  } catch(e){ console.error('지표 섹션 렌더 실패:', e); }
 
-  renderSpecialCorrection(a);
-  renderSpecialPrescription(a);
-  renderSpecialClosing(a);
+  try { renderSpecialCorrection(a); } catch(e){ console.error('correction 렌더 실패:', e); }
+  try { renderSpecialPrescription(a); } catch(e){ console.error('prescription 렌더 실패:', e); }
+  try { renderSpecialClosing(a); } catch(e){ console.error('closing 렌더 실패:', e); }
 }
 
 // 결과지 섹션 보이기/숨기기 (해당 섹션 + 직전 h2/p)
@@ -4981,11 +5017,13 @@ function renderSpecialPrescription(a){
 
   // 우세 유형에 따른 강점 활용 제안
   if(t.kind === 'single' || t.kind === 'complex'){
-    const p = SPECIAL_SCHOOLS[t.primary];
-    actions.push({
-      title:`${p.name} 강점을 키워가세요`,
-      body:`자녀는 ${p.style}을 잘하는 학생입니다. 진학 후에도 이 강점이 점수를 만들 가능성이 큽니다. ${p.schools.join('·')}을 우선 고려하시되, 약점 보강을 함께 진행하면 더 안정됩니다.`,
-    });
+    const p = getSchoolForAxis(t.primary, isParent);
+    if(p){
+      actions.push({
+        title:`${p.name} 강점을 키워가세요`,
+        body:`자녀는 ${p.style}을 잘하는 학생입니다. 진학 후에도 이 강점이 점수를 만들 가능성이 큽니다. ${p.schools.join('·')}을 우선 고려하시되, 약점 보강을 함께 진행하면 더 안정됩니다.`,
+      });
+    }
   }
 
   // 약점에 따른 처방
