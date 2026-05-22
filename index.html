@@ -4248,9 +4248,7 @@ function buildSpecialResultSummary(){
     body += `  매칭 신뢰도: ${c.confidence}\n\n`;
   }
 
-  body += `─────── 응답 원문 ───────\n`;
-  body += JSON.stringify(specialState.responses);
-  body += `\n\n— 가경 국어 연구소 · 특별판 진단 (${new Date().toLocaleString('ko-KR')})`;
+  body += `— 가경 국어 연구소 · 특별판 진단 (${new Date().toLocaleString('ko-KR')})`;
 
   return body;
 }
