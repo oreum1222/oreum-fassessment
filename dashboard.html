@@ -298,6 +298,54 @@ body::before{
   .modal-grid{grid-template-columns:1fr}
   .modal-grid dt{margin-top:6px}
 }
+/* 탭 네비게이션 */
+.tab-nav{
+  display:flex; gap:4px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:28px;
+  margin-top:8px;
+}
+.tab-btn{
+  background:transparent; border:none;
+  padding:12px 22px;
+  font-family:inherit;
+  font-size:14px; font-weight:600;
+  color:var(--ink-muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  transition:all .15s;
+  display:inline-flex; align-items:center; gap:8px;
+  letter-spacing:-0.005em;
+}
+.tab-btn:hover{color:var(--ink-soft)}
+.tab-btn.active{
+  color:var(--gold);
+  border-bottom-color:var(--gold);
+}
+.tab-count{
+  background:var(--bg-deep);
+  color:var(--ink-muted);
+  font-size:11px; font-weight:700;
+  padding:2px 8px;
+  border-radius:999px;
+}
+.tab-btn.active .tab-count{
+  background:var(--gold);
+  color:#1a1a1a;
+}
+.tab-badge{
+  font-size:9.5px; font-weight:700;
+  letter-spacing:.06em;
+  color:#8fb0ff;
+  background:rgba(143,176,255,0.10);
+  border:1px solid rgba(91,141,239,0.35);
+  padding:2px 7px;
+  border-radius:0;
+}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
 </style>
 </head>
 <body>
@@ -309,9 +357,9 @@ body::before{
     <h2>가경T 진단 대시보드</h2>
     <p>학생군 누적 데이터 분석을 보려면 Apps Script 웹 앱 URL과 인증 키를 입력해주세요.</p>
     <label>Apps Script 웹 앱 URL</label>
-    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec">
+    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycbyGV05oyVakYgRbclfi4tX7fRk6fgbkA_FleV5LqwiqO601SZ5Nl1USKy9LGeibjOrk/exec">
     <label>인증 키</label>
-    <input type="password" id="auth-key" placeholder="apps-script.gs의 CONFIG.apiKey 값">
+    <input type="password" id="auth-key" placeholder="apps-script.gs의 CONFIG.apiKey 값" value="kakyungT-oreum-2026">
     <button class="btn" onclick="authenticate()">접속</button>
     <div class="error-msg" id="auth-error"></div>
     <p style="margin-top:24px;font-size:12px;text-align:left;background:var(--bg-deep);padding:12px 14px;border-left:2px solid var(--gold)">
@@ -334,6 +382,19 @@ body::before{
       <button class="btn btn-ghost btn-sm" onclick="logout()">로그아웃</button>
     </div>
   </div>
+
+  <!-- 탭 네비게이션 -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
+      일반 진단 <span class="tab-count" id="tab-count-general">0</span>
+    </button>
+    <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
+      특별판 진단 <span class="tab-badge">한티 MEXX</span> <span class="tab-count" id="tab-count-special">0</span>
+    </button>
+  </div>
+
+  <!-- ════════ 일반 진단 탭 ════════ -->
+  <div id="tab-general" class="tab-pane active">
 
   <!-- 핵심 통계 카드 -->
   <div class="stat-grid" id="stat-grid"></div>
@@ -404,8 +465,80 @@ body::before{
     </div>
   </div>
 
+  </div><!-- /tab-general -->
+
+  <!-- ════════ 특별판 진단 탭 ════════ -->
+  <div id="tab-special" class="tab-pane">
+
+    <!-- 특별판 통계 카드 -->
+    <div class="stat-grid" id="special-stat-grid"></div>
+
+    <!-- 특별판 차트 -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>4축 평균 점수 <small>응답자 전체 평균</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="special-chart-axis"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>판정 분포 <small>학교 매칭 결과</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="special-chart-verdict"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>진로 계열 분포 <small>응답자 희망 계열</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="special-chart-track"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>관심 학교 분포 <small>응답자 1지망</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="special-chart-interest"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 위험 신호 강한 학생 -->
+    <div class="chart-card" style="margin-bottom:32px">
+      <h3>고등 내신 위험 신호 강한 학생 <small>위험도 65점 이상</small></h3>
+      <div class="risk-grid" id="special-risk-students"></div>
+    </div>
+
+    <!-- 특별판 응답자 명단 -->
+    <div class="student-table-wrap">
+      <div class="table-controls">
+        <input type="search" id="special-search-input" placeholder="이름·학교 검색">
+        <select id="special-filter-role">
+          <option value="">전체 응답자</option>
+          <option value="parent">학부모</option>
+          <option value="student">학생</option>
+        </select>
+      </div>
+
+      <table class="student-table" id="special-student-table">
+        <thead>
+          <tr>
+            <th>제출 시각</th>
+            <th>응답자</th>
+            <th>이름</th>
+            <th>학교</th>
+            <th>학년</th>
+            <th>판정</th>
+            <th>자료장악</th>
+            <th>사고적용</th>
+            <th>조건변별</th>
+            <th>위험신호</th>
+            <th>관심학교</th>
+            <th>진로</th>
+          </tr>
+        </thead>
+        <tbody id="special-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="special-empty-state" style="display:none">
+        <h3>특별판 응답이 아직 없습니다</h3>
+        <p>학부모/학생이 특별판 진단에 응답하면 여기에 표시됩니다.</p>
+      </div>
+    </div>
+
+  </div><!-- /tab-special -->
+
   <p style="text-align:center;color:var(--ink-muted);font-size:12px;margin-top:48px;border-top:1px solid var(--line);padding-top:20px">
-    가경 국어 연구소 · 오름 국어학원 · 진단 대시보드 v1.0
+    가경 국어 연구소 · 진단 대시보드 v2.0
   </p>
 </section>
 
@@ -515,6 +648,8 @@ async function loadAnalysis() {
 function renderAll() {
   document.getElementById('meta-total').textContent = allStudents.length;
   document.getElementById('meta-time').textContent = new Date().toLocaleString('ko-KR');
+  const generalCountEl = document.getElementById('tab-count-general');
+  if (generalCountEl) generalCountEl.textContent = allStudents.length;
   renderStats();
   renderCharts();
   renderRiskGrid();
@@ -847,6 +982,312 @@ function openModal(s) {
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('active');
 }
+
+// ═══════════════════════════════════════════════════════════════
+// 탭 전환 + 특별판 진단
+// ═══════════════════════════════════════════════════════════════
+
+let specialList = [];
+let specialAnalysisData = null;
+let specialChartsRendered = false;
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => {
+    p.classList.toggle('active', p.id === `tab-${tab}`);
+  });
+  if (tab === 'special' && !specialChartsRendered) {
+    loadSpecialData();
+  }
+}
+
+async function loadSpecialData() {
+  const url = localStorage.getItem(STORAGE_URL);
+  const key = localStorage.getItem(STORAGE_KEY);
+  if (!url || !key) return;
+
+  try {
+    // 1. 목록
+    const listResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=specialList`);
+    specialList = await listResp.json();
+
+    // 2. 분석
+    const anaResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=specialAnalysis`);
+    specialAnalysisData = await anaResp.json();
+
+    // 탭 카운트 업데이트
+    document.getElementById('tab-count-special').textContent = specialList.length;
+
+    renderSpecialDashboard();
+    specialChartsRendered = true;
+  } catch (err) {
+    console.error('특별판 데이터 로드 실패:', err);
+    document.getElementById('special-stat-grid').innerHTML =
+      `<div class="stat-card" style="grid-column:1/-1;color:var(--crimson)">데이터 로드 실패: ${err.message}</div>`;
+  }
+}
+
+function renderSpecialDashboard() {
+  if (!specialAnalysisData) return;
+  const a = specialAnalysisData;
+
+  // 통계 카드
+  const totalParents = a.parentCount || 0;
+  const totalStudents = a.studentCount || 0;
+  const total = a.totalCount || 0;
+  const highRiskCount = (a.highRiskStudents || []).length;
+
+  document.getElementById('special-stat-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">총 응답</div>
+      <div class="stat-value">${total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">학부모 응답</div>
+      <div class="stat-value">${totalParents}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">학생 응답</div>
+      <div class="stat-value">${totalStudents}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">위험 신호 강한 학생</div>
+      <div class="stat-value" style="color:var(--crimson)">${highRiskCount}</div>
+    </div>
+  `;
+
+  // 4축 평균 차트
+  renderSpecialAxisChart(a.axisAvg || {});
+  // 판정 분포 차트
+  renderSpecialVerdictChart(a.verdictCounts || {});
+  // 진로 계열 분포 차트
+  renderSpecialTrackChart(a.trackCounts || {});
+  // 관심 학교 분포 차트
+  renderSpecialInterestChart(a.interestCounts || {});
+  // 위험 신호 학생 명단
+  renderSpecialRiskStudents(a.highRiskStudents || []);
+  // 응답자 명단 테이블
+  renderSpecialTable();
+
+  // 검색·필터 이벤트
+  document.getElementById('special-search-input').addEventListener('input', renderSpecialTable);
+  document.getElementById('special-filter-role').addEventListener('change', renderSpecialTable);
+}
+
+function renderSpecialAxisChart(axisAvg) {
+  const ctx = document.getElementById('special-chart-axis');
+  if (!ctx) return;
+  const labels = ['자료 장악', '사고 적용', '조건 변별', '위험 신호', '생활'];
+  const keys = ['자료장악', '사고적용', '조건변별', '위험신호', '생활'];
+  const values = keys.map(k => axisAvg[k] || 0);
+  const colors = ['#c9a84c', '#c9a84c', '#c9a84c', '#d4533b', '#9b8e6e'];
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { max: 100, ticks: { color: '#9a9a9a' }, grid: { color: '#333' } },
+        y: { ticks: { color: '#e8e6df' }, grid: { display: false } },
+      },
+    },
+  });
+}
+
+function renderSpecialVerdictChart(verdictCounts) {
+  const ctx = document.getElementById('special-chart-verdict');
+  if (!ctx) return;
+  const entries = Object.entries(verdictCounts).sort((a, b) => b[1] - a[1]);
+  if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
+  const labels = entries.map(e => e[0]);
+  const data = entries.map(e => e[1]);
+  const colors = ['#c9a84c', '#a89240', '#867135', '#645129', '#42321d'];
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderColor: '#1a1a1a', borderWidth: 2 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#e8e6df', font: { size: 11 } } } },
+    },
+  });
+}
+
+function renderSpecialTrackChart(trackCounts) {
+  const ctx = document.getElementById('special-chart-track');
+  if (!ctx) return;
+  const entries = Object.entries(trackCounts).sort((a, b) => b[1] - a[1]);
+  if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
+  const labels = entries.map(e => e[0]);
+  const data = entries.map(e => e[1]);
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: '#8fa3c4', borderRadius: 4 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: '#9a9a9a', stepSize: 1 }, grid: { color: '#333' } },
+        x: { ticks: { color: '#e8e6df', font: { size: 11 } }, grid: { display: false } },
+      },
+    },
+  });
+}
+
+function renderSpecialInterestChart(interestCounts) {
+  const ctx = document.getElementById('special-chart-interest');
+  if (!ctx) return;
+  const entries = Object.entries(interestCounts).sort((a, b) => b[1] - a[1]);
+  if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
+  const labels = entries.map(e => e[0]);
+  const data = entries.map(e => e[1]);
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: '#b89f6e', borderRadius: 4 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: '#9a9a9a', stepSize: 1 }, grid: { color: '#333' } },
+        x: { ticks: { color: '#e8e6df', font: { size: 11 } }, grid: { display: false } },
+      },
+    },
+  });
+}
+
+function renderSpecialRiskStudents(students) {
+  const el = document.getElementById('special-risk-students');
+  if (!students || students.length === 0) {
+    el.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:14px 0">위험 신호 65점 이상 학생 없음</p>';
+    return;
+  }
+  el.innerHTML = students.map(s => `
+    <div class="risk-item" style="border-left:3px solid var(--crimson)">
+      <div style="font-weight:700;color:var(--ink);font-size:14px">${s.이름}</div>
+      <div style="color:var(--ink-muted);font-size:12px;margin:4px 0">${s.학교 || '—'}</div>
+      <div style="font-size:12px">위험도 <strong style="color:var(--crimson);font-size:14px">${s.위험신호}/100</strong></div>
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:6px">${s.판정 || '—'}</div>
+      ${s.학부모연락처 ? `<div style="font-size:11px;color:var(--gold);margin-top:4px">📞 ${s.학부모연락처}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderSpecialTable() {
+  const q = (document.getElementById('special-search-input').value || '').trim().toLowerCase();
+  const roleFilter = document.getElementById('special-filter-role').value;
+  let filtered = specialList;
+  if (q) {
+    filtered = filtered.filter(s =>
+      (s.이름 || '').toLowerCase().includes(q) ||
+      (s.학교 || '').toLowerCase().includes(q)
+    );
+  }
+  if (roleFilter) {
+    filtered = filtered.filter(s => s.응답자 === roleFilter);
+  }
+
+  const tbody = document.getElementById('special-tbody');
+  const empty = document.getElementById('special-empty-state');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(s => {
+    const time = s.제출시각 ? new Date(s.제출시각).toLocaleString('ko-KR', {
+      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    }) : '—';
+    const role = s.응답자 === 'parent' ? '학부모' : '학생';
+    const roleColor = s.응답자 === 'parent' ? '#8fb0ff' : '#c9a84c';
+    const riskClass = (typeof s.위험신호 === 'number' && s.위험신호 >= 65) ? 'style="color:#d4533b;font-weight:700"' : '';
+
+    return `
+      <tr style="cursor:pointer" onclick="showSpecialDetail('${(s.이름 || '').replace(/'/g, "\\'")}')">
+        <td style="font-size:11px;color:var(--ink-muted)">${time}</td>
+        <td><span style="color:${roleColor};font-weight:600;font-size:12px">${role}</span></td>
+        <td style="font-weight:700">${s.이름 || '—'}</td>
+        <td>${s.학교 || '—'}</td>
+        <td>${s.학년 || '—'}</td>
+        <td style="font-size:12px">${s.판정 || '—'}</td>
+        <td style="text-align:right">${s.자료장악 !== '' ? s.자료장악 : '—'}</td>
+        <td style="text-align:right">${s.사고적용 !== '' ? s.사고적용 : '—'}</td>
+        <td style="text-align:right">${s.조건변별 !== '' ? s.조건변별 : '—'}</td>
+        <td style="text-align:right" ${riskClass}>${s.위험신호 !== '' ? s.위험신호 : '—'}</td>
+        <td style="font-size:12px">${s.관심학교 || '—'}</td>
+        <td style="font-size:12px">${s.진로계열 || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function showSpecialDetail(name) {
+  const s = specialList.find(x => x.이름 === name);
+  if (!s) return;
+
+  let analysis = null;
+  try { analysis = s.분석_JSON ? JSON.parse(s.분석_JSON) : null; } catch(e) {}
+
+  const t = analysis && analysis.typeResult ? analysis.typeResult : {};
+  const ax = analysis && analysis.axisScores ? analysis.axisScores : {};
+
+  document.getElementById('modal-title').textContent = `${s.이름} — 특별판 진단 상세`;
+
+  // 학부모 vs 학생 axis 키 분기
+  const isParent = s.응답자 === 'parent';
+  const matchKeys = isParent
+    ? { 자료장악: 'B', 사고적용: 'C', 조건변별: 'D' }
+    : { 자료장악: 'A', 사고적용: 'B', 조건변별: 'C' };
+
+  const getScore = (k) => {
+    const data = ax[k];
+    return data && data.score !== null && data.score !== undefined ? data.score : '—';
+  };
+  const getAvg = (k) => {
+    const data = ax[k];
+    return data && data.avg !== null && data.avg !== undefined ? data.avg : '—';
+  };
+
+  document.getElementById('modal-body').innerHTML = `
+    <dl class="detail-list">
+      <dt>응답자</dt><dd>${isParent ? '학부모' : '학생'}</dd>
+      <dt>학교</dt><dd>${s.학교 || '—'}</dd>
+      <dt>학년</dt><dd>${s.학년 || '—'}</dd>
+      <dt>응답일</dt><dd>${s.응답일 || '—'}</dd>
+      <dt>학부모 연락처</dt><dd>${s.학부모연락처 || '—'}</dd>
+      <dt>관심 학교</dt><dd>${s.관심학교 || '—'}</dd>
+      <dt>진로 계열</dt><dd>${s.진로계열 || '—'}</dd>
+      <dt>판정</dt><dd style="font-weight:700;color:var(--gold)">${t.label || s.판정 || '—'}</dd>
+      <dt>자료 장악형</dt><dd>${getScore(matchKeys.자료장악)}/100 (평균 ${getAvg(matchKeys.자료장악)})</dd>
+      <dt>사고 적용형</dt><dd>${getScore(matchKeys.사고적용)}/100 (평균 ${getAvg(matchKeys.사고적용)})</dd>
+      <dt>조건 변별형</dt><dd>${getScore(matchKeys.조건변별)}/100 (평균 ${getAvg(matchKeys.조건변별)})</dd>
+      ${isParent ? `<dt>위험 신호</dt><dd style="${(typeof getScore('E') === 'number' && getScore('E') >= 65) ? 'color:var(--crimson);font-weight:700' : ''}">${getScore('E')}/100 (평균 ${getAvg('E')})</dd>` : ''}
+      ${isParent ? `<dt>생활 영역</dt><dd>${getScore('A')}/100 (평균 ${getAvg('A')})</dd>` : ''}
+    </dl>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+// 인증 후 일반 카운트는 renderAll에서 자동 갱신됨
 </script>
 
 </body>
