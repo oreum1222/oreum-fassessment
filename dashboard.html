@@ -343,6 +343,11 @@ body::before{
   padding:2px 7px;
   border-radius:0;
 }
+.tab-badge.mirror{
+  color:#b8c98d;
+  background:rgba(184,201,141,0.10);
+  border-color:rgba(140,170,90,0.40);
+}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 
@@ -390,6 +395,9 @@ body::before{
     </button>
     <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
       특별판 진단 <span class="tab-badge">한티 MEXX</span> <span class="tab-count" id="tab-count-special">0</span>
+    </button>
+    <button class="tab-btn" data-tab="mirror" onclick="switchTab('mirror')">
+      거울 진단 <span class="tab-badge mirror">NEW</span> <span class="tab-count" id="tab-count-mirror">0</span>
     </button>
   </div>
 
@@ -536,6 +544,59 @@ body::before{
     </div>
 
   </div><!-- /tab-special -->
+
+  <!-- ════════ 거울 진단 탭 ════════ -->
+  <div id="tab-mirror" class="tab-pane">
+
+    <!-- 거울 통계 카드 -->
+    <div class="stat-grid" id="mirror-stat-grid"></div>
+
+    <!-- 거울 분석 카드 -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>응답 상태 분포 <small>가족 코드별</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="mirror-chart-status"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>메타인지 갭 분포 <small>학생 vs 학부모 응답 차이</small></h3>
+        <div class="chart-canvas-wrap"><canvas id="mirror-chart-gap"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 가족 명단 -->
+    <div class="student-table-wrap">
+      <div class="table-controls">
+        <input type="search" id="mirror-search-input" placeholder="이름·학교·코드 검색">
+        <select id="mirror-filter-status">
+          <option value="">전체 상태</option>
+          <option value="both">양쪽 완료</option>
+          <option value="student_only">학생만 응답</option>
+          <option value="parent_only">학부모만 응답</option>
+        </select>
+      </div>
+
+      <table class="student-table" id="mirror-family-table">
+        <thead>
+          <tr>
+            <th>가족 코드</th>
+            <th>학생 이름</th>
+            <th>학교</th>
+            <th>학년</th>
+            <th>상태</th>
+            <th>메타인지 갭</th>
+            <th>마지막 응답</th>
+            <th>학부모 연락처</th>
+          </tr>
+        </thead>
+        <tbody id="mirror-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="mirror-empty-state" style="display:none">
+        <h3>거울 진단 응답이 아직 없습니다</h3>
+        <p>학생/학부모가 거울 진단에 응답하면 여기에 표시됩니다.</p>
+      </div>
+    </div>
+
+  </div><!-- /tab-mirror -->
 
   <p style="text-align:center;color:var(--ink-muted);font-size:12px;margin-top:48px;border-top:1px solid var(--line);padding-top:20px">
     가경 국어 연구소 · 진단 대시보드 v2.0
@@ -991,6 +1052,10 @@ let specialList = [];
 let specialAnalysisData = null;
 let specialChartsRendered = false;
 
+let mirrorList = [];
+let mirrorAnalysisData = null;
+let mirrorChartsRendered = false;
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
@@ -1000,6 +1065,9 @@ function switchTab(tab) {
   });
   if (tab === 'special' && !specialChartsRendered) {
     loadSpecialData();
+  }
+  if (tab === 'mirror' && !mirrorChartsRendered) {
+    loadMirrorData();
   }
 }
 
@@ -1288,6 +1356,189 @@ function showSpecialDetail(name) {
 }
 
 // 인증 후 일반 카운트는 renderAll에서 자동 갱신됨
+
+// ═══════════════════════════════════════════════════════════════
+// 거울 진단 — 학생 vs 학부모 메타인지 갭
+// ═══════════════════════════════════════════════════════════════
+
+async function loadMirrorData() {
+  const url = localStorage.getItem(STORAGE_URL);
+  const key = localStorage.getItem(STORAGE_KEY);
+  if (!url || !key) return;
+
+  try {
+    const listResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=mirrorList`);
+    mirrorList = await listResp.json();
+
+    const anaResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=mirrorAnalysis`);
+    mirrorAnalysisData = await anaResp.json();
+
+    document.getElementById('tab-count-mirror').textContent = mirrorList.length;
+
+    renderMirrorDashboard();
+    mirrorChartsRendered = true;
+  } catch (err) {
+    console.error('거울 데이터 로드 실패:', err);
+    document.getElementById('mirror-stat-grid').innerHTML =
+      `<div class="stat-card" style="grid-column:1/-1;color:var(--crimson)">데이터 로드 실패: ${err.message}</div>`;
+  }
+}
+
+function renderMirrorDashboard() {
+  if (!mirrorAnalysisData) return;
+  const a = mirrorAnalysisData;
+
+  document.getElementById('mirror-stat-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">총 가족 수</div>
+      <div class="stat-value">${a.totalFamilies || 0}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">양쪽 완료</div>
+      <div class="stat-value" style="color:#b8c98d">${a.bothCount || 0}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">학생만 응답</div>
+      <div class="stat-value" style="color:var(--gold)">${a.studentOnlyCount || 0}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">학부모만 응답</div>
+      <div class="stat-value" style="color:#8fb0ff">${a.parentOnlyCount || 0}</div>
+    </div>
+    ${a.overallAvgGap !== null ? `
+      <div class="stat-card" style="grid-column:span 2">
+        <div class="stat-label">전체 평균 메타인지 갭 <small style="color:var(--ink-muted)">학생-학부모 응답 차이</small></div>
+        <div class="stat-value" style="color:${a.overallAvgGap >= 1 ? 'var(--crimson)' : 'var(--gold)'}">${a.overallAvgGap}<small style="font-size:13px;color:var(--ink-muted)"> / 5점 척도</small></div>
+      </div>
+    ` : ''}
+  `;
+
+  renderMirrorStatusChart(a);
+  renderMirrorGapChart(a.gapDetails || []);
+  renderMirrorTable();
+
+  document.getElementById('mirror-search-input').addEventListener('input', renderMirrorTable);
+  document.getElementById('mirror-filter-status').addEventListener('change', renderMirrorTable);
+}
+
+function renderMirrorStatusChart(a) {
+  const ctx = document.getElementById('mirror-chart-status');
+  if (!ctx) return;
+  const labels = ['양쪽 완료', '학생만 응답', '학부모만 응답'];
+  const data = [a.bothCount || 0, a.studentOnlyCount || 0, a.parentOnlyCount || 0];
+  const colors = ['#b8c98d', '#c9a84c', '#8fb0ff'];
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderColor: '#1a1a1a', borderWidth: 2 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#e8e6df', font: { size: 11 } } } },
+    },
+  });
+}
+
+function renderMirrorGapChart(gapDetails) {
+  const ctx = document.getElementById('mirror-chart-gap');
+  if (!ctx) return;
+  if (!gapDetails || gapDetails.length === 0) {
+    ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">양쪽 응답 완료 가족 없음</p>';
+    return;
+  }
+
+  // 갭별 분포 - 0~0.5, 0.5~1, 1~1.5, 1.5~2, 2+
+  const bins = { '0-0.5': 0, '0.5-1.0': 0, '1.0-1.5': 0, '1.5-2.0': 0, '2.0+': 0 };
+  gapDetails.forEach(g => {
+    if (g.평균갭 < 0.5) bins['0-0.5']++;
+    else if (g.평균갭 < 1.0) bins['0.5-1.0']++;
+    else if (g.평균갭 < 1.5) bins['1.0-1.5']++;
+    else if (g.평균갭 < 2.0) bins['1.5-2.0']++;
+    else bins['2.0+']++;
+  });
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(bins),
+      datasets: [{
+        data: Object.values(bins),
+        backgroundColor: ['#b8c98d', '#c9a84c', '#d4a85a', '#d4533b', '#a53d2a'],
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: '#9a9a9a', stepSize: 1 }, grid: { color: '#333' } },
+        x: { ticks: { color: '#e8e6df', font: { size: 11 } }, title: { display: true, text: '메타인지 갭 (5점 척도)', color: '#9a9a9a', font: { size: 11 } }, grid: { display: false } },
+      },
+    },
+  });
+}
+
+function renderMirrorTable() {
+  const q = (document.getElementById('mirror-search-input').value || '').trim().toLowerCase();
+  const statusFilter = document.getElementById('mirror-filter-status').value;
+  let filtered = mirrorList;
+  if (q) {
+    filtered = filtered.filter(f =>
+      (f.학생이름 || '').toLowerCase().includes(q) ||
+      (f.학교 || '').toLowerCase().includes(q) ||
+      String(f.가족코드 || '').includes(q)
+    );
+  }
+  if (statusFilter) {
+    filtered = filtered.filter(f => f.상태 === statusFilter);
+  }
+
+  // gapDetails에서 가족 코드별 갭 매핑
+  const gapMap = {};
+  if (mirrorAnalysisData && mirrorAnalysisData.gapDetails) {
+    mirrorAnalysisData.gapDetails.forEach(g => { gapMap[g.가족코드] = g.평균갭; });
+  }
+
+  const tbody = document.getElementById('mirror-tbody');
+  const empty = document.getElementById('mirror-empty-state');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(f => {
+    const time = f.마지막응답시각 ? new Date(f.마지막응답시각).toLocaleString('ko-KR', {
+      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    }) : '—';
+
+    const statusLabel = {
+      'both': { txt: '양쪽 완료', color: '#b8c98d' },
+      'student_only': { txt: '학생만', color: '#c9a84c' },
+      'parent_only': { txt: '학부모만', color: '#8fb0ff' },
+    }[f.상태] || { txt: '—', color: '#9a9a9a' };
+
+    const gap = gapMap[f.가족코드];
+    const gapDisplay = gap !== undefined
+      ? `<strong style="color:${gap >= 1.5 ? 'var(--crimson)' : (gap >= 1 ? 'var(--gold)' : '#b8c98d')}">${gap}</strong>`
+      : '—';
+
+    return `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700">${f.가족코드}</td>
+        <td style="font-weight:700">${f.학생이름 || '—'}</td>
+        <td>${f.학교 || '—'}</td>
+        <td>${f.학년 || '—'}</td>
+        <td><span style="color:${statusLabel.color};font-weight:600;font-size:12px">${statusLabel.txt}</span></td>
+        <td style="text-align:right">${gapDisplay}</td>
+        <td style="font-size:11px;color:var(--ink-muted)">${time}</td>
+        <td style="font-size:12px">${f.학부모연락처 || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+}
 </script>
 
 </body>
