@@ -362,7 +362,7 @@ body::before{
     <h2>가경T 진단 대시보드</h2>
     <p>학생군 누적 데이터 분석을 보려면 Apps Script 웹 앱 URL과 인증 키를 입력해주세요.</p>
     <label>Apps Script 웹 앱 URL</label>
-    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycbwD3iLvHHlYbrauUuVk75m1Nh776_76PGb4bUSInwpV1HgCz_ppamDH5XnifpC741c_/exec">
+    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycby-RJ5AmPKpInwgdo5yvCEPMCMlNkYE1ZGYJ6SQ4Ad5BywqbcZllBJcaFlhxO3w6MJS/exec">
     <label>인증 키</label>
     <input type="password" id="auth-key" placeholder="apps-script.gs의 CONFIG.apiKey 값" value="kakyungT-oreum-2026">
     <button class="btn" onclick="authenticate()">접속</button>
@@ -620,6 +620,10 @@ body::before{
 const STORAGE_URL = 'oreum_dashboard_url';
 const STORAGE_KEY = 'oreum_dashboard_key';
 
+// ─── 현재 유효한 Apps Script URL (코드 푸시할 때 여기만 갱신) ───
+// localStorage에 박힌 옛 URL은 페이지 로드 시 자동으로 이 값으로 덮어쓰임
+const CURRENT_URL = 'https://script.google.com/macros/s/AKfycby-RJ5AmPKpInwgdo5yvCEPMCMlNkYE1ZGYJ6SQ4Ad5BywqbcZllBJcaFlhxO3w6MJS/exec';
+
 let allStudents = [];
 let analysisData = null;
 let charts = {};
@@ -627,12 +631,21 @@ let sortState = { col: '제출일시', dir: 'desc' };
 
 // ─── 인증 ───
 window.addEventListener('DOMContentLoaded', () => {
+  // localStorage의 URL이 코드에 박힌 CURRENT_URL과 다르면 자동 갱신
+  const storedUrl = localStorage.getItem(STORAGE_URL);
+  if (storedUrl && storedUrl !== CURRENT_URL) {
+    localStorage.setItem(STORAGE_URL, CURRENT_URL);
+    console.log('🔄 옛 URL 자동 갱신:', storedUrl, '→', CURRENT_URL);
+  }
   const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
   if (url && key) {
     document.getElementById('auth-url').value = url;
     document.getElementById('auth-key').value = key;
     authenticate();
+  } else {
+    // 첫 진입이면 input에 CURRENT_URL을 default로 채워둠
+    document.getElementById('auth-url').value = CURRENT_URL;
   }
 });
 
@@ -1147,12 +1160,13 @@ function renderSpecialDashboard() {
 function renderSpecialAxisChart(axisAvg) {
   const ctx = document.getElementById('special-chart-axis');
   if (!ctx) return;
+  destroyChart('special-chart-axis');
   const labels = ['자료 장악', '사고 적용', '조건 변별', '위험 신호', '생활'];
   const keys = ['자료장악', '사고적용', '조건변별', '위험신호', '생활'];
   const values = keys.map(k => axisAvg[k] || 0);
   const colors = ['#c9a84c', '#c9a84c', '#c9a84c', '#d4533b', '#9b8e6e'];
 
-  new Chart(ctx, {
+  charts['special-chart-axis'] = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
@@ -1178,13 +1192,14 @@ function renderSpecialAxisChart(axisAvg) {
 function renderSpecialVerdictChart(verdictCounts) {
   const ctx = document.getElementById('special-chart-verdict');
   if (!ctx) return;
+  destroyChart('special-chart-verdict');
   const entries = Object.entries(verdictCounts).sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
   const labels = entries.map(e => e[0]);
   const data = entries.map(e => e[1]);
   const colors = ['#c9a84c', '#a89240', '#867135', '#645129', '#42321d'];
 
-  new Chart(ctx, {
+  charts['special-chart-verdict'] = new Chart(ctx, {
     type: 'doughnut',
     data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderColor: '#1a1a1a', borderWidth: 2 }] },
     options: {
@@ -1198,12 +1213,13 @@ function renderSpecialVerdictChart(verdictCounts) {
 function renderSpecialTrackChart(trackCounts) {
   const ctx = document.getElementById('special-chart-track');
   if (!ctx) return;
+  destroyChart('special-chart-track');
   const entries = Object.entries(trackCounts).sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
   const labels = entries.map(e => e[0]);
   const data = entries.map(e => e[1]);
 
-  new Chart(ctx, {
+  charts['special-chart-track'] = new Chart(ctx, {
     type: 'bar',
     data: { labels: labels, datasets: [{ data: data, backgroundColor: '#8fa3c4', borderRadius: 4 }] },
     options: {
@@ -1221,12 +1237,13 @@ function renderSpecialTrackChart(trackCounts) {
 function renderSpecialInterestChart(interestCounts) {
   const ctx = document.getElementById('special-chart-interest');
   if (!ctx) return;
+  destroyChart('special-chart-interest');
   const entries = Object.entries(interestCounts).sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
   const labels = entries.map(e => e[0]);
   const data = entries.map(e => e[1]);
 
-  new Chart(ctx, {
+  charts['special-chart-interest'] = new Chart(ctx, {
     type: 'bar',
     data: { labels: labels, datasets: [{ data: data, backgroundColor: '#b89f6e', borderRadius: 4 }] },
     options: {
@@ -1424,11 +1441,12 @@ function renderMirrorDashboard() {
 function renderMirrorStatusChart(a) {
   const ctx = document.getElementById('mirror-chart-status');
   if (!ctx) return;
+  destroyChart('mirror-chart-status');
   const labels = ['양쪽 완료', '학생만 응답', '학부모만 응답'];
   const data = [a.bothCount || 0, a.studentOnlyCount || 0, a.parentOnlyCount || 0];
   const colors = ['#b8c98d', '#c9a84c', '#8fb0ff'];
 
-  new Chart(ctx, {
+  charts['mirror-chart-status'] = new Chart(ctx, {
     type: 'doughnut',
     data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderColor: '#1a1a1a', borderWidth: 2 }] },
     options: {
@@ -1442,6 +1460,7 @@ function renderMirrorStatusChart(a) {
 function renderMirrorGapChart(gapDetails) {
   const ctx = document.getElementById('mirror-chart-gap');
   if (!ctx) return;
+  destroyChart('mirror-chart-gap');
   if (!gapDetails || gapDetails.length === 0) {
     ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">양쪽 응답 완료 가족 없음</p>';
     return;
@@ -1457,7 +1476,7 @@ function renderMirrorGapChart(gapDetails) {
     else bins['2.0+']++;
   });
 
-  new Chart(ctx, {
+  charts['mirror-chart-gap'] = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: Object.keys(bins),
