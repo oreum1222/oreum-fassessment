@@ -1332,25 +1332,20 @@ function showSpecialDetail(name) {
   let analysis = null;
   try { analysis = s.분석_JSON ? JSON.parse(s.분석_JSON) : null; } catch(e) {}
 
-  if (!analysis) {
-    document.getElementById('modal-title').textContent = `${s.이름} — 분석 데이터 없음`;
-    document.getElementById('modal-body').innerHTML = '<p style="padding:20px;color:var(--ink-muted);font-size:13px">이 응답에는 분석 JSON이 저장되어 있지 않습니다 (구버전 응답).</p>';
-    document.getElementById('modal-overlay').classList.add('active');
-    return;
-  }
-
   const isParent = s.응답자 === 'parent';
   const roleLabel = isParent ? '학부모' : '학생';
-  const t = analysis.typeResult || {};
-  const ax = analysis.axisScores || {};
-  const c = analysis.correction || {};
-  const rs = analysis.riskSignals;
+  const hasAnalysis = !!analysis;
+  const t = (analysis && analysis.typeResult) ? analysis.typeResult : {};
+  const ax = (analysis && analysis.axisScores) ? analysis.axisScores : {};
+  const c = (analysis && analysis.correction) ? analysis.correction : null;
+  const rs = analysis ? analysis.riskSignals : null;
 
-  const get = (k) => {
-    if (!ax[k]) return { score: '—', avg: '—' };
+  // 분석_JSON 우선, 없으면 시트의 점수 컬럼 폴백
+  const getFromAnalysis = (k) => {
+    if (!ax[k]) return null;
     return {
-      score: (ax[k].score !== null && ax[k].score !== undefined) ? ax[k].score : '—',
-      avg: (ax[k].avg !== null && ax[k].avg !== undefined) ? ax[k].avg : '—',
+      score: (ax[k].score !== null && ax[k].score !== undefined) ? ax[k].score : null,
+      avg: (ax[k].avg !== null && ax[k].avg !== undefined) ? ax[k].avg : null,
     };
   };
 
@@ -1358,32 +1353,46 @@ function showSpecialDetail(name) {
   const k자료 = isParent ? 'B' : 'A';
   const k사고 = isParent ? 'C' : 'B';
   const k조건 = isParent ? 'D' : 'C';
-  const s자료 = get(k자료);
-  const s사고 = get(k사고);
-  const s조건 = get(k조건);
+
+  // 분석_JSON 있으면 그걸 사용, 없으면 시트 컬럼 직접 사용
+  const fmt = (analysisData, sheetVal) => {
+    if (analysisData && analysisData.score !== null) {
+      const avgStr = analysisData.avg !== null ? ` <span style="font-size:11px;color:#888;">(평균 ${analysisData.avg})</span>` : '';
+      return `${analysisData.score}/100${avgStr}`;
+    }
+    if (typeof sheetVal === 'number') return `${sheetVal}/100`;
+    return '<span style="color:#bbb">—</span>';
+  };
+
+  const s자료 = fmt(getFromAnalysis(k자료), s.자료장악);
+  const s사고 = fmt(getFromAnalysis(k사고), s.사고적용);
+  const s조건 = fmt(getFromAnalysis(k조건), s.조건변별);
 
   // 위험 신호 (학부모만)
   let riskHtml = '';
-  if (isParent && rs) {
-    const eS = get('E');
-    const strongRisks = rs.strongRisks || [];
+  if (isParent) {
+    const eData = getFromAnalysis('E');
+    const eDisplay = fmt(eData, s.위험신호);
+    const strongRisks = (rs && rs.strongRisks) ? rs.strongRisks : null;
+    const riskScore = (eData && eData.score !== null) ? eData.score : (typeof s.위험신호 === 'number' ? s.위험신호 : null);
+    const isHighRisk = riskScore !== null && riskScore >= 65;
     riskHtml = `
-      <div style="background:#fff5f0;border-left:3px solid #d4533b;padding:14px 18px;margin:18px 0;">
-        <h3 style="margin:0 0 8px;color:#a53d2a;font-size:14px;">⚠ 고등 내신 위험 신호</h3>
+      <div style="background:${isHighRisk ? '#fff5f0' : '#f7f7f4'};border-left:3px solid ${isHighRisk ? '#d4533b' : '#999'};padding:14px 18px;margin:18px 0;">
+        <h3 style="margin:0 0 8px;color:${isHighRisk ? '#a53d2a' : '#555'};font-size:14px;">${isHighRisk ? '⚠ ' : ''}고등 내신 위험 신호</h3>
         <p style="margin:0 0 6px;font-size:13px;color:#444;">
-          위험도: <strong style="color:#a53d2a;">${eS.score}/100 (평균 ${eS.avg})</strong>
+          위험도: <strong style="color:${isHighRisk ? '#a53d2a' : '#333'};">${eDisplay}</strong>
         </p>
-        ${strongRisks.length > 0 ? `
+        ${strongRisks ? (strongRisks.length > 0 ? `
           <p style="margin:8px 0 4px;font-size:13px;color:#666;">강한 동의 위험 문항 (${strongRisks.length}개):</p>
           <ul style="margin:0;padding-left:18px;font-size:12.5px;color:#555;">
             ${strongRisks.map(r => `<li>${r.q}</li>`).join('')}
           </ul>
-        ` : '<p style="margin:6px 0 0;font-size:12.5px;color:#666;">강한 동의 위험 항목 없음</p>'}
+        ` : '<p style="margin:6px 0 0;font-size:12.5px;color:#666;">강한 동의 위험 항목 없음</p>') : ''}
       </div>
     `;
   }
 
-  // 보정 지표 (학부모만)
+  // 보정 지표 (학부모만, 분석_JSON 있을 때만)
   let correctionHtml = '';
   if (c && c.isParent) {
     correctionHtml = `
@@ -1397,9 +1406,17 @@ function showSpecialDetail(name) {
     `;
   }
 
+  // 옛 응답 알림 배너
+  const legacyBanner = !hasAnalysis ? `
+    <div style="background:#fef4e6;border:1px solid #e8d196;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#8c6620;">
+      ⓘ 옛 버전 응답이라 분석 JSON이 없습니다. 시트의 점수 컬럼만 표시합니다.
+    </div>
+  ` : '';
+
   document.getElementById('modal-title').textContent = `${s.이름} — ${roleLabel} 결과지 (요약)`;
   document.getElementById('modal-body').innerHTML = `
     <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
+      ${legacyBanner}
       <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
         <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 · 특별판 진단</p>
         <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${s.이름 || '?'} 학생의 학교 매칭 분석</h1>
@@ -1417,15 +1434,15 @@ function showSpecialDetail(name) {
       <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>자료 장악형</strong><span style="color:#888;font-size:12px;"> — 경기고·숙명여고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s자료.score}/100 <span style="font-size:11px;color:#888;">(평균 ${s자료.avg})</span></td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s자료}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>사고 적용형</strong><span style="color:#888;font-size:12px;"> — 휘문고·진선여고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s사고.score}/100 <span style="font-size:11px;color:#888;">(평균 ${s사고.avg})</span></td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s사고}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>조건 변별형</strong><span style="color:#888;font-size:12px;"> — 중대부고·단대부고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s조건.score}/100 <span style="font-size:11px;color:#888;">(평균 ${s조건.avg})</span></td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s조건}</td>
         </tr>
       </table>
 
