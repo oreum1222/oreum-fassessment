@@ -8300,76 +8300,134 @@ window.onload = function(){
 
 <!-- ═══════════════════════════════════════════════════════════════
      result-viewer 전용: 미리보기 모드 (대시보드에서 풀 결과지 보기)
-     URL 파라미터: ?name=학생이름
+     URL 파라미터:
+       ?name=학생이름        → 특별판 결과지
+       ?mirrorCode=가족코드  → 거울 결과지
      ═══════════════════════════════════════════════════════════════ -->
 <script>
 (function initPreviewMode() {
   const params = new URLSearchParams(window.location.search);
   const targetName = params.get('name');
-  if (!targetName) return; // 파라미터 없으면 일반 진단 흐름 그대로
+  const targetMirrorCode = params.get('mirrorCode');
+  if (!targetName && !targetMirrorCode) return; // 파라미터 없으면 일반 진단 흐름 그대로
+
+  const isMirror = !!targetMirrorCode;
+  const targetLabel = isMirror ? `가족코드 ${targetMirrorCode}` : `${targetName} 학생`;
 
   window.addEventListener('load', async () => {
-    // 모든 화면 비활성화 (welcome 등 자동 진입 차단)
     document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
 
-    // 로딩 오버레이
     const loadEl = document.createElement('div');
     loadEl.id = 'preview-loading';
     loadEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fafaf3;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;color:#888;font-size:14px;z-index:9999;letter-spacing:.04em';
-    loadEl.textContent = `${targetName} 학생의 결과지 불러오는 중…`;
+    loadEl.textContent = `${targetLabel}의 결과지 불러오는 중…`;
     document.body.appendChild(loadEl);
 
     try {
-      const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=specialList`);
-      const list = await resp.json();
-      if (!Array.isArray(list)) throw new Error('데이터 형식 오류');
+      if (isMirror) {
+        // ─── 거울 진단 모드 ───
+        const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=mirrorList`);
+        const list = await resp.json();
+        if (!Array.isArray(list)) throw new Error('데이터 형식 오류');
 
-      const student = list.find(s => s.이름 === targetName);
-      if (!student) throw new Error(`'${targetName}' 학생을 찾을 수 없습니다`);
+        const family = list.find(f => String(f.가족코드) === String(targetMirrorCode));
+        if (!family) throw new Error(`가족코드 '${targetMirrorCode}'를 찾을 수 없습니다`);
+        if (family.상태 !== 'both') throw new Error('양쪽 응답이 모두 들어와야 결과지가 표시됩니다');
 
-      // specialState 채우기 — 시트의 응답_JSON으로 buildSpecialAnalysis가 정상 작동
-      specialState.role = student.응답자 || 'student';
-      specialState.info = {
-        name: student.이름 || '',
-        school: student.학교 || '',
-        grade: student.학년 || '',
-        date: student.응답일 || '',
-        parentPhone: student.학부모연락처 || '',
-        interest: student.관심학교 || '',
-        track: student.진로계열 || '',
-      };
-      try { specialState.responses = JSON.parse(student.응답_JSON || '{}'); }
-      catch(e) { specialState.responses = {}; }
-      specialState.qIdx = 0;
-      specialState.part1OnlyMode = false;
+        let studentResp = {}, parentResp = {};
+        try { studentResp = JSON.parse(family.학생응답_JSON || '{}'); } catch(e) {}
+        try { parentResp = JSON.parse(family.학부모응답_JSON || '{}'); } catch(e) {}
 
-      // 결과지 화면 활성화
-      document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
-      const resultScreen = document.getElementById('special-results');
-      if (!resultScreen) throw new Error('결과지 화면 요소(#special-results) 없음');
-      resultScreen.classList.add('active');
+        // mirrorState 채우기 — 강사 보기는 role='student' 기준 (어느 쪽이든 결과는 동일)
+        mirrorState.role = 'student';
+        mirrorState.code = family.가족코드;
+        mirrorState.info = {
+          name: family.학생이름 || '',
+          school: family.학교 || '',
+          grade: family.학년 || '',
+          date: family.응시일 || '',
+        };
+        mirrorState.partnerInfo = {
+          parentPhone: family.학부모연락처 || '',
+        };
+        mirrorState.responses = studentResp;
+        mirrorState.partnerResponses = parentResp;
+        mirrorState.qIdx = 0;
 
-      // 렌더링 (index.html에 정의된 함수 재활용)
-      if (typeof renderSpecialResults !== 'function') throw new Error('renderSpecialResults 함수 없음');
-      renderSpecialResults();
+        // 결과지 화면 활성화
+        document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
+        const resultScreen = document.getElementById('mirror-results');
+        if (!resultScreen) throw new Error('거울 결과지 화면 요소(#mirror-results) 없음');
+        resultScreen.classList.add('active');
 
-      // 학부모/학생용 부적합 요소 정리
-      const sendBox = document.querySelector('#special-results .send-result-box');
-      if (sendBox) sendBox.remove();
-      const actions = document.querySelector('#special-results .report-actions');
-      if (actions) {
-        actions.innerHTML =
-          '<button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>' +
-          '<button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
+        if (typeof renderMirrorResults !== 'function') throw new Error('renderMirrorResults 함수 없음');
+        renderMirrorResults();
+
+        // 강사 미리보기 배지
+        const stamp = resultScreen.querySelector('.verdict-stamp, .report-stamp');
+        if (stamp) {
+          stamp.innerHTML = stamp.innerHTML + ' <span style="background:#1a1a1a;color:#c9a84c;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px;">강사 미리보기</span>';
+        }
+
+        // 액션 버튼 정리
+        const actions = resultScreen.querySelector('.report-actions');
+        if (actions) {
+          actions.innerHTML =
+            '<button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>' +
+            '<button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
+        }
+        // 결과 보관 안내 박스 제거
+        const sendBox = resultScreen.querySelector('.send-result-box');
+        if (sendBox) sendBox.remove();
+
+        document.title = `${family.학생이름 || targetMirrorCode} — 거울 결과지`;
+      } else {
+        // ─── 특별판 진단 모드 ───
+        const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=specialList`);
+        const list = await resp.json();
+        if (!Array.isArray(list)) throw new Error('데이터 형식 오류');
+
+        const student = list.find(s => s.이름 === targetName);
+        if (!student) throw new Error(`'${targetName}' 학생을 찾을 수 없습니다`);
+
+        specialState.role = student.응답자 || 'student';
+        specialState.info = {
+          name: student.이름 || '',
+          school: student.학교 || '',
+          grade: student.학년 || '',
+          date: student.응답일 || '',
+          parentPhone: student.학부모연락처 || '',
+          interest: student.관심학교 || '',
+          track: student.진로계열 || '',
+        };
+        try { specialState.responses = JSON.parse(student.응답_JSON || '{}'); }
+        catch(e) { specialState.responses = {}; }
+        specialState.qIdx = 0;
+        specialState.part1OnlyMode = false;
+
+        document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
+        const resultScreen = document.getElementById('special-results');
+        if (!resultScreen) throw new Error('특별판 결과지 화면 요소(#special-results) 없음');
+        resultScreen.classList.add('active');
+
+        if (typeof renderSpecialResults !== 'function') throw new Error('renderSpecialResults 함수 없음');
+        renderSpecialResults();
+
+        const sendBox = document.querySelector('#special-results .send-result-box');
+        if (sendBox) sendBox.remove();
+        const actions = document.querySelector('#special-results .report-actions');
+        if (actions) {
+          actions.innerHTML =
+            '<button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>' +
+            '<button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
+        }
+        const stamp = document.querySelector('#special-results .report-stamp');
+        if (stamp) {
+          stamp.innerHTML = stamp.innerHTML + ' <span style="background:#1a1a1a;color:#c9a84c;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px;">강사 미리보기</span>';
+        }
+        document.title = `${targetName} — 특별판 결과지`;
       }
 
-      // 페이지 상단에 "미리보기 모드" 배지
-      const stamp = document.querySelector('#special-results .report-stamp');
-      if (stamp) {
-        stamp.innerHTML = stamp.innerHTML + ' <span style="background:#1a1a1a;color:#c9a84c;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px;">강사 미리보기</span>';
-      }
-
-      document.title = `${targetName} — 특별판 결과지`;
       loadEl.remove();
     } catch (err) {
       loadEl.innerHTML = `<div style="text-align:center;color:#a53d2a;max-width:480px;padding:24px"><h2 style="margin:0 0 12px;font-size:18px">결과지 로드 실패</h2><p style="margin:0 0 16px;color:#666;font-size:13px;line-height:1.6">${err.message}</p><button onclick="window.close()" style="padding:8px 20px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;cursor:pointer;font-size:12px;letter-spacing:.05em">창 닫기</button></div>`;
