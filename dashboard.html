@@ -1637,7 +1637,7 @@ function renderMirrorTable() {
       : '—';
 
     return `
-      <tr>
+      <tr style="cursor:pointer" onclick="showMirrorDetail('${f.가족코드}')">
         <td style="font-family:'JetBrains Mono',monospace;font-weight:700">${f.가족코드}</td>
         <td style="font-weight:700">${f.학생이름 || '—'}</td>
         <td>${f.학교 || '—'}</td>
@@ -1649,6 +1649,101 @@ function renderMirrorTable() {
       </tr>
     `;
   }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 거울 진단 — 학생 행 클릭 시 결과지 요약 모달
+// ═══════════════════════════════════════════════════════════════
+function showMirrorDetail(code) {
+  const f = mirrorList.find(x => String(x.가족코드) === String(code));
+  if (!f) return;
+
+  const status = f.상태;
+  const statusLabel = {
+    'both': { txt: '양쪽 응답 완료', color: '#b8c98d' },
+    'student_only': { txt: '학생만 응답 (학부모 미응답)', color: '#c9a84c' },
+    'parent_only': { txt: '학부모만 응답 (학생 미응답)', color: '#8fb0ff' },
+  }[status] || { txt: '—', color: '#9a9a9a' };
+
+  // 메타인지 갭 (있으면)
+  let gap = null;
+  if (mirrorAnalysisData && mirrorAnalysisData.gapDetails) {
+    const g = mirrorAnalysisData.gapDetails.find(x => String(x.가족코드) === String(code));
+    if (g) gap = g;
+  }
+
+  // 응답 JSON 통계
+  let studentRespCount = 0, parentRespCount = 0;
+  try {
+    if (f.학생응답_JSON) studentRespCount = Object.keys(JSON.parse(f.학생응답_JSON)).length;
+  } catch(e) {}
+  try {
+    if (f.학부모응답_JSON) parentRespCount = Object.keys(JSON.parse(f.학부모응답_JSON)).length;
+  } catch(e) {}
+
+  const canShowFullResult = (status === 'both');
+
+  const fullResultBtnHtml = canShowFullResult
+    ? `<button onclick="openFullMirrorResult('${code}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>`
+    : `<span style="font-size:11px;color:#999;font-style:italic;">양쪽 응답이 모두 들어와야 풀 결과지 발급 가능</span>`;
+
+  const gapHtml = gap ? `
+    <h3 style="margin:18px 0 10px;font-size:15px;color:#333;border-bottom:1px solid #ddd;padding-bottom:6px;">메타인지 갭</h3>
+    <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
+      <tr>
+        <td style="padding:8px 0;color:#222;"><strong>평균 격차 (5점 척도)</strong></td>
+        <td style="text-align:right;padding:8px 0;font-weight:700;color:${gap.평균갭 >= 1.5 ? '#a53d2a' : (gap.평균갭 >= 1 ? '#c9a84c' : '#5a7a3a')};">${gap.평균갭}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#666;font-size:12.5px;">비교 가능 문항 수</td>
+        <td style="text-align:right;padding:8px 0;color:#666;font-size:12.5px;">${gap.항목수}개</td>
+      </tr>
+    </table>
+    <p style="margin:10px 0 0;font-size:11.5px;color:#888;line-height:1.5;">
+      ${gap.평균갭 >= 1.5 ? '⚠ 학부모와 학생의 인식 차이가 크게 벌어진 가족입니다. 풀 결과지에서 어느 영역의 인식이 어긋났는지 자세히 확인하세요.' :
+        gap.평균갭 >= 1 ? '두 분의 인식 사이에 일부 차이가 있는 가족입니다.' :
+        '학부모와 학생의 인식이 비교적 잘 맞는 가족입니다.'}
+    </p>
+  ` : '';
+
+  document.getElementById('modal-title').textContent = `${f.학생이름 || '가족'} — 거울 진단 (요약)`;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
+      <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
+        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 · 거울 진단</p>
+        <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${f.학생이름 || '가족'} — 학부모/학생 인식 비교</h1>
+        <p style="margin:0;font-size:12.5px;color:#888;">
+          가족코드 <strong style="color:#222;font-family:'JetBrains Mono',monospace;">${f.가족코드}</strong>
+          · ${f.학교 || '?'} · ${f.학년 || '?'} · ${f.응시일 || ''}
+          ${f.학부모연락처 ? ' · ' + f.학부모연락처 : ''}
+        </p>
+      </div>
+
+      <div style="background:#faf6ec;border:1px solid #e8dcb9;padding:16px 20px;margin-bottom:18px;">
+        <p style="margin:0 0 6px;font-size:11px;letter-spacing:.1em;color:#a08a3a;">응답 상태</p>
+        <h2 style="margin:0;font-size:18px;color:${statusLabel.color === '#b8c98d' ? '#5a7a3a' : (statusLabel.color === '#c9a84c' ? '#8c6620' : '#3a5a8c')};">${statusLabel.txt}</h2>
+        <p style="margin:8px 0 0;font-size:12.5px;color:#666;">
+          학생 응답: ${studentRespCount > 0 ? `${studentRespCount}문항 완료 ✓` : '아직 미응답'}
+          &nbsp;·&nbsp;
+          학부모 응답: ${parentRespCount > 0 ? `${parentRespCount}문항 완료 ✓` : '아직 미응답'}
+        </p>
+      </div>
+
+      ${gapHtml}
+
+      <div style="margin-top:24px;padding-top:14px;border-top:1px dashed #ddd;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 · 거울 진단</p>
+        ${fullResultBtnHtml}
+      </div>
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+// 풀 결과지 새 창 열기 (거울)
+function openFullMirrorResult(code) {
+  const url = `result-viewer.html?mirrorCode=${encodeURIComponent(code)}`;
+  window.open(url, '_blank', 'width=900,height=1200,scrollbars=yes');
 }
 </script>
 
