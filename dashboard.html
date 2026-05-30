@@ -360,16 +360,14 @@ body::before{
 <section id="auth-screen" class="auth-section">
   <div class="auth-box">
     <h2>가경T 진단 대시보드</h2>
-    <p>학생군 누적 데이터 분석을 보려면 Apps Script 웹 앱 URL과 인증 키를 입력해주세요.</p>
-    <label>Apps Script 웹 앱 URL</label>
-    <input type="text" id="auth-url" class="url-input" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycby-RJ5AmPKpInwgdo5yvCEPMCMlNkYE1ZGYJ6SQ4Ad5BywqbcZllBJcaFlhxO3w6MJS/exec">
-    <label>인증 키</label>
-    <input type="password" id="auth-key" placeholder="apps-script.gs의 CONFIG.apiKey 값" value="kakyungT-oreum-2026">
+    <p>학생군 누적 데이터 분석 — 팀 비밀번호를 입력해주세요.</p>
+    <label>팀 비밀번호</label>
+    <input type="password" id="auth-key" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')authenticate()">
     <button class="btn" onclick="authenticate()">접속</button>
     <div class="error-msg" id="auth-error"></div>
     <p style="margin-top:24px;font-size:12px;text-align:left;background:var(--bg-deep);padding:12px 14px;border-left:2px solid var(--gold)">
-      ※ URL과 키는 한 번 입력하면 브라우저에 저장되어 다음에는 자동으로 불러옵니다.
-      재입력하려면 페이지 하단의 「로그아웃」을 클릭하세요.
+      ※ 한 번 입력하면 브라우저에 저장되어 다음부터는 자동으로 들어옵니다.
+      다른 사람과 공유할 PC면 사용 후 「로그아웃」을 눌러주세요.
     </p>
   </div>
 </section>
@@ -624,6 +622,14 @@ const STORAGE_KEY = 'oreum_dashboard_key';
 // localStorage에 박힌 옛 URL은 페이지 로드 시 자동으로 이 값으로 덮어쓰임
 const CURRENT_URL = 'https://script.google.com/macros/s/AKfycby-RJ5AmPKpInwgdo5yvCEPMCMlNkYE1ZGYJ6SQ4Ad5BywqbcZllBJcaFlhxO3w6MJS/exec';
 
+// ─── 팀 공통 비밀번호 → 실제 Apps Script API 키 매핑 ───
+// 팀원에게는 password만 알려주면 됨. 실제 API 키는 코드에만 박혀있음.
+// 비밀번호 바꾸려면 아래 'password' 값만 수정.
+const TEAM_AUTH = {
+  password: '74527697',  // ← 팀원에게 공유할 비밀번호 (한글 OK)
+  apiKey: 'kakyungT-oreum-2026',  // ← 실제 Apps Script CONFIG.apiKey (건드리지 말 것)
+};
+
 let allStudents = [];
 let analysisData = null;
 let charts = {};
@@ -637,48 +643,75 @@ window.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_URL, CURRENT_URL);
     console.log('🔄 옛 URL 자동 갱신:', storedUrl, '→', CURRENT_URL);
   }
-  const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
-  if (url && key) {
-    document.getElementById('auth-url').value = url;
-    document.getElementById('auth-key').value = key;
-    authenticate();
-  } else {
-    // 첫 진입이면 input에 CURRENT_URL을 default로 채워둠
-    document.getElementById('auth-url').value = CURRENT_URL;
+  if (key) {
+    // 저장된 키가 있으면 자동 접속 (URL은 항상 CURRENT_URL 사용)
+    localStorage.setItem(STORAGE_URL, CURRENT_URL);
+    autoAuthenticate(key);
   }
 });
 
 async function authenticate() {
-  const url = document.getElementById('auth-url').value.trim();
-  const key = document.getElementById('auth-key').value.trim();
+  const input = document.getElementById('auth-key').value.trim();
   const errEl = document.getElementById('auth-error');
 
-  if (!url || !key) {
-    errEl.textContent = 'URL과 키를 모두 입력해주세요.';
+  if (!input) {
+    errEl.textContent = '비밀번호를 입력해주세요.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // 팀 비밀번호 → 실제 API 키 변환
+  let apiKey;
+  if (input === TEAM_AUTH.password) {
+    apiKey = TEAM_AUTH.apiKey;
+  } else if (input === TEAM_AUTH.apiKey) {
+    // 옛 사용자 호환 — 실제 API 키 직접 입력해도 통과
+    apiKey = TEAM_AUTH.apiKey;
+  } else {
+    errEl.textContent = '비밀번호가 일치하지 않습니다.';
     errEl.style.display = 'block';
     return;
   }
 
   errEl.style.display = 'none';
+  await doAuthFetch(apiKey);
+}
+
+async function autoAuthenticate(savedKey) {
+  // localStorage에 저장된 키로 자동 접속 (UI 입력 없이)
+  // 옛 사용자가 password를 저장했을 수도, apiKey를 저장했을 수도 있음 → 둘 다 시도
+  let apiKey = null;
+  if (savedKey === TEAM_AUTH.password) apiKey = TEAM_AUTH.apiKey;
+  else if (savedKey === TEAM_AUTH.apiKey) apiKey = TEAM_AUTH.apiKey;
+  if (!apiKey) {
+    // 저장된 키가 이제 안 맞음 → 입력 화면 그대로
+    localStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+  await doAuthFetch(apiKey);
+}
+
+async function doAuthFetch(apiKey) {
+  const errEl = document.getElementById('auth-error');
   try {
-    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=list`);
+    const resp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(apiKey)}&action=list`);
     const data = await resp.json();
     if (data.error === 'forbidden') {
-      errEl.textContent = '인증 키가 일치하지 않습니다.';
+      errEl.textContent = '인증 실패 — 관리자에게 문의해주세요.';
       errEl.style.display = 'block';
       return;
     }
     // 성공
-    localStorage.setItem(STORAGE_URL, url);
-    localStorage.setItem(STORAGE_KEY, key);
+    localStorage.setItem(STORAGE_URL, CURRENT_URL);
+    localStorage.setItem(STORAGE_KEY, apiKey);
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('dashboard-screen').style.display = 'block';
     allStudents = Array.isArray(data) ? data : [];
     await loadAnalysis();
     renderAll();
   } catch (err) {
-    errEl.textContent = '연결 실패: ' + err.message + ' — URL이 올바른지, 웹 앱이 「모든 사용자」 액세스로 배포되었는지 확인해주세요.';
+    errEl.textContent = '연결 실패: ' + err.message;
     errEl.style.display = 'block';
   }
 }
@@ -689,16 +722,14 @@ function logout() {
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById('dashboard-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
-  document.getElementById('auth-url').value = '';
   document.getElementById('auth-key').value = '';
 }
 
 async function loadData() {
-  const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
-  if (!url || !key) return;
+  if (!key) return;
   try {
-    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=list`);
+    const resp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=list`);
     allStudents = await resp.json();
     if (!Array.isArray(allStudents)) allStudents = [];
     await loadAnalysis();
@@ -709,10 +740,9 @@ async function loadData() {
 }
 
 async function loadAnalysis() {
-  const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
   try {
-    const resp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=analysis`);
+    const resp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=analysis`);
     analysisData = await resp.json();
   } catch (err) {
     analysisData = null;
@@ -1101,17 +1131,16 @@ function switchTab(tab) {
 }
 
 async function loadSpecialData() {
-  const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
-  if (!url || !key) return;
+  if (!key) return;
 
   try {
     // 1. 목록
-    const listResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=specialList`);
+    const listResp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=specialList`);
     specialList = await listResp.json();
 
     // 2. 분석
-    const anaResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=specialAnalysis`);
+    const anaResp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=specialAnalysis`);
     specialAnalysisData = await anaResp.json();
 
     // 탭 카운트 업데이트
@@ -1487,15 +1516,14 @@ function openFullResultForName(name) {
 // ═══════════════════════════════════════════════════════════════
 
 async function loadMirrorData() {
-  const url = localStorage.getItem(STORAGE_URL);
   const key = localStorage.getItem(STORAGE_KEY);
-  if (!url || !key) return;
+  if (!key) return;
 
   try {
-    const listResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=mirrorList`);
+    const listResp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=mirrorList`);
     mirrorList = await listResp.json();
 
-    const anaResp = await fetch(`${url}?key=${encodeURIComponent(key)}&action=mirrorAnalysis`);
+    const anaResp = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=mirrorAnalysis`);
     mirrorAnalysisData = await anaResp.json();
 
     document.getElementById('tab-count-mirror').textContent = mirrorList.length;
