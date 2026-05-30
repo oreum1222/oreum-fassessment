@@ -3479,7 +3479,6 @@ body::before{
 
     <!-- 액션 -->
     <div class="report-actions">
-      <button class="btn btn-ghost" onclick="printParentSummary()">📋 학부모 상담용 요약 (한 장)</button>
       <button class="btn btn-ghost" onclick="window.print()">📄 전체 결과 인쇄</button>
       <button class="btn btn-ghost" onclick="restartDiagnosis()">↻ 다시 진단</button>
     </div>
@@ -8301,18 +8300,25 @@ window.onload = function(){
 <!-- ═══════════════════════════════════════════════════════════════
      result-viewer 전용: 미리보기 모드 (대시보드에서 풀 결과지 보기)
      URL 파라미터:
-       ?name=학생이름        → 특별판 결과지
-       ?mirrorCode=가족코드  → 거울 결과지
+       ?name=학생이름              → 특별판 결과지
+       ?mirrorCode=가족코드        → 거울 결과지
+       ?generalName=학생이름       → 일반 진단 결과지
+       ?generalName=...&mode=parentSummary → 학부모 상담용 한 장 요약
      ═══════════════════════════════════════════════════════════════ -->
 <script>
 (function initPreviewMode() {
   const params = new URLSearchParams(window.location.search);
   const targetName = params.get('name');
   const targetMirrorCode = params.get('mirrorCode');
-  if (!targetName && !targetMirrorCode) return; // 파라미터 없으면 일반 진단 흐름 그대로
+  const targetGeneralName = params.get('generalName');
+  const previewMode = params.get('mode'); // 'parentSummary' 또는 없음
+  if (!targetName && !targetMirrorCode && !targetGeneralName) return;
 
   const isMirror = !!targetMirrorCode;
-  const targetLabel = isMirror ? `가족코드 ${targetMirrorCode}` : `${targetName} 학생`;
+  const isGeneral = !!targetGeneralName;
+  const targetLabel = isMirror ? `가족코드 ${targetMirrorCode}`
+                     : isGeneral ? `${targetGeneralName} 학생`
+                     : `${targetName} 학생`;
 
   window.addEventListener('load', async () => {
     document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
@@ -8324,7 +8330,70 @@ window.onload = function(){
     document.body.appendChild(loadEl);
 
     try {
-      if (isMirror) {
+      if (isGeneral) {
+        // ─── 일반 진단 모드 ───
+        const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=list`);
+        const list = await resp.json();
+        if (!Array.isArray(list)) throw new Error('데이터 형식 오류');
+
+        // 동명이인 대비 — 최신 제출 행 사용
+        const matches = list.filter(s => s['이름'] === targetGeneralName);
+        if (matches.length === 0) throw new Error(`'${targetGeneralName}' 학생을 찾을 수 없습니다`);
+        const student = matches.sort((a, b) => String(b['제출일시'] || '').localeCompare(String(a['제출일시'] || '')))[0];
+
+        // state 복원 — index.html의 renderResults / printParentSummary가 읽는 구조 그대로
+        let responses = {}, written = {};
+        try { responses = JSON.parse(student['응답 raw JSON'] || '{}'); } catch(e) {}
+        try { written = JSON.parse(student['서술형 JSON'] || '{}'); } catch(e) {}
+
+        state.version = student['버전'] || 'standard';
+        state.info = {
+          name: student['이름'] || '',
+          school: student['학교'] || '',
+          class: student['학년'] || '',
+          grade: student['국어 등급'] || '',
+          naeshinScore: student['학교 점수'] || '',
+          suneungScore: student['모의고사 점수'] || '',
+          studentPhone: student['학생 연락처'] || '',
+          parentPhone: student['학부모 연락처'] || '',
+          date: student['응시일'] || '',
+        };
+        state.responses = responses;
+        state.written = written;
+        state.questionList = [];
+        state.pageIdx = 0;
+
+        if (previewMode === 'parentSummary') {
+          // 학부모 상담용 한 장 요약 — 별도 창 인쇄 함수 직접 호출
+          if (typeof printParentSummary !== 'function') throw new Error('printParentSummary 함수 없음');
+          loadEl.remove();
+          printParentSummary();
+          // printParentSummary는 새 창에 인쇄 다이얼로그 띄움. 이 창은 닫음.
+          setTimeout(() => { try { window.close(); } catch(e){} }, 500);
+        } else {
+          // 일반 진단 전체 결과지
+          document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
+          const resultScreen = document.getElementById('results');
+          if (!resultScreen) throw new Error('일반 진단 결과 화면 요소(#results) 없음');
+          resultScreen.classList.add('active');
+          if (typeof renderResults !== 'function') throw new Error('renderResults 함수 없음');
+          renderResults();
+
+          // 액션 버튼 정리 — 진단자용 버튼들은 강사 미리보기와 안 맞음
+          const actions = resultScreen.querySelector('.report-actions');
+          if (actions) {
+            actions.innerHTML =
+              '<button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>' +
+              '<button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
+          }
+          // 제출 박스 제거
+          const submitBox = resultScreen.querySelector('.send-result-box, #submit-section, .submit-section');
+          if (submitBox) submitBox.remove();
+
+          document.title = `${targetGeneralName} — 일반 진단 결과지`;
+          loadEl.remove();
+        }
+      } else if (isMirror) {
         // ─── 거울 진단 모드 ───
         const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=mirrorList`);
         const list = await resp.json();
@@ -8338,7 +8407,6 @@ window.onload = function(){
         try { studentResp = JSON.parse(family.학생응답_JSON || '{}'); } catch(e) {}
         try { parentResp = JSON.parse(family.학부모응답_JSON || '{}'); } catch(e) {}
 
-        // mirrorState 채우기 — 강사 보기는 role='student' 기준 (어느 쪽이든 결과는 동일)
         mirrorState.role = 'student';
         mirrorState.code = family.가족코드;
         mirrorState.info = {
@@ -8347,14 +8415,11 @@ window.onload = function(){
           grade: family.학년 || '',
           date: family.응시일 || '',
         };
-        mirrorState.partnerInfo = {
-          parentPhone: family.학부모연락처 || '',
-        };
+        mirrorState.partnerInfo = { parentPhone: family.학부모연락처 || '' };
         mirrorState.responses = studentResp;
         mirrorState.partnerResponses = parentResp;
         mirrorState.qIdx = 0;
 
-        // 결과지 화면 활성화
         document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
         const resultScreen = document.getElementById('mirror-results');
         if (!resultScreen) throw new Error('거울 결과지 화면 요소(#mirror-results) 없음');
@@ -8363,24 +8428,21 @@ window.onload = function(){
         if (typeof renderMirrorResults !== 'function') throw new Error('renderMirrorResults 함수 없음');
         renderMirrorResults();
 
-        // 강사 미리보기 배지
         const stamp = resultScreen.querySelector('.verdict-stamp, .report-stamp');
         if (stamp) {
           stamp.innerHTML = stamp.innerHTML + ' <span style="background:#1a1a1a;color:#c9a84c;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px;">강사 미리보기</span>';
         }
-
-        // 액션 버튼 정리
         const actions = resultScreen.querySelector('.report-actions');
         if (actions) {
           actions.innerHTML =
             '<button class="btn btn-ghost" onclick="window.print()">📄 결과지 인쇄</button>' +
             '<button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
         }
-        // 결과 보관 안내 박스 제거
         const sendBox = resultScreen.querySelector('.send-result-box');
         if (sendBox) sendBox.remove();
 
         document.title = `${family.학생이름 || targetMirrorCode} — 거울 결과지`;
+        loadEl.remove();
       } else {
         // ─── 특별판 진단 모드 ───
         const resp = await fetch(`${CONFIG.sheetUrl}?key=${encodeURIComponent(CONFIG.apiKey)}&action=specialList`);
@@ -8426,9 +8488,8 @@ window.onload = function(){
           stamp.innerHTML = stamp.innerHTML + ' <span style="background:#1a1a1a;color:#c9a84c;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px;">강사 미리보기</span>';
         }
         document.title = `${targetName} — 특별판 결과지`;
+        loadEl.remove();
       }
-
-      loadEl.remove();
     } catch (err) {
       loadEl.innerHTML = `<div style="text-align:center;color:#a53d2a;max-width:480px;padding:24px"><h2 style="margin:0 0 12px;font-size:18px">결과지 로드 실패</h2><p style="margin:0 0 16px;color:#666;font-size:13px;line-height:1.6">${err.message}</p><button onclick="window.close()" style="padding:8px 20px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;cursor:pointer;font-size:12px;letter-spacing:.05em">창 닫기</button></div>`;
     }
