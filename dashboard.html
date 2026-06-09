@@ -391,6 +391,9 @@ body::before{
     <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
       일반 진단 <span class="tab-count" id="tab-count-general">0</span>
     </button>
+    <button class="tab-btn" data-tab="v2" onclick="switchTab('v2')">
+      비재원생·재원생 <span class="tab-badge mirror">v2</span> <span class="tab-count" id="tab-count-v2">0</span>
+    </button>
     <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
       특별판 진단 <span class="tab-badge">한티 MEXX</span> <span class="tab-count" id="tab-count-special">0</span>
     </button>
@@ -472,6 +475,22 @@ body::before{
   </div>
 
   </div><!-- /tab-general -->
+
+  <!-- ════════ v2 진단 탭 (비재원생/재원생) ════════ -->
+  <div id="tab-v2" class="tab-pane">
+    <div class="stat-grid" id="v2-stat-grid" style="margin-bottom:24px"></div>
+    <div class="data-section">
+      <div class="table-controls">
+        <h3 style="margin:0">응답 명단</h3>
+        <input type="text" id="v2-search" placeholder="이름·학교 검색" oninput="renderV2Table()" style="margin-left:auto">
+      </div>
+      <div id="v2-table-wrap"></div>
+      <div id="v2-empty" class="empty-state" style="display:none">
+        <h3>v2 진단 응답이 아직 없습니다</h3>
+        <p>비재원생/재원생 진단에 응답하면 여기에 표시됩니다. (Apps Script에 v2Save 배포 필요)</p>
+      </div>
+    </div>
+  </div><!-- /tab-v2 -->
 
   <!-- ════════ 특별판 진단 탭 ════════ -->
   <div id="tab-special" class="tab-pane">
@@ -1087,16 +1106,226 @@ function openModal(s) {
   document.getElementById('modal-overlay').classList.add('active');
 }
 
-// 일반 진단 — 학부모 상담용 요약 새 창
+// 일반 진단 — 학부모 상담용 한 장 요약 새 창 (시트 데이터로 직접 생성)
 function openGeneralParentSummary(name) {
-  const url = `result-viewer.html?generalName=${encodeURIComponent(name)}&mode=parentSummary`;
-  window.open(url, '_blank', 'width=900,height=1200,scrollbars=yes');
+  const s = allStudents.find(x => x['이름'] === name);
+  if (!s) { alert('학생 데이터를 찾을 수 없습니다.'); return; }
+  const html = buildParentSummaryHTML(s);
+  const win = window.open('', '_blank', 'width=900,height=1200');
+  if (!win) { alert('팝업이 차단되었습니다. 브라우저 팝업 차단을 해제해주세요.'); return; }
+  win.document.write(html);
+  win.document.close();
 }
 
 // 일반 진단 — 전체 결과 인쇄용 풀 결과지 새 창
 function openGeneralFullResult(name) {
   const url = `result-viewer.html?generalName=${encodeURIComponent(name)}`;
   window.open(url, '_blank', 'width=900,height=1200,scrollbars=yes');
+}
+
+// ─── 학부모 상담용 한 장 요약 HTML 빌더 ───
+// 시트에 저장된 8축 점수·판정·주의 신호로 직접 생성 (별도 함수 의존 없음)
+function buildParentSummaryHTML(s) {
+  const sec = {
+    A: parseFloat(s['A.학습성향'] || 0),
+    B: parseFloat(s['B.학습습관'] || 0),
+    C: parseFloat(s['C.영역별이해도'] || 0),
+    D: parseFloat(s['D.국어태도'] || 0),
+    E: parseFloat(s['E.내신대비'] || 0),
+    F: parseFloat(s['F.수능대비'] || 0),
+    G: parseFloat(s['G.시험운영'] || 0),
+    H: parseFloat(s['H.마인드셋'] || 0),
+  };
+  const SECTION_NAMES = { A:'학습 성향', B:'학습 습관', C:'영역별 이해도', D:'국어 태도', E:'내신 대비', F:'수능 대비', G:'시험 운영', H:'마인드셋' };
+  const ACTION_MAP = {
+    A: '풀고 나서 "왜 이게 답인지" 한 줄로 적기 (메타인지 훈련)',
+    B: '주 1회 정해진 복습 시간 확보 + 핸드폰 차단 환경',
+    C: '약점 영역(문학/독서/문법)부터 짧은 지문으로 다시 시작',
+    D: '시험과 무관한 짧은 글(에세이·칼럼) 주 1편 노출',
+    E: '학교 자료 단권화 + 강조점 표시 + 외부 작품 연계',
+    F: '모의고사 시간 측정 풀이 + 〈보기〉 활용 + 근거 짚기',
+    G: '문제당 최대 시간 설정 + 막힘 표시 후 넘기기 루틴',
+    H: '작은 성공 경험을 매주 만들어 기록하기',
+  };
+
+  const sortedAsc = Object.entries(sec).sort((a, b) => a[1] - b[1]);
+  const sortedDesc = Object.entries(sec).sort((a, b) => b[1] - a[1]);
+  const weak2 = sortedAsc.slice(0, 2);
+  const strong2 = sortedDesc.slice(0, 2);
+  const actions = weak2.map(([k]) => ACTION_MAP[k]).filter(Boolean);
+
+  const naeshin = parseFloat(s['내신 대응력'] || 0);
+  const suneung = parseFloat(s['수능 대응력'] || 0);
+  const naeshinScore = s['학교 점수'] || '—';
+  const suneungScore = s['모의고사 점수'] || '—';
+  const grade = s['국어 등급'] || '—';
+
+  const risks = (s['주의 신호'] || '').split(',').map(r => r.trim()).filter(Boolean);
+
+  const dateStr = s['응시일'] || (s['제출일시'] ? String(s['제출일시']).slice(0, 10) : new Date().toISOString().slice(0, 10));
+
+  const escapeHtml = (txt) => String(txt || '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+
+  // 점수대별 코멘트
+  const scoreComment = (v) => {
+    if (v >= 75) return '강점';
+    if (v >= 60) return '안정';
+    if (v >= 45) return '보완 필요';
+    return '집중 보완';
+  };
+  const scoreColor = (v) => {
+    if (v >= 75) return '#3a6b3a';
+    if (v >= 60) return '#5a7a5a';
+    if (v >= 45) return '#8c6620';
+    return '#a53d2a';
+  };
+
+  // 종합 메시지
+  const overallMsg = (() => {
+    const avg = Object.values(sec).reduce((a, b) => a + b, 0) / 8;
+    if (avg >= 70) return `전반적으로 안정된 학습 기반을 갖춘 학생입니다. 강점은 더 다듬고, 보완 영역은 좁은 범위부터 차근히 강화해주시면 좋겠습니다.`;
+    if (avg >= 55) return `기본기는 갖추었으나 영역별 편차가 있는 학생입니다. 약점 영역 1-2개를 집중 보완하면 큰 변화가 가능합니다.`;
+    return `학습 전반의 재정비가 필요한 시점입니다. 가장 약한 두 영역부터 작은 단위로 회복해주시는 걸 권합니다.`;
+  })();
+
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
+<title>${escapeHtml(s['이름'])} 학생 진단 요약 — 가경T</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+@page { size: A4; margin: 14mm 14mm 12mm 14mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55; color: #1a1a1a; background: #fff; font-weight: 450; }
+.page { max-width: 182mm; margin: 0 auto; }
+.head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; margin-bottom: 16px; }
+.head-left h1 { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 20pt; letter-spacing: -.01em; }
+.head-left .subtitle { font-family: 'Nanum Myeongjo', serif; color: #8c6620; font-size: 10pt; font-weight: 700; margin-top: 2px; }
+.head-right { text-align: right; font-size: 9pt; color: #5a554c; line-height: 1.6; }
+.head-right strong { font-family: 'Nanum Myeongjo', serif; color: #1a1a1a; font-weight: 800; font-size: 11pt; display: block; }
+.brand { font-family: 'Nanum Myeongjo', serif; font-weight: 700; color: #8c6620; font-size: 8.5pt; letter-spacing: .05em; margin-bottom: 6px; }
+.section { margin-bottom: 14px; }
+.section-title { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 11pt; color: #8c6620; padding-bottom: 4px; margin-bottom: 8px; border-bottom: 1px solid #d4c896; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.score-card { background: #faf6ec; border: 1px solid #e8dcb9; padding: 10px 14px; }
+.score-card .label { font-size: 9pt; color: #8c6620; letter-spacing: .04em; margin-bottom: 4px; }
+.score-card .value { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 16pt; color: #1a1a1a; }
+.score-card .sub { font-size: 9pt; color: #5a554c; margin-top: 2px; }
+.axis-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+.axis-table td { padding: 5px 8px; border-bottom: 1px solid #ececec; }
+.axis-table .name { width: 35%; font-weight: 700; }
+.axis-table .bar-cell { width: 50%; }
+.axis-table .bar-track { background: #ececec; height: 7px; width: 100%; position: relative; }
+.axis-table .bar-fill { height: 100%; background: #8c6620; }
+.axis-table .score { width: 15%; text-align: right; font-weight: 700; font-family: 'Pretendard'; }
+.verdict-box { background: #1a1a1a; color: #fff; padding: 14px 18px; margin-bottom: 14px; }
+.verdict-box .label { font-size: 9pt; color: #c9a84c; letter-spacing: .1em; margin-bottom: 4px; }
+.verdict-box .value { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 14pt; }
+.bullet-list { list-style: none; padding: 0; }
+.bullet-list li { padding: 6px 0 6px 18px; position: relative; font-size: 10pt; line-height: 1.6; }
+.bullet-list li::before { content: '·'; position: absolute; left: 6px; font-weight: 800; color: #8c6620; }
+.risk-box { background: #fff5f0; border-left: 3px solid #d4533b; padding: 10px 14px; margin-bottom: 10px; }
+.risk-box .label { font-size: 9pt; color: #a53d2a; font-weight: 700; margin-bottom: 4px; }
+.risk-box .item { font-size: 10pt; color: #444; padding: 2px 0; }
+.foot { margin-top: 24px; padding-top: 10px; border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; font-size: 9pt; color: #5a554c; }
+.foot-mark { font-family: 'Nanum Myeongjo', serif; font-weight: 800; color: #8c6620; letter-spacing: .05em; }
+.foot-sign { font-family: 'Nanum Myeongjo', serif; font-weight: 700; }
+.overall-msg { background: #faf6ec; padding: 12px 16px; font-size: 10.5pt; line-height: 1.7; color: #1a1a1a; border-left: 3px solid #8c6620; }
+.print-btn { position: fixed; top: 16px; right: 16px; padding: 8px 16px; background: #1a1a1a; color: #c9a84c; border: 1px solid #c9a84c; font-size: 12px; cursor: pointer; letter-spacing: .05em; font-family: 'Pretendard'; }
+@media print { .print-btn { display: none; } }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">📄 인쇄</button>
+<div class="page">
+  <div class="brand">가경 국어 연구소 · 학부모 상담용 한 장 요약</div>
+  <div class="head">
+    <div class="head-left">
+      <h1>${escapeHtml(s['이름'])} 학생</h1>
+      <div class="subtitle">국어 학습 진단 결과</div>
+    </div>
+    <div class="head-right">
+      <strong>${escapeHtml(s['학교'])} ${escapeHtml(s['학년'])}</strong>
+      응시일 ${escapeHtml(dateStr)}<br>
+      국어 등급 ${escapeHtml(grade)}<br>
+      학교 ${escapeHtml(naeshinScore)} · 모의고사 ${escapeHtml(suneungScore)}
+    </div>
+  </div>
+
+  <div class="verdict-box">
+    <div class="label">진단 유형</div>
+    <div class="value">${escapeHtml(s['4분면 유형'] || '미분류')}${s['16유형 이름'] ? ` · ${escapeHtml(s['16유형 이름'])}` : ''}</div>
+  </div>
+
+  <div class="section">
+    <div class="overall-msg">${overallMsg}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">대응력 진단</div>
+    <div class="grid-2">
+      <div class="score-card">
+        <div class="label">내신 대응력</div>
+        <div class="value">${naeshin}<span style="font-size:10pt;color:#888"> / 100</span></div>
+        <div class="sub" style="color:${scoreColor(naeshin)}">${scoreComment(naeshin)}</div>
+      </div>
+      <div class="score-card">
+        <div class="label">수능 대응력</div>
+        <div class="value">${suneung}<span style="font-size:10pt;color:#888"> / 100</span></div>
+        <div class="sub" style="color:${scoreColor(suneung)}">${scoreComment(suneung)}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">8축 영역별 점수</div>
+    <table class="axis-table">
+      ${Object.entries(sec).map(([k, v]) => `
+        <tr>
+          <td class="name">${SECTION_NAMES[k]}</td>
+          <td class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${Math.max(2, v)}%;background:${scoreColor(v)}"></div></div></td>
+          <td class="score" style="color:${scoreColor(v)}">${v}</td>
+        </tr>
+      `).join('')}
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="section">
+      <div class="section-title">강점 영역</div>
+      <ul class="bullet-list">
+        ${strong2.map(([k, v]) => `<li>${SECTION_NAMES[k]} <strong style="color:${scoreColor(v)}">(${v})</strong></li>`).join('')}
+      </ul>
+    </div>
+    <div class="section">
+      <div class="section-title">보완 영역</div>
+      <ul class="bullet-list">
+        ${weak2.map(([k, v]) => `<li>${SECTION_NAMES[k]} <strong style="color:${scoreColor(v)}">(${v})</strong></li>`).join('')}
+      </ul>
+    </div>
+  </div>
+
+  ${risks.length > 0 ? `
+    <div class="section">
+      <div class="risk-box">
+        <div class="label">⚠ 주의 신호</div>
+        ${risks.map(r => `<div class="item">· ${escapeHtml(r)}</div>`).join('')}
+      </div>
+    </div>
+  ` : ''}
+
+  <div class="section">
+    <div class="section-title">가경T 처방 — 우선 실행 2가지</div>
+    <ul class="bullet-list">
+      ${actions.map((a, i) => `<li><strong>${i + 1}. ${escapeHtml(a)}</strong></li>`).join('')}
+    </ul>
+  </div>
+
+  <div class="foot">
+    <div class="foot-mark">가경 국어 연구소</div>
+    <div class="foot-sign">— 가경T</div>
+  </div>
+</div>
+</body></html>`;
 }
 
 function closeModal() {
@@ -1128,6 +1357,67 @@ function switchTab(tab) {
   if (tab === 'mirror' && !mirrorChartsRendered) {
     loadMirrorData();
   }
+  if (tab === 'v2' && !v2Rendered) {
+    loadV2Data();
+  }
+}
+
+// ═══════════ v2 진단 (비재원생/재원생) ═══════════
+let v2List = [];
+let v2Ana = null;
+let v2Rendered = false;
+
+async function loadV2Data() {
+  const key = localStorage.getItem(STORAGE_KEY);
+  if (!key) return;
+  try {
+    const lr = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=v2List`);
+    v2List = await lr.json();
+    if (!Array.isArray(v2List)) v2List = [];
+    const ar = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=v2Analysis`);
+    v2Ana = await ar.json();
+    document.getElementById('tab-count-v2').textContent = v2List.length;
+    renderV2Dashboard();
+    renderV2Table();
+    v2Rendered = true;
+  } catch (err) {
+    console.error('v2 데이터 로드 실패:', err);
+    document.getElementById('v2-stat-grid').innerHTML =
+      `<div class="stat-card" style="grid-column:1/-1;color:var(--crimson)">데이터 로드 실패: ${err.message} (Apps Script에 v2 배포 필요)</div>`;
+  }
+}
+
+function renderV2Dashboard() {
+  const a = v2Ana || {};
+  const pc = a.personaCounts || {};
+  const personaTop = Object.entries(pc).sort((x,y)=>y[1]-x[1]).map(([k,v])=>`${k} ${v}`).join(' · ') || '—';
+  document.getElementById('v2-stat-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">총 응답</div><div class="stat-value">${a.totalCount||0}</div></div>
+    <div class="stat-card"><div class="stat-label">고위험 신호(누적)</div><div class="stat-value">${a.totalStars||0}</div></div>
+    <div class="stat-card"><div class="stat-label">"알았다 착각"(누적)</div><div class="stat-value">${a.totalChakgak||0}</div></div>
+    <div class="stat-card" style="grid-column:span 2"><div class="stat-label">페르소나 분포</div><div class="stat-value" style="font-size:15px;line-height:1.5">${personaTop}</div></div>`;
+}
+
+function renderV2Table() {
+  const q = (document.getElementById('v2-search').value || '').trim();
+  let rows = v2List;
+  if (q) rows = rows.filter(r => (r['이름']||'').includes(q) || (r['학교']||'').includes(q));
+  const wrap = document.getElementById('v2-table-wrap');
+  const empty = document.getElementById('v2-empty');
+  if (!rows.length) { wrap.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  let h = `<table class="data-table"><thead><tr><th>응답시각</th><th>이름</th><th>학교</th><th>학년</th><th>버전</th><th>페르소나</th><th>고위험</th><th>착각</th><th>부모</th><th></th></tr></thead><tbody>`;
+  rows.forEach(r => {
+    const dt = r['제출시각'] ? String(r['제출시각']).slice(0,10) : '';
+    const nm = (r['이름']||'').replace(/'/g,'');
+    h += `<tr style="cursor:pointer" onclick="openV2Result('${nm}')"><td>${dt}</td><td>${r['이름']||''}</td><td>${r['학교']||''}</td><td>${r['학년']||''}</td><td>${r['버전']||''}</td><td><strong>${r['페르소나']||''}</strong></td><td>${r['고위험수']||0}</td><td>${r['착각수']||0}</td><td>${r['부모응답']==='Y'?'✓':'—'}</td><td style="color:var(--olive)">풀 결과지 →</td></tr>`;
+  });
+  h += `</tbody></table>`;
+  wrap.innerHTML = h;
+}
+function openV2Result(name){
+  if(!name) return;
+  window.open('result-viewer.html?v2Name=' + encodeURIComponent(name), '_blank');
 }
 
 async function loadSpecialData() {

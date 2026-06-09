@@ -1,0 +1,12 @@
+# 배포 제외 (GitHub Pages = 공개. 내부 문서·백엔드·스크래치 제외)
+_preview.html
+Code.gs
+CLAUDE.md
+design-*.md
+문항개편_*.md
+문항개편_*.docx
+문항검토_*.md
+문항검토_*.docx
+미니과제_*.md
+미니과제_*.docx
+*.docx

@@ -2624,6 +2624,250 @@ body::before{
   }
   .parent-self-tag{color:#8b3a3a !important}
 }
+
+/* ═══════════════════════════════════════════════════════════
+   [오름] 국어 특별판 — 제이드 틸 테마 (Palette ③)
+   MEXX(파랑)와 분리: 오름 화면(#oreum-*)·오름 카드만 스코프
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --o-bg:#071A1B; --o-card:#0F2A2A; --o-card-hi:#143534;
+  --o-mint:#2DD4BF; --o-mint2:#14B8A6; --o-mint-deep:#0E7A70;
+  --o-ink:#ECFEFB; --o-ink2:#C2E8E2; --o-mut:#7B9E99;
+  --o-line:rgba(45,212,191,0.20);
+  --o-amber:#E8B27A; --o-amber-ln:rgba(232,178,122,0.32); --o-amber-bg:rgba(232,178,122,0.08);
+}
+
+/* 오름 화면 진입 시 전체 배경 딥그린 */
+body.oreum-skin{ background:var(--o-bg); }
+
+/* ── 웰컴 화면 오름 카드 (블루→그린) ── */
+.version-card.special[data-version="oreum"]{
+  border-color:rgba(45,212,191,0.42);
+  background:linear-gradient(180deg, rgba(20,184,166,0.08) 0%, var(--bg-elevated) 100%);
+}
+.version-card.special[data-version="oreum"]::before{
+  background:linear-gradient(90deg, var(--o-mint-deep) 0%, var(--o-mint) 50%, var(--o-mint-deep) 100%);
+  box-shadow:0 0 10px rgba(45,212,191,0.5);
+}
+.version-card.special[data-version="oreum"]::after{
+  background:radial-gradient(circle at top right, rgba(45,212,191,0.12) 0%, transparent 70%);
+}
+.version-card.special[data-version="oreum"] .version-num{ color:var(--o-mint); }
+.version-card.special[data-version="oreum"] h4{ color:#d6f5f0; }
+.version-card.special[data-version="oreum"] .version-meta strong{ color:var(--o-mint); }
+.version-card.special[data-version="oreum"] .version-badge-special{
+  background:linear-gradient(135deg, var(--o-mint-deep) 0%, var(--o-mint) 100%); color:#08160d;
+  box-shadow:0 3px 12px -2px rgba(45,212,191,0.5), 0 0 0 1px rgba(45,212,191,0.2);
+}
+.version-card.special[data-version="oreum"]:hover{
+  border-color:#6EE7D6;
+  background:linear-gradient(180deg, rgba(45,212,191,0.14) 0%, var(--bg-elevated) 100%);
+  box-shadow:0 14px 48px -12px rgba(20,184,166,0.55), 0 0 0 1px rgba(45,212,191,0.3), inset 0 0 60px -20px rgba(20,184,166,0.18);
+}
+.version-card.special[data-version="oreum"]:hover .version-num{ color:#6EE7D6; text-shadow:0 0 16px rgba(45,212,191,0.55); }
+.version-card.special[data-version="oreum"]:hover::before{ height:3px; background:linear-gradient(90deg,var(--o-mint) 0%,#9FF0E4 50%,var(--o-mint) 100%); box-shadow:0 0 20px rgba(169,227,192,0.8); }
+.version-card.special[data-version="oreum"]:hover::after{ width:220px;height:220px; background:radial-gradient(circle at top right, rgba(169,227,192,0.22) 0%, transparent 70%); }
+
+/* ── 오름 스크린 공통: special 텍스트/요소 그린화 ── */
+#oreum-role-select .special-tag{ color:var(--o-mint); }
+#oreum-role-select .special-title{ color:#d6f5f0; text-shadow:0 2px 32px rgba(45,212,191,0.25); }
+#oreum-role-select .version-card.special{
+  border-color:rgba(45,212,191,0.4);
+  background:linear-gradient(180deg, rgba(20,184,166,0.07) 0%, var(--bg-elevated) 100%);
+}
+#oreum-role-select .version-card.special::before{ background:linear-gradient(90deg,var(--o-mint-deep),var(--o-mint),var(--o-mint-deep)); box-shadow:0 0 10px rgba(45,212,191,0.5); }
+#oreum-role-select .version-card.special::after{ background:radial-gradient(circle at top right, rgba(45,212,191,0.12), transparent 70%); }
+#oreum-role-select .version-card.special .version-num{ color:var(--o-mint); }
+#oreum-role-select .version-card.special h4{ color:#d6f5f0; }
+#oreum-role-select .version-card.special p{ color:var(--o-mut); }
+#oreum-role-select .version-card.special .version-meta strong{ color:var(--o-mint); }
+#oreum-role-select .version-card.special:hover{ border-color:#6EE7D6; box-shadow:0 12px 40px -12px rgba(20,184,166,0.5); transform:translateY(-2px); }
+#oreum-role-select .version-card.special:hover .version-num{ color:#6EE7D6; }
+
+/* 버튼 (민트 + 다크 텍스트, 이미지2 스타일) */
+#oreum-role-select .btn-primary.special,
+#oreum-info .btn-primary.special,
+#oreum-quiz .btn-primary.special,
+#oreum-results .btn-primary.special{
+  background:linear-gradient(135deg, var(--o-mint) 0%, var(--o-mint2) 100%); color:#08160d;
+  box-shadow:0 4px 16px -4px rgba(20,184,166,0.5);
+}
+#oreum-info .btn-primary.special:hover,
+#oreum-quiz .btn-primary.special:hover,
+#oreum-results .btn-primary.special:hover{
+  background:linear-gradient(135deg, #6EE7D6 0%, var(--o-mint) 100%);
+  box-shadow:0 6px 24px -4px rgba(45,212,191,0.6);
+}
+
+/* 정보 입력 */
+#oreum-info .special-stamp{ color:var(--o-mint) !important; }
+#oreum-info .info-note.special{
+  background:linear-gradient(180deg, rgba(20,184,166,0.07) 0%, var(--bg-elevated) 100%);
+  border-left-color:var(--o-mint2);
+}
+#oreum-info .info-note.special strong{ color:var(--o-mint); }
+
+/* 응답 화면 */
+#oreum-quiz .q-progress-fill.special{ background:linear-gradient(90deg, var(--o-mint-deep), var(--o-mint)); box-shadow:0 0 8px rgba(45,212,191,0.5); }
+#oreum-quiz .q-mode.special-mode{ color:var(--o-mint); border-color:var(--o-mint-deep); background:rgba(20,184,166,0.1); }
+#oreum-quiz .scale-row .scale-btn:hover{ border-color:var(--o-mint); background:rgba(45,212,191,0.08); }
+#oreum-quiz .scale-row .scale-btn.selected{ background:var(--o-mint) !important; border-color:var(--o-mint) !important; }
+#oreum-quiz .scale-row .scale-btn.selected .scale-num,
+#oreum-quiz .scale-row .scale-btn.selected .scale-label{ color:#08160d !important; }
+
+/* ── 결과지 (다크그린 화면) ── */
+#oreum-results .report-header.special{ border-bottom-color:var(--o-mint2); }
+#oreum-results .report-stamp.special{ color:var(--o-mint); }
+#oreum-results .report-title{ color:var(--o-ink); }
+#oreum-results .report-meta{ color:var(--o-mut); }
+#oreum-results .section-title{ color:var(--o-ink); }
+#oreum-results .section-num{ color:var(--o-mint); }
+#oreum-results .section-lead{ color:var(--o-mut); }
+#oreum-results .verdict-card.special{
+  background:var(--o-card); border-color:rgba(45,212,191,0.35);
+  box-shadow:0 0 60px -12px rgba(20,184,166,0.22), 0 8px 32px -8px rgba(0,0,0,0.6);
+}
+#oreum-results .verdict-card.special::before{ background:linear-gradient(90deg, var(--o-mint-deep), var(--o-mint), var(--o-mint-deep)); box-shadow:0 0 16px rgba(45,212,191,0.6); }
+#oreum-results .verdict-card.special .verdict-stamp{ color:var(--o-mint); }
+#oreum-results .verdict-card.special .verdict-name{ font-family:var(--serif); font-size:26px; font-weight:800; color:var(--o-ink); margin:6px 0; }
+#oreum-results .verdict-card.special .verdict-desc{ color:var(--o-ink2); line-height:1.7; margin:0; }
+#oreum-results .send-result-box{ background:var(--o-card); border-color:var(--o-line); }
+#oreum-results .send-result-title{ color:var(--o-ink); }
+#oreum-results .send-result-desc,#oreum-results .send-result-note{ color:var(--o-mut); }
+#oreum-results .footer-mark{ color:var(--o-mint); }
+#oreum-results .footer{ color:var(--o-mut); }
+
+/* 결과지 본문 카드 (renderOreumResults에서 .o-* 클래스 사용) */
+#oreum-results .o-card{ background:var(--o-card); border:1px solid var(--o-line); border-radius:14px; padding:20px 22px; color:var(--o-ink); line-height:1.7; }
+#oreum-results .o-school-card{ background:var(--o-card); border:1px solid var(--o-line); border-radius:14px; padding:20px 22px; margin-bottom:14px; }
+#oreum-results .o-school-card.rank1{ background:linear-gradient(180deg, var(--o-card-hi), var(--o-card)); border-color:rgba(45,212,191,0.45); box-shadow:0 0 40px -16px rgba(20,184,166,0.35); }
+#oreum-results .o-school-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+#oreum-results .o-rank{ font-size:13px; color:var(--o-mint2); font-weight:700; }
+#oreum-results .o-fit{ font-size:13px; color:var(--o-mut); }
+#oreum-results .o-fit strong{ font-size:18px; color:var(--o-mint); }
+#oreum-results .o-school-name{ font-family:var(--serif); font-size:24px; color:var(--o-ink); margin:6px 0 2px; }
+#oreum-results .o-school-name small{ font-size:14px; color:var(--o-mint2); }
+#oreum-results .o-school-card .o-wants{ margin:8px 0 6px; color:var(--o-ink2); }
+#oreum-results .o-school-card .o-style{ margin:0; color:var(--o-mut); font-size:14px; }
+#oreum-results .o-interest{ border:1px dashed var(--o-mint2); border-radius:12px; padding:16px 18px; margin-top:6px; background:rgba(20,184,166,0.06); }
+#oreum-results .o-interest .o-rank{ color:var(--o-mint); }
+#oreum-results .o-interest p{ margin:6px 0 0; color:var(--o-ink2); }
+#oreum-results .o-axis-row{ margin-bottom:14px; }
+#oreum-results .o-axis-top{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px; }
+#oreum-results .o-axis-label{ color:var(--o-ink); }
+#oreum-results .o-axis-need{ color:var(--o-mut); font-size:12px; }
+#oreum-results .o-axis-val{ color:var(--o-mint); font-weight:700; }
+#oreum-results .o-bar-track{ background:#06201F; border-radius:6px; height:12px; overflow:hidden; }
+#oreum-results .o-bar-fill{ height:100%; background:linear-gradient(90deg, var(--o-mint2), var(--o-mint)); }
+#oreum-results .o-risk{ border:1px solid var(--o-amber-ln); background:var(--o-amber-bg); border-radius:12px; padding:16px 18px; margin-bottom:12px; }
+#oreum-results .o-risk-title{ font-family:var(--serif); font-size:17px; color:var(--o-amber); margin-bottom:4px; }
+#oreum-results .o-risk p{ margin:0 0 6px; color:var(--o-ink2); }
+#oreum-results .o-rx{ margin:0; color:var(--o-mint); font-size:14px; }
+#oreum-results .o-ok{ border:1px solid rgba(45,212,191,0.3); background:rgba(20,184,166,0.08); border-radius:12px; padding:16px 18px; color:#a9e9df; line-height:1.6; }
+#oreum-results .o-rx-card{ background:linear-gradient(180deg, var(--o-card-hi), var(--o-card)); border:1px solid rgba(45,212,191,0.3); border-radius:14px; padding:20px 22px; line-height:1.7; color:var(--o-ink2); }
+#oreum-results .o-rx-card strong{ color:var(--o-ink); }
+#oreum-results .o-rx-card .o-sol{ color:var(--o-mut); font-size:14px; }
+#oreum-results .o-closing{ text-align:center; margin:28px 0 4px; font-family:var(--serif); font-size:18px; color:var(--o-ink); }
+#oreum-results .o-closing-sub{ text-align:center; color:var(--o-mint2); font-size:13px; }
+
+/* ── 인쇄 버튼(라이트·잉크 절약): body.oreum-print-light + @media print ── */
+@media print{
+  body.oreum-print-light{ background:#fff !important; }
+  body.oreum-print-light #oreum-results .report-header.special{ border-bottom-color:#0d8074; }
+  body.oreum-print-light #oreum-results .report-title,
+  body.oreum-print-light #oreum-results .section-title,
+  body.oreum-print-light #oreum-results .verdict-card.special .verdict-name,
+  body.oreum-print-light #oreum-results .o-school-name,
+  body.oreum-print-light #oreum-results .o-axis-label{ color:#14331f !important; }
+  body.oreum-print-light #oreum-results .report-stamp.special,
+  body.oreum-print-light #oreum-results .section-num,
+  body.oreum-print-light #oreum-results .verdict-card.special .verdict-stamp,
+  body.oreum-print-light #oreum-results .o-fit strong,
+  body.oreum-print-light #oreum-results .o-axis-val,
+  body.oreum-print-light #oreum-results .o-rx,
+  body.oreum-print-light #oreum-results .footer-mark{ color:#0d8074 !important; }
+  body.oreum-print-light #oreum-results .verdict-card.special,
+  body.oreum-print-light #oreum-results .o-card,
+  body.oreum-print-light #oreum-results .o-school-card,
+  body.oreum-print-light #oreum-results .o-rx-card,
+  body.oreum-print-light #oreum-results .send-result-box{ background:#fff !important; border-color:#cfe6d6 !important; color:#1a2a20 !important; box-shadow:none !important; }
+  body.oreum-print-light #oreum-results .o-school-card.rank1,
+  body.oreum-print-light #oreum-results .o-rx-card{ background:#f3f8f4 !important; }
+  body.oreum-print-light #oreum-results .o-wants,
+  body.oreum-print-light #oreum-results .o-rx-card,
+  body.oreum-print-light #oreum-results .verdict-card.special .verdict-desc{ color:#26392d !important; }
+  body.oreum-print-light #oreum-results .o-style,
+  body.oreum-print-light #oreum-results .section-lead,
+  body.oreum-print-light #oreum-results .o-axis-need{ color:#5a7263 !important; }
+  body.oreum-print-light #oreum-results .o-bar-track{ background:#e6efe8 !important; }
+  body.oreum-print-light #oreum-results .o-bar-fill{ background:#14b8a6 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body.oreum-print-light #oreum-results .o-risk{ background:#fdf6ee !important; border-color:#e3c9a8 !important; }
+  body.oreum-print-light #oreum-results .o-risk-title{ color:#9a5a22 !important; }
+  body.oreum-print-light #oreum-results .o-rank,
+  body.oreum-print-light #oreum-results .o-school-name small{ color:#0d8074 !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   v2 진단 (비재원생/재원생) — 데이터 기반 UI · 제이드 틸
+   장면 단일선택 · 미니과제 · 랭킹 · 주의력 · 부모 선택
+   ═══════════════════════════════════════════════════════════ */
+body.v2-skin{ background:var(--o-bg); }
+#v2-quiz .q-progress-fill, #v2-quiz .q-mode{ }
+#v2-quiz .q-progress-fill{ background:linear-gradient(90deg,var(--o-mint-deep),var(--o-mint)); box-shadow:0 0 8px rgba(45,212,191,.5); }
+#v2-quiz .q-mode{ color:var(--o-mint); border:1px solid var(--o-mint-deep); background:rgba(45,212,191,.10); font-family:var(--serif); font-weight:700; font-size:11px; letter-spacing:.06em; padding:4px 10px; margin-left:auto; }
+
+.v2-part{ font-family:var(--serif); font-weight:700; font-size:12px; letter-spacing:.06em; color:var(--o-mint); margin-bottom:10px; }
+.v2-q{ font-size:18px; font-weight:700; line-height:1.6; color:var(--o-ink); margin-bottom:18px; }
+.v2-q .qn{ color:var(--o-mint); margin-right:8px; }
+
+/* 장면 단일선택 — 세로 버튼 */
+.v2-choices{ display:flex; flex-direction:column; gap:10px; }
+.v2-choice{ text-align:left; width:100%; background:var(--o-card); border:1px solid var(--o-line); border-radius:12px; padding:15px 18px; color:var(--o-ink2); font-size:15px; line-height:1.5; cursor:pointer; transition:all .15s ease; display:flex; gap:10px; align-items:flex-start; }
+.v2-choice .mk{ color:var(--o-mint2); font-weight:800; flex:0 0 auto; }
+.v2-choice:hover{ border-color:var(--o-mint); background:var(--o-card-hi); }
+.v2-choice.sel{ border-color:var(--o-mint); background:rgba(45,212,191,.12); color:var(--o-ink); box-shadow:0 0 0 1px var(--o-mint), 0 8px 28px -12px rgba(45,212,191,.5); }
+.v2-choice.sel .mk{ color:var(--o-mint); }
+
+/* 미니과제 */
+.v2-mt-tag{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em; color:#06140d; background:var(--o-mint); padding:3px 10px; border-radius:20px; margin-bottom:12px; }
+.v2-passage{ background:var(--o-card); border:1px solid var(--o-line); border-left:3px solid var(--o-mint); border-radius:10px; padding:16px 18px; color:var(--o-ink); line-height:1.75; font-size:15px; margin-bottom:16px; white-space:pre-line; }
+.v2-sub{ font-size:13px; color:var(--o-mut); margin:14px 0 8px; }
+.v2-textarea{ width:100%; min-height:70px; background:var(--o-card); border:1px solid var(--o-line); border-radius:10px; padding:12px 14px; color:var(--o-ink); font-size:14px; line-height:1.6; resize:vertical; font-family:inherit; }
+.v2-textarea:focus{ outline:none; border-color:var(--o-mint); }
+.v2-conf{ display:flex; gap:8px; margin-top:6px; }
+.v2-conf-chip{ flex:1; text-align:center; background:var(--o-card); border:1px solid var(--o-line); border-radius:10px; padding:10px 6px; color:var(--o-ink2); font-size:13px; cursor:pointer; transition:all .15s; }
+.v2-conf-chip:hover{ border-color:var(--o-mint); }
+.v2-conf-chip.sel{ border-color:var(--o-mint); background:rgba(45,212,191,.12); color:var(--o-ink); box-shadow:0 0 0 1px var(--o-mint); }
+
+/* 랭킹 */
+.v2-rank-help{ font-size:13px; color:var(--o-mut); margin-bottom:12px; }
+.v2-rank-list{ display:flex; flex-direction:column; gap:9px; }
+.v2-rank-item{ display:flex; align-items:center; gap:12px; background:var(--o-card); border:1px solid var(--o-line); border-radius:12px; padding:14px 16px; color:var(--o-ink2); font-size:15px; cursor:pointer; transition:all .15s; }
+.v2-rank-item:hover{ border-color:var(--o-mint); }
+.v2-rank-item.picked{ border-color:var(--o-mint); background:rgba(45,212,191,.10); color:var(--o-ink); }
+.v2-rank-badge{ flex:0 0 28px; width:28px; height:28px; border-radius:50%; border:1px solid var(--o-line); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:var(--o-mut); }
+.v2-rank-item.picked .v2-rank-badge{ background:var(--o-mint); color:#06140d; border-color:var(--o-mint); }
+
+/* 부모 선택 분기 */
+#v2-parent-bridge .v2-bridge-card{ background:var(--o-card); border:1px solid var(--o-line); border-radius:18px; padding:30px 26px; text-align:center; box-shadow:0 20px 60px -28px rgba(0,0,0,.7); }
+.v2-bridge-card h2{ font-family:var(--serif); font-size:23px; color:var(--o-ink); margin-bottom:10px; }
+.v2-bridge-card p{ color:var(--o-ink2); line-height:1.7; font-size:15px; }
+.v2-bridge-card .hint{ color:var(--o-mut); font-size:13px; margin-top:6px; }
+
+/* v2 결과(임시) */
+#v2-results .v2-r-card{ background:var(--o-card); border:1px solid var(--o-line); border-radius:14px; padding:22px 24px; color:var(--o-ink2); line-height:1.7; }
+#v2-results .v2-r-card b{ color:var(--o-ink); }
+#v2-results .v2-axis{ margin:10px 0; }
+#v2-results .v2-axis .lab{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:4px; }
+#v2-results .v2-axis .lab .v{ color:var(--o-mint); font-weight:700; }
+#v2-results .v2-bar{ height:10px; border-radius:6px; background:#06201f; overflow:hidden; }
+#v2-results .v2-bar > div{ height:100%; background:linear-gradient(90deg,var(--o-mint2),var(--o-mint)); }
+#v2-results .report-header.special{ border-bottom-color:var(--o-mint2); }
+#v2-results .report-stamp.special{ color:var(--o-mint); }
+#v2-results .report-title{ color:var(--o-ink); }
+#v2-results .report-meta{ color:var(--o-mut); }
+#v2-results .footer{ color:var(--o-mut); }
+#v2-results .footer-mark{ color:var(--o-mint); }
 </style>
 </head>
 <body>
@@ -2693,54 +2937,64 @@ body::before{
   <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">진단 버전을 골라주세요</h3>
 
   <div class="version-grid">
-    <!-- 1번: 특별판 (한티 MEXX 한정) - 최우선 노출 -->
-    <div class="version-card special" data-version="special">
+    <!-- 1번: [오름] 국어 학원 특별판 — 군포 6개교 성향별 학교 추천 (최우선 노출) -->
+    <div class="version-card special" data-version="oreum">
       <div class="version-num">1</div>
       <div class="version-info">
-        <h4>특별판 <span class="version-badge-special">한티 MEXX 한정</span></h4>
-        <p>2026.05.27(수) 한티 MEXX 설명회 참여자 한정 진단<br>자녀 학습 성향에 따른 고등학교 추천</p>
+        <h4>특별판 <span class="version-badge-special">[오름] 국어 한정</span></h4>
+        <p>"나에게 어울리는 관내 고등학교는?"<br>군포 6개교 성향별 학교 추천 진단</p>
       </div>
-      <div class="version-meta"><strong>—</strong><br>questions</div>
+      <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
 
-    <!-- 2번: 간편형 -->
+    <!-- 2번: 비재원생 진단 (구 간편형) -->
     <div class="version-card" data-version="brief">
       <div class="version-num">2</div>
       <div class="version-info">
-        <h4>간편형</h4>
+        <h4>비재원생 진단</h4>
         <p>핵심 40문항 · 5분 소요<br>첫 상담 전 빠르게 알아보기</p>
       </div>
       <div class="version-meta"><strong>40</strong><br>questions</div>
     </div>
 
-    <!-- 3번: 표준형 (권장) -->
+    <!-- 3번: 재원생 첫 진단 (구 표준형, 권장) -->
     <div class="version-card recommended" data-version="standard">
       <div class="version-num">3</div>
       <div class="version-info">
-        <h4>표준형</h4>
-        <p>핵심 80문항 · 10분 소요<br>신규 학생 진단</p>
+        <h4>재원생 첫 진단</h4>
+        <p>핵심 80문항 · 10분 소요<br>신규 재원생 진단</p>
       </div>
       <div class="version-meta"><strong>80</strong><br>questions</div>
     </div>
 
-    <!-- 4번: 정밀형 -->
+    <!-- 4번: 재원생 심층 진단 (구 정밀형) -->
     <div class="version-card" data-version="precision">
       <div class="version-num">4</div>
       <div class="version-info">
-        <h4>정밀형</h4>
+        <h4>재원생 심층 진단</h4>
         <p>핵심 100문항 · 15분 소요<br>국어 학습의 약점 진단, 심층 상담용</p>
       </div>
       <div class="version-meta"><strong>100</strong><br>questions</div>
     </div>
 
-    <!-- 5번: 거울형 -->
+    <!-- 5번: 거울 진단 (구 거울형) -->
     <div class="version-card mirror" data-version="mirror">
       <div class="version-num">5</div>
       <div class="version-info">
-        <h4>거울형 <span class="version-badge">NEW</span></h4>
+        <h4>거울 진단 <span class="version-badge">NEW</span></h4>
         <p>부모와 자녀 간 메타인지 진단<br>"내가 보는 나, 부모님이 보는 자녀"</p>
       </div>
       <div class="version-meta"><strong>30</strong><br>questions</div>
+    </div>
+
+    <!-- 6번: 특별판 (한티 MEXX 한정) — 종료된 설명회용, 맨 아래 -->
+    <div class="version-card special" data-version="special">
+      <div class="version-num">6</div>
+      <div class="version-info">
+        <h4>특별판 <span class="version-badge-special">한티 MEXX 한정</span></h4>
+        <p>2026.05.27(수) 한티 MEXX 설명회 참여자 한정 진단<br>자녀 학습 성향에 따른 고등학교 추천</p>
+      </div>
+      <div class="version-meta"><strong>—</strong><br>questions</div>
     </div>
   </div>
 
@@ -3367,6 +3621,265 @@ body::before{
   </div>
 </section>
 
+<!-- ═══════════════════════════════════ [오름] 특별판 역할 선택 ═══════════════════════════════════ -->
+<section id="oreum-role-select" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div style="height:32px"></div>
+  <p class="hero-meta special-tag" style="text-align:center">특별판 · [오름] 국어 한정 · 군포 6개교</p>
+  <h1 class="title-serif hero-title special-title">나에게 어울리는<br>관내 고등학교는?</h1>
+  <p class="hero-meta" style="text-align:center;font-style:italic">학습 성향에 가장 잘 맞는 군포 관내 고등학교를 찾아드립니다</p>
+
+  <div class="divider-dot">◆</div>
+
+  <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">누가 응답하시나요?</h3>
+
+  <div class="role-choice">
+    <div class="version-card special" onclick="oreumChooseRole('student')">
+      <div class="version-num">학생</div>
+      <div class="version-info">
+        <h4>학생이 직접 응답합니다</h4>
+        <p>본인의 학습 처리 방식을 30문항으로 진단합니다. 군포 관내 6개교 중 어느 학교 출제 스타일과 가장 잘 맞는지 분석합니다.</p>
+      </div>
+      <div class="version-meta"><strong>30</strong><br>questions</div>
+    </div>
+
+    <div class="version-card special parent" onclick="oreumChooseRole('parent')">
+      <div class="version-num">학부모</div>
+      <div class="version-info">
+        <h4>학부모님이 응답합니다</h4>
+        <p>일상에서 관찰한 자녀의 모습을 37문항으로 진단합니다. 자녀의 학습 성향, 학교 매칭, 그리고 고등 내신 위험 신호까지 분석합니다.</p>
+      </div>
+      <div class="version-meta"><strong>37</strong><br>questions</div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:36px">
+    <button class="btn btn-ghost" onclick="goScreen('welcome')">← 뒤로</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ [오름] 특별판 정보 입력 ═══════════════════════════════════ -->
+<section id="oreum-info" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div style="height:24px"></div>
+  <div class="form-stamp special-stamp">[오름] 국어 학원</div>
+  <h2 class="screen-title">자녀 정보를 알려주세요</h2>
+  <p class="screen-sub">결과지 매칭과 상담 안내에만 사용됩니다.</p>
+
+  <div class="info-form">
+    <div class="field">
+      <label>학생 이름 <span class="required">*</span></label>
+      <input type="text" id="oreum-info-name" placeholder="예: 홍길동" required>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>현재 재학 중학교 <span class="required">*</span></label>
+        <input type="text" id="oreum-info-school" placeholder="예: 산본중학교" required>
+      </div>
+      <div class="field">
+        <label>학년 <span class="required">*</span></label>
+        <select id="oreum-info-grade" required>
+          <option value="">선택해주세요</option>
+          <option value="중3">중3</option>
+          <option value="중2">중2</option>
+          <option value="중1">중1</option>
+          <option value="예비고1">예비고1</option>
+          <option value="고1">고1</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>응답일</label>
+        <input type="date" id="oreum-info-date" min="2026-01-01" max="2026-12-31">
+      </div>
+      <div class="field">
+        <label>학부모 연락처 <small>(상담 안내용)</small></label>
+        <input type="tel" id="oreum-info-parent-phone" placeholder="예: 010-9876-5432">
+      </div>
+    </div>
+    <div class="field">
+      <label>관심 있는 고등학교 <small>(있다면 — 결과지에서 별도 매칭 분석)</small></label>
+      <select id="oreum-info-interest">
+        <option value="">선택 안 함</option>
+        <option value="군포중앙고">군포중앙고</option>
+        <option value="수리고">수리고</option>
+        <option value="산본고">산본고</option>
+        <option value="군포고">군포고</option>
+        <option value="흥진고">흥진고</option>
+        <option value="용호고">용호고</option>
+        <option value="기타">기타 (결과지에 종합 매칭 제공)</option>
+      </select>
+    </div>
+    <div id="oreum-info-error" class="info-error"></div>
+  </div>
+
+  <div class="info-note special">
+    <strong>학생 본인 또는 학부모님이 자녀의 학습 모습을 떠올리며 답해주세요.</strong> 정답은 없습니다. 평소 모습에 가장 가깝게 솔직히 응답할수록 정확한 학교 매칭이 나옵니다.
+  </div>
+
+  <div class="btn-row" style="margin-top:32px">
+    <button class="btn btn-ghost" onclick="goScreen('oreum-role-select')">← 이전</button>
+    <button class="btn btn-primary special" onclick="startOreumQuiz()">응답 시작 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ [오름] 특별판 응답 화면 ═══════════════════════════════════ -->
+<section id="oreum-quiz" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div class="q-header">
+    <div class="q-counter" id="oreum-q-counter">1 / 30</div>
+    <div class="q-progress-bar"><div class="q-progress-fill special" id="oreum-q-progress"></div></div>
+    <div class="q-mode special-mode" id="oreum-q-mode">[오름] 특별판</div>
+  </div>
+
+  <div id="oreum-q-area"></div>
+
+  <div class="btn-row" style="margin-top:24px">
+    <button class="btn btn-ghost" id="oreum-q-prev" onclick="oreumPrevQ()">← 이전</button>
+    <button class="btn btn-primary special" id="oreum-q-next" onclick="oreumNextQ()">다음 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ [오름] 특별판 결과지 ═══════════════════════════════════ -->
+<section id="oreum-results" class="screen">
+  <div class="report">
+    <div class="report-header special">
+      <div class="report-stamp special">[오름] 국어 · 성향별 학교 추천 결과 보고서</div>
+      <h1 class="report-title" id="oreum-r-name">— 학생의 학교 매칭 분석</h1>
+      <p class="report-meta" id="oreum-r-meta">○○중학교 · 2026 · [오름] 국어</p>
+    </div>
+
+    <!-- 1. 본형 판정 카드 -->
+    <div class="verdict-card special" id="oreum-verdict-card"></div>
+
+    <!-- 2. 추천 학교 -->
+    <h2 class="section-title"><span class="section-num">1.</span> 우리 아이에게 맞는 학교</h2>
+    <p class="section-lead">자녀의 학습 성향과 가장 잘 맞는 군포 관내 학교입니다.</p>
+    <div id="oreum-school-match"></div>
+
+    <!-- 3. 5개 성향 축 점수 -->
+    <h2 class="section-title"><span class="section-num">2.</span> 5개 성향 축 점수</h2>
+    <p class="section-lead">범위·암기 / 낯선 지문 / 문법 / 디테일 / 속도·멘탈 — 각 축의 강도입니다.</p>
+    <div id="oreum-axis-scores"></div>
+
+    <!-- 4. 위험 신호 -->
+    <h2 class="section-title"><span class="section-num">3.</span> 고등 내신 위험 신호</h2>
+    <p class="section-lead">학교 매칭과 별개로, 학교 선택 전 짚어야 할 자녀의 학습 패턴입니다.</p>
+    <div id="oreum-risk-signals"></div>
+
+    <!-- 5. [오름] 처방 -->
+    <h2 class="section-title"><span class="section-num">4.</span> [오름] 국어의 진단</h2>
+    <div id="oreum-prescription"></div>
+
+    <div id="oreum-closing"></div>
+
+    <div class="send-result-box">
+      <h3 class="send-result-title">결과를 저장해 두세요</h3>
+      <p class="send-result-desc">이 결과지는 일회성으로 표시됩니다. <strong>화면 그대로(딥그린) 저장</strong>은 캡처/스크린샷이 편하고, <strong>종이 인쇄</strong>는 아래 버튼을 누르면 잉크를 아끼는 밝은 배경으로 출력됩니다. [오름] 상담 시 참고 자료로 활용하세요.</p>
+      <div class="send-result-buttons">
+        <button class="btn btn-primary special" onclick="oreumPrintLight()">📄 인쇄 (밝은 배경·잉크 절약)</button>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <button class="btn btn-ghost" onclick="goScreen('welcome')">↻ 처음 화면으로</button>
+    </div>
+
+    <div class="footer">
+      <div class="footer-mark">[오름] 국어</div>
+      <div>성향별 학교 추천 진단 · 군포 6개교 · v1.0</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ v2 정보 입력 ═══════════════════════════════════ -->
+<section id="v2-info" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div style="height:24px"></div>
+  <div class="form-stamp special-stamp" id="v2-info-stamp">진단</div>
+  <h2 class="screen-title">먼저, 정보를 알려주세요</h2>
+  <p class="screen-sub">반 배치·상담 안내에만 사용됩니다.</p>
+  <div class="info-form">
+    <div class="field">
+      <label>학생 이름 <span class="required">*</span></label>
+      <input type="text" id="v2-info-name" placeholder="예: 홍길동" required>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>학교 <span class="required">*</span></label>
+        <input type="text" id="v2-info-school" placeholder="예: 산본고등학교" required>
+      </div>
+      <div class="field">
+        <label>학년 <span class="required">*</span></label>
+        <select id="v2-info-grade" required>
+          <option value="">선택</option>
+          <option value="고1">고1</option>
+          <option value="고2">고2</option>
+          <option value="고3">고3</option>
+          <option value="예비고1">예비고1</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>학부모 연락처 <small>(상담 안내용·선택)</small></label>
+      <input type="tel" id="v2-info-parent-phone" placeholder="예: 010-1234-5678">
+    </div>
+    <div id="v2-info-error" class="info-error"></div>
+  </div>
+  <div class="btn-row" style="margin-top:28px">
+    <button class="btn btn-ghost" onclick="goScreen('welcome')">← 뒤로</button>
+    <button class="btn btn-primary special" onclick="startV2Quiz()">진단 시작 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ v2 응답 ═══════════════════════════════════ -->
+<section id="v2-quiz" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div class="q-header">
+    <div class="q-counter" id="v2-q-counter">1 / 1</div>
+    <div class="q-progress-bar"><div class="q-progress-fill" id="v2-q-progress"></div></div>
+    <div class="q-mode" id="v2-q-mode">진단</div>
+  </div>
+  <div id="v2-area"></div>
+  <div class="btn-row" style="margin-top:24px">
+    <button class="btn btn-ghost" id="v2-prev" onclick="v2Prev()">← 이전</button>
+    <button class="btn btn-primary special" id="v2-next" onclick="v2Next()">다음 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ v2 부모 선택 분기 ═══════════════════════════════════ -->
+<section id="v2-parent-bridge" class="screen">
+  <div class="brand-mark"><span>[오름] 국어</span></div>
+  <div style="height:40px"></div>
+  <div class="v2-bridge-card">
+    <h2>학생 응답이 끝났어요</h2>
+    <p>부모님이 <strong>1분만</strong> 더 응답하면<br>자녀의 진단이 훨씬 정확해집니다.</p>
+    <p class="hint">건너뛰어도 진단 결과는 바로 나옵니다.</p>
+    <div class="btn-row" style="margin-top:26px;justify-content:center">
+      <button class="btn btn-ghost" onclick="v2FinishStudentOnly()">건너뛰고 결과 보기</button>
+      <button class="btn btn-primary special" onclick="v2StartParent()">부모님 응답하기 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ v2 결과(임시) ═══════════════════════════════════ -->
+<section id="v2-results" class="screen">
+  <div class="report">
+    <div class="report-header special">
+      <div class="report-stamp special" id="v2-r-stamp">진단 결과</div>
+      <h1 class="report-title" id="v2-r-name">— 진단 결과</h1>
+      <p class="report-meta" id="v2-r-meta"></p>
+    </div>
+    <div id="v2-r-body"></div>
+    <div class="report-actions" style="margin-top:28px">
+      <button class="btn btn-ghost" onclick="goScreen('welcome')">↻ 처음 화면으로</button>
+    </div>
+    <div class="footer"><div class="footer-mark">[오름] 국어</div><div id="v2-r-foot">진단 · v2</div></div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════ 5. 결과 리포트 ═══════════════════════════════════ -->
 <section id="results" class="screen">
   <div class="report">
@@ -3700,6 +4213,9 @@ const VERSION_LEVELS = {
 function goScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  // [오름] 특별판 화면 진입 시 딥그린 스킨
+  document.body.classList.toggle('oreum-skin', id.indexOf('oreum-') === 0);
+  document.body.classList.toggle('v2-skin', id.indexOf('v2-') === 0);
   window.scrollTo({top:0, behavior:'smooth'});
 }
 // 거울 진단에서 사용하는 별칭
@@ -3727,6 +4243,18 @@ document.querySelectorAll('.version-card').forEach(c=>{
       return;
     }
 
+    // ★ [오름] 특별판 — 코드 없이 공개, 바로 시작
+    if(ver === 'oreum'){
+      startOreumDiagnosis();
+      return;
+    }
+
+    // ★ v2 일반 진단 (비재원생/재원생 첫/재원생 심층) — 새 장면형 흐름
+    if(ver === 'brief' || ver === 'standard' || ver === 'precision'){
+      startV2(ver);
+      return;
+    }
+
     // ISO 형식으로 오늘 날짜 자동 입력 (input type="date" 호환)
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -3736,6 +4264,843 @@ document.querySelectorAll('.version-card').forEach(c=>{
     goScreen('info');
   });
 });
+
+/* ════════════════════════════════════════════════════════════
+   ★★★ [오름] 국어 학원 특별판 — 군포 6개교 성향별 학교 추천
+   2본형(성실↔감각) + 5보조축 → 학교 매칭 + 위험 신호 보정
+   (한티 MEXX 특별판과 완전히 독립된 병렬 모듈)
+   ════════════════════════════════════════════════════════════ */
+
+const OREUM_AXIS_NAMES = {
+  1: '범위·암기 지구력',
+  2: '낯선 지문·연계 독해',
+  3: '문법·규칙 처리',
+  4: '디테일·감점 방어',
+  5: '속도·실수 방어(멘탈)',
+};
+
+// ─── 학생 자기응답 30문항 (5축 × 6) ───
+const OREUM_QUESTIONS = [
+  // 축1. 범위 장악·암기 지구력
+  { id:'O1',  axis:1, q:'시험 범위가 많아도 처음부터 끝까지 빠짐없이 다 보고 들어갑니다.' },
+  { id:'O2',  axis:1, q:'교과서 본문뿐 아니라 날개·학습활동·각주까지 시험 범위로 보고 챙깁니다.' },
+  { id:'O3',  axis:1, q:'외울 양이 많아도 계획을 세워 끝까지 소화하는 편입니다.' },
+  { id:'O4',  axis:1, q:'자습서·프린트의 세세한 설명도 그냥 넘기지 않고 외웁니다.' },
+  { id:'O5',  axis:1, q:'암기 위주의 시험에서 기복 없이 점수가 잘 나옵니다.' },
+  { id:'O6',  axis:1, q:'반복해서 외우는 일을 지루해하지 않고 꾸준히 합니다.' },
+  // 축2. 낯선 지문·연계 독해력
+  { id:'O7',  axis:2, q:'처음 보는 시나 소설이 나와도 핵심 주제를 곧잘 파악합니다.' },
+  { id:'O8',  axis:2, q:'배운 작품과 비슷한 낯선 작품이 나오면 "이거 그거랑 비슷한데?"가 떠오릅니다.' },
+  { id:'O9',  axis:2, q:'외부 지문이 나와도 당황하기보다 화제와 구조부터 잡으려 합니다.' },
+  { id:'O10', axis:2, q:'〈보기〉나 외부 자료가 지문과 어디서 연결되는지 찾아냅니다.' },
+  { id:'O11', axis:2, q:'공부한 양에 비해 모의고사 점수가 잘 나오는 편입니다.' },
+  { id:'O12', axis:2, q:'긴 지문도 끝까지 읽어내는 독해 체력이 있습니다.' },
+  // 축3. 문법·규칙 처리력
+  { id:'O13', axis:3, q:'문법 문제를 풀 때 예문을 외우기보다 규칙이 어떻게 적용되는지 따져 봅니다.' },
+  { id:'O14', axis:3, q:'음운 변동·품사 같은 문법 개념을 새 단어에도 적용할 수 있습니다.' },
+  { id:'O15', axis:3, q:'문법은 한번 이해하면 잘 안 틀리는 편입니다.' },
+  { id:'O16', axis:3, q:'헷갈리는 문법 선지는 규칙으로 되짚어 판단합니다.' },
+  { id:'O17', axis:3, q:'문법 공부가 다른 영역보다 부담스럽지 않습니다.' },
+  { id:'O18', axis:3, q:'문장 구조를 따져 분석하는 문제를 좋아하는 편입니다.' },
+  // 축4. 디테일·감점 방어
+  { id:'O19', axis:4, q:'서답형은 답을 쓰기 전에 조건부터 표시하고 시작합니다.' },
+  { id:'O20', axis:4, q:'답을 알아도 키워드·표현·분량 조건을 놓쳤는지 다시 확인합니다.' },
+  { id:'O21', axis:4, q:'유인물·프린트를 순서대로 모으고 출제 가능 부분을 다시 분류합니다.' },
+  { id:'O22', axis:4, q:'수행평가도 기준표(루브릭)를 꼼꼼히 보고 빠진 항목이 없게 챙깁니다.' },
+  { id:'O23', axis:4, q:'맞은 것 같아도 사소한 조건 누락으로 점수를 잃을 수 있다고 생각합니다.' },
+  { id:'O24', axis:4, q:'노트·프린트에 밑줄·메모를 남기며 반복해서 봅니다.' },
+  // 축5. 속도·실수 방어(멘탈)
+  { id:'O25', axis:5, q:'시험 중 한 문제에 오래 막히면 과감히 표시하고 넘어갑니다.' },
+  { id:'O26', axis:5, q:'시간을 재고 푸는 연습을 해서 시험 시간이 부족하지 않습니다.' },
+  { id:'O27', axis:5, q:'배점 큰 문제에서도 긴장해서 실수하기보다 침착하게 풉니다.' },
+  { id:'O28', axis:5, q:'어려운 문제가 나와도 멘탈이 흔들리지 않고 끝까지 풉니다.' },
+  { id:'O29', axis:5, q:'시험 후 틀린 이유를 "몰라서 / 조건 놓쳐서 / 시간 부족"으로 구분합니다.' },
+  { id:'O30', axis:5, q:'한 문제에 깊이 고민하더라도 전체 시간 배분을 놓치지 않습니다.' },
+];
+
+// ─── 학부모 관찰형 37문항 (생활12 + 학습20 + 위험5) ───
+const OREUM_PARENT_QUESTIONS = [
+  // Part 1. 생활 속 관찰 (12) — 본형 보조
+  { id:'OL1',  axis:2, part:1, q:'우리 아이는 책·웹툰·드라마 등 이야기에 빠져들고, 줄거리를 잘 들려주는 편입니다.' },
+  { id:'OL2',  axis:2, part:1, q:'우리 아이는 처음 가는 곳이나 새로운 상황에 비교적 잘 적응합니다.' },
+  { id:'OL3',  axis:3, part:1, q:'우리 아이는 "왜 그렇게 돼?"처럼 이유·원리를 묻는 편입니다.' },
+  { id:'OL4',  axis:1, part:1, q:'우리 아이는 한번 하기로 한 일은 양이 많아도 끝까지 해내는 편입니다.' },
+  { id:'OL5',  axis:1, part:1, q:'우리 아이는 외울 것이 많아도 미루지 않고 꾸준히 하는 편입니다.' },
+  { id:'OL6',  axis:4, part:1, q:'우리 아이는 준비물·일정 같은 본인 일을 빠짐없이 챙기는 편입니다.' },
+  { id:'OL7',  axis:4, part:1, q:'우리 아이는 정해진 규칙·절차를 잘 지키는 편입니다.' },
+  { id:'OL8',  axis:5, part:1, q:'우리 아이는 시간 안에 일을 끝내는 것을 어려워하지 않습니다.' },
+  { id:'OL9',  axis:5, part:1, q:'우리 아이는 실수하거나 틀려도 크게 위축되지 않는 편입니다.' },
+  { id:'OL10', axis:2, part:1, q:'우리 아이는 새로운 글·문제를 봐도 일단 읽고 이해해 보려 합니다.' },
+  { id:'OL11', axis:1, part:1, q:'우리 아이는 외운 것을 빠짐없이 기억해 내는 편입니다.' },
+  { id:'OL12', axis:4, part:1, q:'우리 아이는 꼼꼼해서 사소한 것도 놓치지 않는 편입니다.' },
+  // Part 2. 학습·시험 처리 (20) — 5축 × 4
+  { id:'OP1',  axis:1, part:2, q:'시험 범위가 많아도 학교 자료를 빠짐없이 챙겨 공부합니다.' },
+  { id:'OP2',  axis:1, part:2, q:'"오늘 선생님이 이건 외우래"처럼 강조점을 기억해 옵니다.' },
+  { id:'OP3',  axis:1, part:2, q:'암기가 많은 시험에서 점수가 안정적으로 나옵니다.' },
+  { id:'OP4',  axis:1, part:2, q:'시험 직전 노트·프린트에 반복해서 본 흔적이 남아 있습니다.' },
+  { id:'OP5',  axis:2, part:2, q:'처음 보는 지문·문제가 나와도 두려워하지 않습니다.' },
+  { id:'OP6',  axis:2, part:2, q:'"이거 전에 배운 거랑 비슷한데?"라고 연결해서 말합니다.' },
+  { id:'OP7',  axis:2, part:2, q:'모의고사처럼 처음 보는 지문 시험에서 상대적으로 강합니다.' },
+  { id:'OP8',  axis:2, part:2, q:'외운 것보다 이해한 것을 더 오래 기억하는 편입니다.' },
+  { id:'OP9',  axis:3, part:2, q:'문법·규칙을 한번 이해하면 새로운 예에도 적용합니다.' },
+  { id:'OP10', axis:3, part:2, q:'"왜 이렇게 되는 거야?"라고 원리를 묻고서야 납득합니다.' },
+  { id:'OP11', axis:3, part:2, q:'규칙·절차가 분명한 과제를 어렵지 않게 해냅니다.' },
+  { id:'OP12', axis:3, part:2, q:'헷갈리는 것을 규칙으로 되짚어 판단하려 합니다.' },
+  { id:'OP13', axis:4, part:2, q:'과제·수행평가에서 요구 조건을 빠짐없이 챙깁니다.' },
+  { id:'OP14', axis:4, part:2, q:'지시를 받으면 "몇 시까지? 어떤 방식으로?"를 확인합니다.' },
+  { id:'OP15', axis:4, part:2, q:'틀린 이유를 "몰라서"인지 "조건을 놓쳐서"인지 구분합니다.' },
+  { id:'OP16', axis:4, part:2, q:'자료·프린트를 정리하고 빠진 것이 없게 관리합니다.' },
+  { id:'OP17', axis:5, part:2, q:'어려운 문제 하나에 막히면 표시하고 넘어갑니다.' },
+  { id:'OP18', axis:5, part:2, q:'시간 안에 마무리하는 것을 어려워하지 않습니다.' },
+  { id:'OP19', axis:5, part:2, q:'중요한 시험·발표에서도 긴장으로 무너지지 않습니다.' },
+  { id:'OP20', axis:5, part:2, q:'"시간이 부족했던 구간"을 구체적으로 말할 줄 압니다.' },
+  // Part 3. 고등 내신 위험 신호 (5) — reverse (동의할수록 위험)
+  { id:'OR1', axis:'R', risk:'독해부담', part:3, q:'긴 안내문·지문을 끝까지 안 읽고 "이거 뭐 하라는 거야?"라고 먼저 묻습니다.' },
+  { id:'OR2', axis:'R', risk:'속도',     part:3, q:'"그 문제 보다가 시간이 다 갔어"라고 말한 적이 있습니다.' },
+  { id:'OR3', axis:'R', risk:'뒷심',     part:3, q:'시험 직전에야 시험 범위를 본격적으로 확인하기 시작합니다.' },
+  { id:'OR4', axis:'R', risk:'암기거부', part:3, q:'외우는 것을 특히 싫어하거나 자주 미룹니다.' },
+  { id:'OR5', axis:'R', risk:'멘탈',     part:3, q:'배점 크거나 어려운 문제에서 쉽게 위축됩니다.' },
+];
+
+// ─── 군포 6개교 프로파일 (축 가중치 0~3) ───
+const OREUM_SCHOOLS = {
+  '흥진고': { group:'A', weights:{1:3,2:0,3:2,4:2,5:1},
+    tagline:'기초에서 심화로',
+    wants:'교과서를 빠짐없이 암기하고 문법까지 챙기며, 2학기 심화를 끝까지 따라가는 성실·뒷심형',
+    style:'출제 범위가 거의 전부 교과서. 외부 지문 부담은 적지만 2학기에 난이도가 급상승합니다.' },
+  '군포고': { group:'A', weights:{1:3,2:1,3:2,4:2,5:3},
+    tagline:'1등급 필승·타임어택',
+    wants:'방대한 범위를 끝까지 암기하면서도 시간 압박(타임어택)을 견디는 성실·스피드형',
+    style:'범위가 방대하고 서술형이 있으며, 시간 안에 정확히 푸는 속도가 등급을 가릅니다.' },
+  '용호고': { group:'A', weights:{1:2,2:1,3:2,4:3,5:1},
+    tagline:'디테일의 힘',
+    wants:'교과서·유인물·문법 디테일을 하나도 놓치지 않는 꼼꼼·성실형',
+    style:'난이도는 평이한 편이라, 유인물·디테일을 빠짐없이 챙겨 실수하지 않는 것이 핵심입니다.' },
+  '산본고': { group:'B', weights:{1:2,2:3,3:3,4:1,5:1},
+    tagline:'상위권 도약',
+    wants:'낯선 외부지문을 읽어내는 감각에 문법과 암기 성실성까지 받쳐주는 균형형',
+    style:'외부 지문 연계와 문법(음운 변동) 비중이 큽니다. 감각만 믿고 암기를 게을리하면 위험합니다.' },
+  '군포중앙고': { group:'B', weights:{1:1,2:3,3:0,4:2,5:3},
+    tagline:'외부 지문·장르 복합',
+    wants:'낯선 지문을 배운 것과 연결하는 연계력과, 고난도·수행평가에도 흔들리지 않는 멘탈형',
+    style:'외부 지문 비중이 압도적이고 장르 복합·고난도로 멘탈을 흔듭니다. 수행평가 비중도 큽니다.' },
+  '수리고': { group:'B', weights:{1:1,2:2,3:3,4:1,5:3},
+    tagline:'프리미엄 1등급',
+    wants:'높은 배점에서 실수하지 않는 정확성과 문법·적용 감각을 갖춘 최상위 감각형',
+    style:'배점 구조가 매우 높아 한 문제 실수가 치명적입니다. 문법 집중 출제와 적용 감각을 함께 요구합니다.' },
+};
+
+// ─── 위험 신호 정의 (PT p59 주의표) ───
+const OREUM_RISK_DEFS = [
+  { key:'완벽주의속도', title:'속도 느린 완벽주의자',
+    test:(ax,pr)=> ax[4]>=60 && ax[5]<=45,
+    warn:'군포고의 타임어택에서 시간이 부족할 수 있습니다.',
+    rx:'시간 제한 풀이 연습 + 막히면 표시하고 건너뛰는 훈련' },
+  { key:'암기거부', title:'암기를 싫어하는 감각파',
+    test:(ax,pr)=> (ax[2]>=60 && ax[1]<=45) || pr('OR4'),
+    warn:'산본고·흥진고의 암기형 출제에서 점수가 흔들릴 수 있습니다.',
+    rx:'교과서 구석구석·유인물을 꼼꼼히 읽고 외우는 습관' },
+  { key:'멘탈', title:'멘탈이 약한 유리심장',
+    test:(ax,pr)=> ax[5]<=40 || pr('OR5'),
+    warn:'수리고·군포중앙고의 높은 배점·고난도에서 위축될 수 있습니다.',
+    rx:'고난도 외부지문 적용 훈련 + 실수 회복·자신감 관리' },
+  { key:'뒷심', title:'뒷심이 부족한 학생',
+    test:(ax,pr)=> (ax[1]<=50 && ax[5]<=50) || pr('OR3'),
+    warn:'군포·산본·흥진의 2학기 난이도 급상승에 밀릴 수 있습니다.',
+    rx:'1학기 성적에 안주하지 않는 여름방학 선행 학습' },
+  { key:'꼼꼼', title:'꼼꼼함이 부족한 학생',
+    test:(ax,pr)=> ax[4]<=40 || pr('OR1'),
+    warn:'군포중앙·산본의 수행평가에서 감점될 수 있습니다.',
+    rx:'수행평가 루브릭(기준표) 준수 관리 + 조건 체크 습관' },
+];
+
+// ─── [오름] state ───
+const oreumState = { info:{}, responses:{}, qIdx:0, role:'student' };
+
+function startOreumDiagnosis(){ goScreen('oreum-role-select'); }
+
+function oreumChooseRole(role){
+  oreumState.role = role;
+  const d = document.getElementById('oreum-info-date');
+  if(d && !d.value){ d.value = new Date().toISOString().slice(0,10); }
+  goScreen('oreum-info');
+}
+
+function getOreumQuestionList(){
+  return oreumState.role === 'parent' ? OREUM_PARENT_QUESTIONS : OREUM_QUESTIONS;
+}
+
+function startOreumQuiz(){
+  const name = document.getElementById('oreum-info-name').value.trim();
+  const school = document.getElementById('oreum-info-school').value.trim();
+  const grade = document.getElementById('oreum-info-grade').value;
+  const date = document.getElementById('oreum-info-date').value || new Date().toISOString().slice(0,10);
+  const parentPhone = document.getElementById('oreum-info-parent-phone').value.trim();
+  const interest = document.getElementById('oreum-info-interest').value;
+  const errEl = document.getElementById('oreum-info-error');
+
+  if(!name || !school || !grade){
+    errEl.textContent = '이름·학교·학년은 필수입니다.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  oreumState.info = { name, school, grade, date, parentPhone, interest };
+  oreumState.responses = {};
+  oreumState.qIdx = 0;
+
+  goScreen('oreum-quiz');
+  renderOreumQuestion();
+}
+
+function renderOreumQuestion(){
+  const list = getOreumQuestionList();
+  const total = list.length;
+  const idx = oreumState.qIdx;
+  const q = list[idx];
+  if(!q) return;
+
+  document.getElementById('oreum-q-counter').textContent = `${idx+1} / ${total}`;
+  document.getElementById('oreum-q-progress').style.width = `${(idx+1)/total*100}%`;
+  const modeEl = document.getElementById('oreum-q-mode');
+  if(modeEl) modeEl.textContent = oreumState.role === 'parent' ? '학부모 응답' : '학생 응답';
+
+  const scaleLabels = oreumState.role === 'parent'
+    ? ['거의 그렇지 않다', '가끔 그렇다', '보통이다', '자주 그렇다', '매우 그렇다']
+    : ['전혀 그렇지 않다', '별로 그렇지 않다', '보통이다', '대체로 그렇다', '매우 그렇다'];
+
+  const isRiskZone = q.axis === 'R';
+  let partLabel = '';
+  if(oreumState.role === 'parent'){
+    partLabel = q.part === 1 ? 'Part 1 · 생활 속 모습'
+              : q.part === 3 ? 'Part 3 · 고등 내신 위험 신호'
+              : 'Part 2 · 학습·시험 처리 방식';
+  } else {
+    partLabel = OREUM_AXIS_NAMES[q.axis];
+  }
+
+  const html = `
+    <div class="quiz-card${isRiskZone ? ' risk-zone' : ''}">
+      <div class="part-label ${q.part === 1 ? 'part1' : 'part2'}">${partLabel}</div>
+      <div class="quiz-q-num">${idx+1}.</div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="scale-row">
+        ${[1,2,3,4,5].map(v => `
+          <button class="scale-btn ${oreumState.responses[q.id] === v ? 'selected' : ''}" onclick="oreumPickScale('${q.id}', ${v})">
+            <span class="scale-num">${v}</span>
+            <span class="scale-label">${scaleLabels[v-1]}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  document.getElementById('oreum-q-area').innerHTML = html;
+  document.getElementById('oreum-q-prev').disabled = (idx === 0);
+  document.getElementById('oreum-q-next').textContent = (idx === total-1) ? '응답 완료 →' : '다음 →';
+}
+
+function oreumPickScale(id, v){
+  oreumState.responses[id] = v;
+  renderOreumQuestion();
+  const list = getOreumQuestionList();
+  if(oreumState.qIdx < list.length - 1){
+    setTimeout(() => { oreumState.qIdx++; renderOreumQuestion(); }, 200);
+  }
+}
+
+function oreumPrevQ(){ if(oreumState.qIdx > 0){ oreumState.qIdx--; renderOreumQuestion(); } }
+
+function oreumNextQ(){
+  const list = getOreumQuestionList();
+  const q = list[oreumState.qIdx];
+  if(!(q.id in oreumState.responses)){ alert('응답을 선택해주세요.'); return; }
+  if(oreumState.qIdx < list.length - 1){ oreumState.qIdx++; renderOreumQuestion(); }
+  else { finishOreumQuiz(); }
+}
+
+async function finishOreumQuiz(){
+  try { renderOreumResults(); goScreen('oreum-results'); }
+  catch(e){ console.error('[오름] 결과지 렌더 실패:', e); alert('결과 분석 중 오류가 발생했습니다. 다시 시도해주세요.'); return; }
+  sendOreumToBackend();
+}
+
+// ─── 축 점수 계산 (0~100) ───
+function oreumAxisScores(){
+  const r = oreumState.responses;
+  const list = getOreumQuestionList();
+  const sums = {1:0,2:0,3:0,4:0,5:0}, cnts = {1:0,2:0,3:0,4:0,5:0};
+  list.forEach(q => {
+    if(q.axis === 'R') return;
+    const v = r[q.id];
+    if(typeof v !== 'number') return;
+    sums[q.axis] += (v-1)/4*100;
+    cnts[q.axis] += 1;
+  });
+  const sc = {};
+  for(let a=1; a<=5; a++) sc[a] = cnts[a] ? Math.round(sums[a]/cnts[a]) : 0;
+  return sc;
+}
+
+// ─── 종합 분석 ───
+function computeOreumAnalysis(){
+  const ax = oreumAxisScores();
+  const bonhyeong = ax[1] >= ax[2] ? 'A' : 'B';
+
+  const fits = Object.entries(OREUM_SCHOOLS).map(([key, s]) => {
+    let num = 0, den = 0;
+    for(let a=1; a<=5; a++){ num += ax[a]*s.weights[a]; den += s.weights[a]*100; }
+    return { key, ...s, fit: den ? Math.round(num/den*100) : 0 };
+  });
+  const group = fits.filter(f => f.group === bonhyeong).sort((a,b) => b.fit - a.fit);
+  const other = fits.filter(f => f.group !== bonhyeong).sort((a,b) => b.fit - a.fit);
+  const top = group[0];
+  const second = group[1] || other[0];
+
+  const pr = (id) => { const v = oreumState.responses[id]; return typeof v === 'number' && v >= 4; };
+  const risks = OREUM_RISK_DEFS.filter(d => d.test(ax, pr));
+
+  return { ax, bonhyeong, fits, top, second, risks, role: oreumState.role, info: oreumState.info };
+}
+
+// ─── 결과지 렌더 ───
+function renderOreumResults(){
+  const a = computeOreumAnalysis();
+  const info = oreumState.info;
+
+  document.getElementById('oreum-r-name').textContent = `${info.name || '학생'} 의 학교 매칭 분석`;
+  document.getElementById('oreum-r-meta').textContent = `${info.school || ''} · ${info.date || ''} · [오름] 국어`;
+
+  // 본형 카드
+  const typeLabel = a.bonhyeong === 'A' ? 'Type A · 성실/노력형' : 'Type B · 언어/감각형';
+  const typeDesc = a.bonhyeong === 'A'
+    ? '방대한 범위를 꼼꼼하게 암기하고 끝까지 소화하는 끈기가 강점인 학생입니다. 자체 범위가 넓고 암기 비중이 큰 학교에서 유리합니다.'
+    : '낯선 지문을 두려워하지 않고 원리를 이해해 적용하는 감각이 강점인 학생입니다. 외부 지문과 고난도 변별이 많은 학교에서 유리합니다.';
+  document.getElementById('oreum-verdict-card').innerHTML = `
+    <div class="verdict-stamp">[오름] 성향 판정 — ${info.name || '학생'}</div>
+    <div class="verdict-name">${typeLabel}</div>
+    <p class="verdict-desc">${typeDesc}</p>
+  `;
+
+  // 학교 매칭 카드 (1순위 + 2순위)
+  const schoolCard = (f, rank) => `
+    <div class="o-school-card${rank===1?' rank1':''}">
+      <div class="o-school-head">
+        <div class="o-rank">${rank}순위 추천 · ${f.group==='A'?'성실형':'감각형'} 계열</div>
+        <div class="o-fit">성향 적합도 <strong>${f.fit}</strong>%</div>
+      </div>
+      <div class="o-school-name">${f.key} <small>— ${f.tagline}</small></div>
+      <p class="o-wants"><strong>이 학교가 원하는 아이:</strong> ${f.wants}</p>
+      <p class="o-style">${f.style}</p>
+    </div>
+  `;
+  let matchHtml = schoolCard(a.top, 1);
+  if(a.second && a.second.key !== a.top.key) matchHtml += schoolCard(a.second, 2);
+  if(info.interest && OREUM_SCHOOLS[info.interest]){
+    const wf = a.fits.find(f => f.key === info.interest);
+    if(wf && wf.key !== a.top.key && (!a.second || wf.key !== a.second.key)){
+      matchHtml += `<div class="o-interest">
+        <div class="o-rank">관심 학교 매칭 — ${wf.key}</div>
+        <p>관심 학교의 성향 적합도는 <strong>${wf.fit}%</strong>입니다. ${wf.wants}이(가) 필요합니다.</p>
+      </div>`;
+    }
+  }
+  document.getElementById('oreum-school-match').innerHTML = matchHtml;
+
+  // 5축 막대
+  const topW = a.top.weights;
+  const axHtml = [1,2,3,4,5].map(k => {
+    const v = a.ax[k];
+    const need = topW[k];
+    const needLabel = need >= 3 ? '핵심' : need >= 2 ? '중요' : need >= 1 ? '보조' : '영향 적음';
+    return `
+      <div class="o-axis-row">
+        <div class="o-axis-top">
+          <span class="o-axis-label"><strong>${OREUM_AXIS_NAMES[k]}</strong> <span class="o-axis-need">· ${a.top.key} 기준 ${needLabel}</span></span>
+          <span class="o-axis-val">${v}</span>
+        </div>
+        <div class="o-bar-track"><div class="o-bar-fill" style="width:${v}%"></div></div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('oreum-axis-scores').innerHTML = axHtml;
+
+  // 위험 신호
+  const riskEl = document.getElementById('oreum-risk-signals');
+  if(a.risks.length === 0){
+    riskEl.innerHTML = `<div class="o-ok">뚜렷한 위험 신호가 감지되지 않았습니다. 추천 학교의 성향을 꾸준히 다져 가면 됩니다.</div>`;
+  } else {
+    riskEl.innerHTML = a.risks.map(r => `
+      <div class="o-risk">
+        <div class="o-risk-title">⚠ ${r.title}</div>
+        <p>${r.warn}</p>
+        <p class="o-rx"><strong>[오름] 처방:</strong> ${r.rx}</p>
+      </div>
+    `).join('');
+  }
+
+  // 처방
+  document.getElementById('oreum-prescription').innerHTML = `
+    <div class="o-rx-card">
+      <p style="margin:0 0 10px"><strong>${info.name || '학생'}</strong> 학생은 <strong>${typeLabel}</strong>으로, <strong>${a.top.key}</strong>의 출제 스타일과 가장 잘 맞습니다(적합도 ${a.top.fit}%).</p>
+      <p style="margin:0 0 10px">${a.risks.length ? '다만 위에 표시된 위험 신호를 보완하면 추천 학교에서의 안정성이 크게 높아집니다.' : '강점이 고르게 받쳐 주어, 추천 학교에서 안정적으로 상위권을 노릴 수 있습니다.'}</p>
+      <p class="o-sol" style="margin:0">[오름] 국어는 관내 6개교 기출 기반 자체 콘텐츠 · 학교별 변형 모의고사 · 수행평가 1:1 밀착 피드백으로 성향별 맞춤 관리를 제공합니다.</p>
+    </div>
+  `;
+
+  document.getElementById('oreum-closing').innerHTML = `
+    <div class="o-closing">"시작이 다르면, 결과가 다릅니다."</div>
+    <div class="o-closing-sub">— [오름] 국어</div>
+  `;
+}
+
+async function sendOreumToBackend(){
+  if(typeof CONFIG === 'undefined' || !CONFIG.sheetUrl) return;
+  try {
+    const a = computeOreumAnalysis();
+    const params = new URLSearchParams();
+    params.append('action', 'oreumSave');
+    params.append('role', oreumState.role);
+    params.append('info', JSON.stringify(oreumState.info));
+    params.append('responses', JSON.stringify(oreumState.responses));
+    params.append('analysis', JSON.stringify({
+      bonhyeong: a.bonhyeong, axisScores: a.ax,
+      top: a.top ? { key:a.top.key, fit:a.top.fit } : null,
+      second: a.second ? { key:a.second.key, fit:a.second.fit } : null,
+      risks: a.risks.map(r => r.title),
+    }));
+    params.append('apiKey', CONFIG.apiKey || '');
+    await fetch(CONFIG.sheetUrl, {
+      method:'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+      body: params.toString(),
+      mode: 'no-cors',
+    });
+  } catch(e){ console.warn('[오름] 백엔드 전송 실패:', e); }
+}
+
+// 인쇄 버튼 → 밝은 배경(잉크 절약)으로만 출력. 화면·직접 PDF 저장은 딥그린 유지.
+function oreumPrintLight(){
+  document.body.classList.add('oreum-print-light');
+  window.print();
+}
+window.addEventListener('afterprint', () => document.body.classList.remove('oreum-print-light'));
+
+/* ════════════════════════════════════════════════════════════
+   ★★★ v2 진단 (비재원생 / 재원생 첫 / 재원생 심층)
+   데이터 기반: 장면 단일선택 · 미니과제 · 랭킹 · 주의력 · 부모 선택
+   기존 척도형(QUESTIONS) 흐름과 독립. 채점/페르소나는 [3]에서.
+   ════════════════════════════════════════════════════════════ */
+
+// 플래그 코드 파서: "메타-★" / "적용+" / "적용+|변별+" / "" (중립)
+function v2Flags(code){
+  if(!code) return [];
+  return code.split('|').map(c=>{
+    c=c.trim(); if(!c) return null;
+    const star=c.includes('★'); c=c.replace('★','');
+    const d = c.includes('-') ? -1 : 1;
+    const ax = c.replace('+','').replace('-','').trim();
+    return {ax, d, star};
+  }).filter(Boolean);
+}
+
+// ─── 비재원생 학생 18 + 주의력 1 ───
+const V2_BIJAE_STUDENT = [
+  {type:'choice', id:'B1', q:'국어 시험이 끝난 뒤, 내가 가장 자주 하는 말에 가깝다.', opts:[['몰랐던 게 나왔다','장악-'],['알았는데 헷갈렸다','변별-'],['시간이 부족했다','시간-'],['문제를 잘못 읽었다','변별-'],['왜 틀렸는지 모르겠다','메타-★']]},
+  {type:'choice', id:'B2', q:'긴 지문을 읽다 중간에 흐름을 놓치면 나는 보통.', opts:[['처음부터 다시 읽는다','시간-'],['방금 놓친 문장만 다시 본다','적용+'],['일단 끝까지 읽고 문제로 간다','적용+'],['선지를 먼저 보고 필요한 부분만 찾는다',''],['그냥 감으로 이어 붙인다','메타-★']]},
+  {type:'choice', id:'B3', q:'해설지를 읽었을 때 가장 자주 드는 생각은?', opts:[['아예 몰랐던 내용이다','장악-'],['읽어 보니 알던 내용이다','메타-'],['내가 왜 그 선지를 골랐는지 모르겠다','메타-★'],['답은 이해되는데 다음에 또 맞힐지는 모르겠다','메타-'],['해설보다 내 생각이 더 맞는 것 같다','변별-★']]},
+  {type:'choice', id:'B4', q:'시험 3일 전, 범위가 아직 안 끝났다. 가장 먼저 줄이는 것은?', opts:[['교과서 본문 다시 읽기','장악-'],['학교 프린트 정리','장악-★'],['자습서 설명 등 정리본 읽기',''],['문제 풀기','적용-'],['풀었던 문제들 오답 확인','메타-']]},
+  {type:'choice', id:'B5', q:'문학 작품을 공부할 때 제일 많이 표시하는 곳은?', opts:[['줄거리와 사건','적용-'],['인물의 감정 변화','적용+'],['표현법과 시어','적용+|변별+'],['선생님 필기','장악+'],['문제에서 틀린 부분','메타+'],['따로 표시하지 않고 읽기만 한다','장악-★']]},
+  {type:'choice', id:'B6', q:'선생님이 "이건 넘어가면 안 된다"고 했는데 어디였는지 흐릿하다. 나라면?', opts:[['친구에게 필기를 물어본다','장악-'],['교과서 그 부분을 다시 찾아보며 기억해본다','장악+'],['프린트 전체를 훑는다',''],['그냥 중요해 보이는 부분을 외운다','장악-'],['기억 안 나면 포기한다','장악-★'],['선생님께 다시 여쭤본다','장악+']]},
+  {type:'choice', id:'B7', q:'두 선지가 끝까지 헷갈릴 때, 마지막에 더 자주 고르는 기준은?', opts:[['더 익숙한 표현','변별-'],['더 그럴듯한 느낌을 주는 내용','변별-★'],['지문에 더 직접적으로 있는 내용','변별+'],['선생님이 강조했던 것 같은 내용','장악-'],['처음 찍었던 답','메타-']]},
+  {type:'choice', id:'B8', q:'국어 문제를 틀렸을 때, 내 오답 표시에 보통 남아 있는 것은?', opts:[['틀린 번호만 표시되어 있다','메타-★'],['답 근거 줄이 표시되어 있다','변별+'],['내가 고른 오답의 이유가 적혀 있다','메타+'],['해설 핵심만 옮겨 적혀 있다','메타-'],['다시 볼 문제만 별표가 되어 있다','']]},
+  {type:'choice', id:'B9', q:'문법 문제를 풀 때 나에게 더 가까운 쪽은?', opts:[['개념 이름은 아는데 예문에 적용하면 흔들린다','변별-'],['예문을 외우면 맞히지만 새 단어가 나오면 어렵다','적용-'],['규칙을 알면 낯선 예도 적용할 수 있다','적용+'],['문법은 감으로 풀 때가 많다','메타-'],['문법은 아예 피하고 싶다','장악-★']]},
+  {type:'choice', id:'B10', q:'국어 시험 중 시간이 부족해질 때 나는 보통.', opts:[['뒤 문제를 거의 못 본다','시간-★'],['지문을 대충 읽고 선지를 본다','시간-'],['긴 문제를 버리고 짧은 문제부터 푼다','시간+'],['표시해 둔 문제를 포기하고 끝까지 간다','시간+'],['시간 부족을 크게 겪지 않는다','시간+']]},
+  {type:'choice', id:'B11', q:'처음 보는 외부 작품이 시험에 나왔다. 첫 반응은?', opts:[['배운 작품과 비슷한 점부터 떠올린다','적용+'],['일단 화제·상황부터 잡으려 한다','적용+'],['당황해서 머릿속이 굳는다','적용-★|정서-'],['아는 단어·표현만 찾아 읽는다','적용-'],['어차피 모를 거라 찍고 넘긴다','적용-★|메타-']]},
+  {type:'choice', id:'B12', q:'〈보기〉가 붙은 문제를 보면 가장 먼저 하는 일은?', opts:[['〈보기〉를 먼저 해석한다','적용+'],['지문에서 관련 부분을 찾는다','적용+|변별+'],['선지를 읽으며 감을 잡는다','변별-'],['아는 개념이 있는지 본다',''],['길어 보이면 일단 넘긴다','시간-']]},
+  {type:'choice', id:'B13', q:'"적절하지 않은 것을 고르라"는 발문을 보면 나는?', opts:[['발문(문제의 \'않은\')에 바로 표시부터 한다','변별+'],['풀다가 가끔 놓쳐서 적절한 것을 고를 때가 있다','변별-'],['다 풀고 나서 다시 확인한다',''],['급하면 반대로 고를 때가 있다','변별-★'],['그런 실수는 거의 없다','변별+']]},
+  {type:'choice', id:'B14', q:'공부하려고 책상에 앉았을 때, 내 국어 자료 풍경에 가깝다.', opts:[['단권화된 자료가 있다','장악+'],['프린트가 쌓여 있는데 순서는 없다','장악-'],['문제집 위주고 학교 자료는 잘 안 본다','장악-'],['뭐부터 펼쳐야 할지 모르겠다','장악-★'],['핸드폰부터 본다','정서-']]},
+  {type:'choice', id:'B15', q:'국어 숙제를 할 때 내 모습에 가까운 것을 고른다면?', opts:[['풀고 채점하고 틀린 이유까지 적는다','메타+'],['풀고 채점만 한다','메타-'],['답을 맞춰 보고 끝낸다','메타-'],['안 풀리면 답지부터 본다','장악-★|메타-'],['자주 미루거나 안 한다','정서-★']]},
+  {type:'choice', id:'B16', q:'같은 실수를 또 했다는 걸 보통 언제 아는가?', opts:[['틀린 직후 바로 안다','메타+'],['오답 정리할 때 안다','메타+'],['다음 시험에서 또 틀리고서야 안다','메타-★'],['잘 모른다','메타-★'],['같은 실수를 거의 안 한다','메타+']]},
+  {type:'choice', id:'B17', q:'시험에서 지문을 읽다가 모르는 단어가 나오면 나는?', opts:[['앞뒤 문맥으로 뜻을 추론한다','적용+'],['표시만 하고 일단 넘어간다',''],['거기서 멈춰 한참 고민한다','시간-'],['뜻을 모르면 그 문장을 못 읽는다','적용-★'],['그냥 무시하고 읽는다','메타-']]},
+  {type:'choice', id:'B18', q:'모의고사(처음 보는 지문)와 학교 내신 중 점수 차가 크다면?', opts:[['모의고사가 훨씬 잘 나온다','적용+|장악-'],['내신이 훨씬 잘 나온다','장악+|적용-'],['둘 다 비슷하게 잘 나온다',''],['둘 다 비슷하게 안 나온다','★'],['모의고사를 본 적이 거의 없다','']]},
+  {type:'attention', id:'BC1', q:'이 문항은 응답 확인용입니다. ③ \'보통이다\'를 선택해 주세요.', scale:['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'], correct:3},
+];
+
+// ─── 비재원생/재원생 학부모 10 (선택) ───
+const V2_PARENT = [
+  {type:'choice', id:'P1', part:'부모 관찰', q:'아이가 국어(또는 평소) 문제를 틀렸을 때 가장 자주 하는 말은?', opts:[['"몰랐어"','장악-'],['"알았는데 실수했어"','변별-'],['"시간이 없었어"','시간-'],['"문제가 이상했어"','변별-★'],['"왜 틀렸는지 모르겠어"','메타-★']]},
+  {type:'choice', id:'P2', part:'부모 관찰', q:'아이의 국어 프린트/노트 상태에 가장 가까운 것은?', opts:[['잘 모아져 있고 본 흔적이 많다','장악+'],['모아져는 있는데 다시 본 흔적은 적다','장악-'],['일부는 있고 일부는 없다','장악-'],['시험 직전에 찾느라 바쁘다','장악-★'],['부모가 챙겨 줘야 한다','장악-★']]},
+  {type:'choice', id:'P3', part:'부모 관찰', q:'아이가 긴 글이나 안내문을 볼 때 자주 보이는 모습은?', opts:[['끝까지 읽고 요지를 말한다','적용+'],['읽긴 읽는데 다시 설명을 요구한다','적용-'],['중간부터 "그래서 뭐 하라는 거야?"라고 묻는다','적용-★'],['필요한 부분만 찾으려 한다',''],['아예 읽기 싫어한다','적용-★|정서-']]},
+  {type:'choice', id:'P4', part:'부모 관찰', q:'시험 직전 아이의 모습에 가깝다.', opts:[['이미 정리한 것을 반복해서 본다','장악+'],['문제집을 많이 푼다',''],['프린트와 필기를 급하게 찾는다','장악-★'],['새로 외울 게 많아 허둥댄다','장악-'],['국어는 뭘 해야 할지 몰라 한다','장악-★']]},
+  {type:'choice', id:'P5', part:'부모 관찰', q:'아이가 성적이 안 나왔을 때 회복하는 방식은?', opts:[['바로 틀린 이유를 확인한다','메타+|정서+'],['속상해하지만 다시 보려고 한다','정서+'],['"실수야"라고 하고 넘긴다','메타-★'],['한동안 국어를 피한다','정서-★'],['부모가 말해야 겨우 본다','정서-']]},
+  {type:'choice', id:'P6', part:'부모 관찰', q:'아이가 "국어 공부했다"는 날, 실제로 남는 흔적은?', opts:[['푼 문제와 채점/오답 이유','메타+'],['필기/자료 정리','장악+'],['읽은 지문 표시',''],['눈에 띄는 흔적이 별로 없다','메타-★'],['정확히 확인하기 어렵다','']]},
+  {type:'choice', id:'P7', part:'부모 관찰', q:'아이가 국어로 하는 질문 중 가장 많은 유형은?', opts:[['"이 답 왜 아니야?"','메타+|변별+'],['"이 지문 무슨 말이야?"','적용-'],['"이거 외워야 해?"','장악-'],['"이거 시험에 나와?"','장악-'],['"뭘 해야 해?"','메타-★']]},
+  {type:'choice', id:'P8', part:'부모 관찰', q:'아이가 해설을 본 뒤 자주 하는 말은?', opts:[['"아, 나 이거 알았는데"','메타-★'],['"아예 몰랐네"','장악-'],['"왜 이게 답이지?"','메타+'],['별말 없이 넘긴다','메타-'],['"해설이 이상해"','변별-★']]},
+  {type:'choice', id:'P9', part:'부모 관찰', q:'아이가 국어 때문에 반복해서 듣는 지적은?', opts:[['"꼼꼼히 읽어라"','변별-'],['"근거를 찾아라"','변별-|메타-'],['"시간 관리해라"','시간-'],['"미리 시작해라"','장악-'],['"감으로 풀지 마라"','메타-★']]},
+  {type:'choice', id:'P10', part:'부모 관찰', q:'시험 기간 아이의 모습에 가깝다.', opts:[['계획대로 차근차근 한다','장악+'],['벼락치기를 한다','장악-'],['프린트를 못 찾아 헤맨다','장악-★'],['시험 범위 자체를 잘 모른다','장악-★'],['평소와 큰 차이가 없다','정서-']]},
+];
+
+// ─── 재원생 추가 장면 6 ───
+const V2_JAE_EXTRA = [
+  {type:'choice', id:'R1', q:'학교 프린트에 외부 작품이 실려 나왔다. 나는?', opts:[['교과서 작품과 연결해 정리한다','장악+|적용+'],['그 작품만 따로 외운다','장악-'],['프린트라 잘 안 챙긴다','장악-★'],['시험 직전에야 본다','장악-'],['뭘 해야 할지 모른다','장악-★']]},
+  {type:'choice', id:'R2', q:'모의고사를 시간 재고 풀면 나는?', opts:[['시간이 남아 검토까지 한다','시간+'],['딱 맞게 끝낸다','시간+'],['2~3문제를 못 푼다','시간-'],['지문 하나에 막혀 뒤가 무너진다','시간-★'],['시간 재고 풀어본 적이 없다','']]},
+  {type:'choice', id:'R3', q:'틀린 문제를 다시 볼 때 나는?', opts:[['내가 고른 오답의 이유까지 따진다','메타+'],['정답 근거만 확인한다','메타-'],['해설을 읽고 넘긴다','메타-'],['답만 맞춰 본다','메타-★'],['잘 안 본다','메타-★']]},
+  {type:'choice', id:'R4', q:'배운 작품과 주제가 비슷한 낯선 작품이 나오면?', opts:[['공통점·차이점을 견줘 본다','적용+'],['비슷하다고 느끼기만 한다',''],['낯설어 따로 외운다','적용-'],['당황한다','적용-★|정서-'],['연결을 생각해 본 적 없다','적용-']]},
+  {type:'choice', id:'R5', q:'국어 점수가 확 떨어진 다음 주, 나는?', opts:[['바로 원인을 찾아 고친다','정서+|메타+'],['속상하지만 곧 다시 한다','정서+'],['한동안 손이 안 간다','정서-★'],['불안해서 문제만 많이 푼다',''],['어차피 안 오른다고 생각한다','정서-★']]},
+  {type:'choice', id:'R6', q:'서술형·서답형에서 나는?', opts:[['조건부터 표시하고 쓴다','변별+'],['내용 먼저 쓰고 조건을 확인한다',''],['자주 조건을 빠뜨린다','변별-★'],['부분점수 노리고 일단 쓴다',''],['서술형은 거의 비운다','변별-★']]},
+];
+
+// ─── 미니 과제 (고1 5종) ───
+const V2_MINI_고1 = [
+  {type:'minitask', id:'M1', tag:'미니 과제 · 근거 찾기', measure:'변별·메타',
+   passage:'백신은 약화하거나 비활성화한 병원체의 일부를 몸에 넣어, 실제로 병에 걸리지 않고도 면역 체계가 그 병원체를 기억하게 만든다. 그래서 백신은 병을 낫게 하는 것이 아니라, 병에 걸리기 전에 대비하게 하는 것이다.',
+   q:'윗글로 보아 적절한 것은?', opts:[['백신은 병에 걸린 뒤 그 병을 치료하는 약이다',''],['백신은 몸이 병원체를 미리 기억하도록 돕는다','O']],
+   answer:'왜 그 답이 맞고 다른 하나는 아닌지 한 줄로 적어 주세요.', conf:true},
+  {type:'minitask', id:'M2', tag:'미니 과제 · 한 문장 요약', measure:'거시구조·요약',
+   passage:'도시의 가로수는 단순한 장식이 아니다. 여름철 그늘을 만들어 도로의 온도를 낮추고, 자동차가 내뿜는 미세먼지를 잎으로 붙잡는다. 또 빗물을 잠시 머금어 한꺼번에 하수구로 쏠리는 것을 막는다. 즉 가로수는 도시의 열·공기·물을 함께 관리하는 장치다.',
+   q:'윗글을 한 문장으로 요약하세요.', answer:'한 문장 요약을 적어 주세요.', conf:true},
+  {type:'minitask', id:'M3', tag:'미니 과제 · 표현', measure:'감각의존·변별',
+   passage:'나무는 묵묵히 서서\n제 그림자를 발밑에 내려놓는다',
+   q:'이 시의 표현상 특징으로 적절한 것은?', opts:[['대상에 인격을 부여하여 표현하였다','O'],['같은 시구를 반복하여 운율을 형성하였다','']], conf:true},
+  {type:'minitask', id:'M4', tag:'미니 과제 · 문법', measure:'적용·문법',
+   passage:'\'국물[궁물]\'은 \'ㄱ\'이 뒤의 \'ㅁ\'을 닮아 \'ㅇ\'으로 바뀐 것이다.',
+   q:'이와 같은 종류의 변화가 일어나는 것은?', opts:[['굳이[구지]',''],['닫는[단는]','O']], conf:true},
+  {type:'minitask', id:'M5', tag:'미니 과제 · 조건 수행', measure:'변별·조건',
+   passage:'(앞의 \'가로수\' 글을 떠올려 보세요.)',
+   q:'\'가로수\' 글을 친구에게 한 문장으로 설명하려 합니다. 아래 조건을 모두 지켜 쓰세요.\n[조건1] 가로수의 기능을 두 가지 쓸 것\n[조건2] \'단순한 장식이 아니라\'라는 말을 넣을 것',
+   answer:'조건을 지켜 한 문장으로 적어 주세요.', conf:true},
+];
+
+// ─── 미니 과제 (고2 5종 · 문학·독서 융합) ───
+const V2_MINI_고2 = [
+  {type:'minitask', id:'N1', tag:'미니 과제 · 관계 추론', measure:'적용·변별·메타',
+   passage:'어떤 약물은 효과가 클수록 부작용도 커진다. 그래서 의사는 약을 처방할 때, 그 약이 주는 이득이 부작용으로 인한 손해보다 클 때에만 사용한다. 즉 \'쓸 만한 약\'이란 부작용이 없는 약이 아니라, 이득이 손해를 넘어서는 약이다.',
+   q:'윗글로 추론한 내용으로 적절한 것은?', opts:[['부작용이 있는 약은 \'쓸 만한 약\'이 될 수 없다',''],['부작용이 큰 약도 이득이 더 크면 처방될 수 있다','O']],
+   answer:'왜 그렇게 판단했는지 지문 근거로 한 줄 적어 주세요.', conf:true},
+  {type:'minitask', id:'N2', tag:'미니 과제 · 〈보기〉 연결', measure:'적용',
+   passage:'\'공유지의 비극\'이란, 누구나 자유롭게 쓸 수 있는 자원은 각자가 자기 이익만 좇다 보면 결국 모두가 망가뜨리게 된다는 것이다.\n\n〈보기〉 한 마을의 공동 목초지에 농가들이 경쟁적으로 소를 풀어놓아, 풀이 다 사라져 결국 아무도 소를 먹이지 못하게 되었다.',
+   q:'〈보기〉에 대한 이해로 적절한 것은?', opts:[['농가들이 협력했다면 목초지가 유지됐을 것이다','O'],['목초지가 망가진 것은 원래 풀의 양이 부족했기 때문이다','']],
+   answer:'〈보기〉의 어떤 부분이 본문 개념과 연결되는지 한 줄 적어 주세요.', conf:true},
+  {type:'minitask', id:'N3', tag:'미니 과제 · 화자·정서', measure:'변별·감상',
+   passage:'빈 들에 서서\n나는 또 무엇을 기다리는가\n가을은 이미 저문 지 오래인데',
+   q:'이 시의 화자에 대한 설명으로 적절한 것은?', opts:[['결실을 거둔 만족감을 드러낸다',''],['무언가를 기다리며 막막함을 느낀다','O']],
+   answer:'그렇게 본 근거가 되는 시어·시구 하나를 적어 주세요.', conf:true},
+  {type:'minitask', id:'N4', tag:'미니 과제 · 〈보기〉 감상', measure:'변별',
+   passage:'어머니는 밥상 위에\n자식 몫의 생선을 먼저 발라 놓고\n가시를 발라낸 자리에 앉으셨다\n\n〈보기〉 이 시는 희생적 사랑을 일상적 행동으로 보여 준다.',
+   q:'〈보기〉를 바탕으로 한 감상으로 적절하지 않은 것은?', opts:[['\'생선을 먼저 발라 놓\'은 것은 자식을 위한 행동이다',''],['\'가시를 발라낸 자리에 앉\'은 것은 어머니의 권위를 드러낸다','O']], conf:true},
+  {type:'minitask', id:'N5', tag:'미니 과제 · 관점 비교(조건)', measure:'변별·조건',
+   passage:'(가) 고통은 되도록 피해야 할 것이다.\n(나) 고통은 사람을 한층 성장시킨다.',
+   q:'(가)와 (나)의 관점 차이를 아래 조건을 모두 지켜 한 문장으로 쓰세요.\n[조건1] (가)와 (나)를 모두 언급할 것\n[조건2] \'반면\'을 사용할 것',
+   answer:'조건을 지켜 한 문장으로 적어 주세요.', conf:true},
+];
+
+// ─── 오답 기록 (심층 전용 서답) · 랭킹 ───
+const V2_OBROK = {type:'minitask', id:'OB1', tag:'오답 기록', measure:'메타',
+  passage:'가장 최근 국어에서 틀린 문제 하나를 떠올려 주세요.',
+  q:'그 문제를 왜 틀렸는지 한 줄로 적어 주세요.',
+  answer:'예: 조건을 놓쳐서 / 지문을 잘못 이해해서 / 시간이 부족해서 / 그냥 헷갈려서', conf:false};
+const V2_RANK_FIRST = {type:'ranking', id:'RK1', q:'국어 공부에서 지금 가장 먼저 해결하고 싶은 것부터 순서대로 골라 주세요.', items:['긴 지문 독해','문학 해석','문법 적용','내신 암기','서술형 조건','시간 관리','오답 정리'], pick:3};
+const V2_RANK_FALL = {type:'ranking', id:'RK2', q:'시험에서 가장 자주 무너지는 순간부터 순서대로 골라 주세요.', items:['첫 지문이 안 읽힐 때','어려운 단어가 많을 때','두 선지가 헷갈릴 때','시간이 부족할 때','배점 큰 문제가 나올 때','서술형 조건이 많을 때','시험 끝나고 실수 발견'], pick:3};
+
+function v2MiniSet(grade){ return (grade==='고2'||grade==='고3') ? V2_MINI_고2 : V2_MINI_고1; }
+
+// ─── 버전 구성 (학년별 미니과제 분기, 심층은 오답기록+랭킹2 추가) ───
+const V2_VERSIONS = {
+  brief:     {label:'비재원생 진단', hasParent:true, buildStudent:(g)=> V2_BIJAE_STUDENT.slice()},
+  standard:  {label:'재원생 첫 진단', hasParent:true, buildStudent:(g)=> [...V2_BIJAE_STUDENT.slice(0,18), ...V2_JAE_EXTRA, ...v2MiniSet(g), V2_RANK_FIRST, V2_BIJAE_STUDENT[18]]},
+  precision: {label:'재원생 심층 진단', hasParent:true, buildStudent:(g)=> [...V2_BIJAE_STUDENT.slice(0,18), ...V2_JAE_EXTRA, ...v2MiniSet(g), V2_RANK_FIRST, V2_OBROK, V2_RANK_FALL, V2_BIJAE_STUDENT[18]]},
+};
+
+// ─── state ───
+const v2State = { ver:'brief', info:{}, items:[], idx:0, responses:{}, phase:'student' };
+
+function startV2(ver){
+  v2State.ver = ver; v2State.info = {}; v2State.responses = {}; v2State.idx = 0; v2State.phase = 'student';
+  const cfg = V2_VERSIONS[ver];
+  document.getElementById('v2-info-stamp').textContent = cfg.label;
+  goScreen('v2-info');
+}
+
+function startV2Quiz(){
+  const name = document.getElementById('v2-info-name').value.trim();
+  const school = document.getElementById('v2-info-school').value.trim();
+  const grade = document.getElementById('v2-info-grade').value;
+  const parentPhone = document.getElementById('v2-info-parent-phone').value.trim();
+  const err = document.getElementById('v2-info-error');
+  if(!name || !school || !grade){ err.textContent='이름·학교·학년은 필수입니다.'; err.style.display='block'; return; }
+  err.style.display='none';
+  v2State.info = { name, school, grade, parentPhone };
+  v2State.phase = 'student';
+  v2State.items = V2_VERSIONS[v2State.ver].buildStudent(grade);
+  v2State.idx = 0;
+  document.getElementById('v2-q-mode').textContent = V2_VERSIONS[v2State.ver].label;
+  goScreen('v2-quiz');
+  renderV2();
+}
+
+function renderV2(){
+  const items = v2State.items, idx = v2State.idx, it = items[idx];
+  if(!it) return;
+  document.getElementById('v2-q-counter').textContent = `${idx+1} / ${items.length}`;
+  document.getElementById('v2-q-progress').style.width = `${(idx+1)/items.length*100}%`;
+  document.getElementById('v2-q-mode').textContent = v2State.phase==='parent' ? '부모 관찰' : V2_VERSIONS[v2State.ver].label;
+  const r = v2State.responses[it.id];
+  let html = '';
+
+  if(it.type==='choice' || it.type==='attention'){
+    const opts = it.type==='attention' ? it.scale.map((t,i)=>[`${'①②③④⑤'[i]} ${t}`]) : it.opts;
+    if(it.part) html += `<div class="v2-part">${it.part}</div>`;
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div><div class="v2-choices">`;
+    opts.forEach((o,i)=>{
+      const mk = '①②③④⑤⑥'[i];
+      const sel = (r === i+1) ? ' sel' : '';
+      html += `<button class="v2-choice${sel}" onclick="v2PickChoice('${it.id}',${i+1})"><span class="mk">${it.type==='attention'?'':mk}</span><span>${it.type==='attention'?o[0]:o[0]}</span></button>`;
+    });
+    html += `</div>`;
+  }
+  else if(it.type==='minitask'){
+    const st = r || {};
+    html += `<div class="v2-mt-tag">${it.tag}</div>`;
+    html += `<div class="v2-passage">${it.passage}</div>`;
+    html += `<div class="v2-q">${it.q}</div>`;
+    if(it.opts){
+      html += `<div class="v2-choices">`;
+      it.opts.forEach((o,i)=>{ const sel=(st.c===i+1)?' sel':''; html += `<button class="v2-choice${sel}" onclick="v2MtChoice('${it.id}',${i+1})"><span class="mk">${'①②③④⑤'[i]}</span><span>${o[0]}</span></button>`; });
+      html += `</div>`;
+    }
+    if(it.answer){
+      html += `<div class="v2-sub">✎ ${it.answer}</div><textarea class="v2-textarea" id="v2-ta-${it.id}" oninput="v2MtText('${it.id}',this.value)" placeholder="여기에 적어 주세요">${st.t?st.t.replace(/</g,'&lt;'):''}</textarea>`;
+    }
+    if(it.conf!==false){
+      html += `<div class="v2-sub">방금 답, 얼마나 확신해요?</div><div class="v2-conf">`;
+      ['찍었다','애매하다','확실하다'].forEach((c,i)=>{ const sel=(st.conf===i+1)?' sel':''; html += `<div class="v2-conf-chip${sel}" onclick="v2MtConf('${it.id}',${i+1})">${c}</div>`; });
+      html += `</div>`;
+    }
+  }
+  else if(it.type==='ranking'){
+    const order = Array.isArray(r) ? r : [];
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div>`;
+    html += `<div class="v2-rank-help">가장 먼저 해결하고 싶은 것부터 차례로 탭하세요 (${it.pick}개). 다시 탭하면 취소됩니다.</div><div class="v2-rank-list">`;
+    it.items.forEach((label,i)=>{
+      const pos = order.indexOf(i);
+      const picked = pos>=0;
+      html += `<div class="v2-rank-item${picked?' picked':''}" onclick="v2RankTap('${it.id}',${i})"><span class="v2-rank-badge">${picked?(pos+1):''}</span><span>${label}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('v2-area').innerHTML = html;
+  document.getElementById('v2-prev').disabled = (idx===0);
+  document.getElementById('v2-next').textContent = (idx===items.length-1) ? '응답 완료 →' : '다음 →';
+}
+
+function v2PickChoice(id, val){
+  v2State.responses[id] = val;
+  renderV2();
+  if(v2State.idx < v2State.items.length-1){ setTimeout(()=>{ v2State.idx++; renderV2(); }, 180); }
+}
+function v2MtChoice(id, c){ const st=v2State.responses[id]||{}; st.c=c; v2State.responses[id]=st; renderV2(); }
+function v2MtText(id, val){ const st=v2State.responses[id]||{}; st.t=val; v2State.responses[id]=st; }
+function v2MtConf(id, n){ const st=v2State.responses[id]||{}; st.conf=n; v2State.responses[id]=st; renderV2(); }
+function v2RankTap(id, itemIdx){
+  const it=v2State.items[v2State.idx]; let order=Array.isArray(v2State.responses[id])?v2State.responses[id].slice():[];
+  const pos=order.indexOf(itemIdx);
+  if(pos>=0) order.splice(pos,1);
+  else if(order.length < it.pick) order.push(itemIdx);
+  v2State.responses[id]=order; renderV2();
+}
+
+function v2Prev(){ if(v2State.idx>0){ v2State.idx--; renderV2(); } }
+function v2Next(){
+  const it=v2State.items[v2State.idx], r=v2State.responses[it.id];
+  if(it.type==='choice'||it.type==='attention'){ if(!r){ alert('응답을 선택해주세요.'); return; } }
+  else if(it.type==='minitask'){
+    if(it.opts && !(r&&r.c)){ alert('보기를 선택해주세요.'); return; }
+    if(it.answer && !(r&&r.t&&r.t.trim().length>=2)){ alert('서답을 한 줄 이상 적어주세요.'); return; }
+    if(it.conf!==false && !(r&&r.conf)){ alert('확신도를 선택해주세요.'); return; }
+  }
+  else if(it.type==='ranking'){ if(!(Array.isArray(r)&&r.length===it.pick)){ alert(`${it.pick}개를 순서대로 골라주세요.`); return; } }
+  if(v2State.idx < v2State.items.length-1){ v2State.idx++; renderV2(); }
+  else { v2EndPhase(); }
+}
+
+function v2EndPhase(){
+  if(v2State.phase==='student'){
+    if(V2_VERSIONS[v2State.ver].hasParent){ goScreen('v2-parent-bridge'); }
+    else { renderV2Results(); }
+  } else { renderV2Results(); }
+}
+function v2StartParent(){
+  v2State.phase='parent'; v2State.items=V2_PARENT.slice(); v2State.idx=0;
+  goScreen('v2-quiz'); renderV2();
+}
+function v2FinishStudentOnly(){ renderV2Results(); }
+
+// ════════════════ [3] v2 채점 · 페르소나 엔진 ════════════════
+const V2_AXNAME = {장악:'자료 장악',적용:'사고 적용',변별:'조건 변별',메타:'오답 메타인지',시간:'시간 운영',정서:'정서 회복'};
+const V2_PERSONA = {
+  성실누수:   {label:'성실 누수형', sub:'공부량은 있는데 점수로 새는 아이', line:`공부량은 충분한데, 맞고 틀린 이유를 정밀하게 분류하지 못해 점수로 이어지지 않는 유형입니다. 자료는 챙기지만 '왜 틀렸는지'에서 새고 있습니다.`},
+  감각의존:   {label:'감각 의존형', sub:'맞힐 때도 있지만 재현성이 약한 아이', line:`문제를 풀 때 감각은 있으나, 맞힌 것과 틀린 것을 모두 '이해했다'로 처리해 같은 매력적 오답에 반복적으로 걸릴 가능성이 큽니다.`},
+  고난도적용: {label:'고난도 적용형', sub:'어려운 문제는 강한데 내신 디테일에서 새는 아이', line:`낯선 지문·고난도에는 강하지만, 학교 자료·조건 같은 내신 디테일에서 점수를 흘립니다. 모의고사형 강점이 내신으로 잘 이어지지 않는 유형입니다.`},
+  조건변별:   {label:'조건 변별형', sub:'실수·감점·조건 방어가 중요한 아이', line:`내용 이해는 어느 정도 되지만 발문·선지·서술형 조건에서 실수가 잦아, 조건 방어 훈련이 점수를 가장 빠르게 올릴 지점입니다.`},
+  자료장악:   {label:'자료 장악형', sub:'학교 자료를 빠짐없이 챙길 때 강한 아이', line:`학교 자료·필기·범위를 꼼꼼히 챙기는 성실함이 강점입니다. 자체 범위가 넓고 암기 비중이 큰 시험에서 유리합니다.`},
+  사고적용:   {label:'사고 적용형', sub:'낯선 지문·새 문제에서 강한 아이', line:`낯선 지문을 두려워하지 않고 원리를 이해해 적용하는 감각이 강점입니다. 외부 지문·고난도 변별이 많은 시험에서 유리합니다.`},
+  균형:       {label:'균형형', sub:'고른 강점을 가진 아이', line:`특정 축에 치우치지 않고 고르게 안정적인 유형입니다. 강점을 유지하며 약점 축을 조금씩 끌어올리면 됩니다.`},
+  기초재설계: {label:'기초 재설계형', sub:'학습 처리 전반을 다시 잡아야 하는 아이', line:`특정 영역의 문제라기보다 국어 학습 처리 전반을 다시 설계할 시점입니다. 한 축씩 기초부터 세우는 접근이 필요합니다.`},
+};
+const V2_RANK_AX = {'긴 지문 독해':'적용','문학 해석':'적용','문법 적용':'변별','내신 암기':'장악','서술형 조건':'변별','시간 관리':'시간','오답 정리':'메타'};
+
+function v2FindItem(id){
+  return [...V2_BIJAE_STUDENT,...V2_JAE_EXTRA,...V2_MINI_고1,...V2_MINI_고2,V2_OBROK,V2_RANK_FIRST,V2_RANK_FALL,...V2_PARENT].find(x=>x.id===id) || (v2State.items||[]).find(x=>x.id===id);
+}
+// 축 점수: -1~+1 평균 → 0~100. pred로 학생/부모 분리
+function v2CollectAxes(pred){
+  const acc={장악:[],적용:[],변별:[],메타:[],시간:[],정서:[]}; let stars=0;
+  Object.entries(v2State.responses).forEach(([id,val])=>{
+    if(!pred(id)) return;
+    const it=v2FindItem(id); if(!it||!it.opts) return;
+    const v=(it.type==='minitask')?(val&&val.c):val;
+    if(!v) return; const opt=it.opts[v-1]; if(!opt) return;
+    v2Flags(opt[1]).forEach(f=>{ if(f.ax && acc[f.ax]) acc[f.ax].push(f.d); if(f.star) stars++; });
+  });
+  const score={}, counts={};
+  Object.keys(acc).forEach(k=>{ const a=acc[k]; counts[k]=a.length; score[k]=a.length?Math.round(50+50*(a.reduce((s,x)=>s+x,0)/a.length)):50; });
+  return {score, counts, stars};
+}
+function v2MinitaskStats(){
+  const out={total:0, correct:0, 착각:0, 진짜강점:0, 찍음:0, written:[]};
+  [...V2_MINI_고1, ...V2_MINI_고2, V2_OBROK].forEach(it=>{
+    const r=v2State.responses[it.id]; if(!r) return;
+    if(it.opts){
+      out.total++;
+      const ci=it.opts.findIndex(o=>o[1]==='O')+1;
+      const correct=(r.c===ci);
+      if(correct) out.correct++;
+      if(!correct && r.conf===3) out.착각++;
+      if(correct && r.conf===3) out.진짜강점++;
+      if(r.conf===1) out.찍음++;
+    }
+    if(it.answer && r.t && r.t.trim()) out.written.push({tag:it.tag, text:r.t.trim()});
+  });
+  return out;
+}
+function v2Judge(s){
+  const A=s.장악,B=s.적용,C=s.변별,D=s.메타; const vals=[s.장악,s.적용,s.변별,s.메타,s.시간,s.정서];
+  const avg=vals.reduce((a,b)=>a+b,0)/6, lows=vals.filter(v=>v<=42).length;
+  if(avg<45 && lows>=3) return '기초재설계';
+  if(A>=60 && (D<=46||C<=46)) return '성실누수';
+  if(B>=54 && A<=50 && D<=50) return '감각의존';
+  if(B>=58 && A<=50) return '고난도적용';
+  if(C<=44 && A>=50 && B>=50) return '조건변별';
+  if(A>=60) return '자료장악';
+  if(B>=60) return '사고적용';
+  return '균형';
+}
+function v2Analyze(){
+  const st=v2CollectAxes(id=>id[0]!=='P');
+  const hasParent=Object.keys(v2State.responses).some(id=>id[0]==='P');
+  const pa=hasParent?v2CollectAxes(id=>id[0]==='P'):null;
+  const persona=v2Judge(st.score);
+  const mt=v2MinitaskStats();
+  const attR=v2State.responses['BC1'];
+  const att=(typeof attR==='number' && attR!==3);
+  let gap=null;
+  if(pa){ let best=null; Object.keys(st.score).forEach(k=>{ if(st.counts[k]&&pa.counts[k]){ const d=st.score[k]-pa.score[k]; if(d>=15&&(!best||d>best.d)) best={ax:k,d}; } }); gap=best; }
+  // 약점 축 (응답 있는 것 중 최저)
+  let weakest=null; Object.keys(st.score).forEach(k=>{ if(st.counts[k] && (!weakest||st.score[k]<st.score[weakest])) weakest=k; });
+  return {score:st.score, counts:st.counts, stars:st.stars, persona, mt, att, hasParent, parentScore:pa?pa.score:null, gap, weakest};
+}
+
+function renderV2Results(){
+  const info=v2State.info, a=v2Analyze(), P=V2_PERSONA[a.persona];
+  document.getElementById('v2-r-stamp').textContent = V2_VERSIONS[v2State.ver].label + ' 결과';
+  document.getElementById('v2-r-name').textContent = `${info.name||'학생'} 의 진단 결과`;
+  document.getElementById('v2-r-meta').textContent = `${info.school||''} · ${info.grade||''} · [오름] 국어`;
+  document.getElementById('v2-r-foot').textContent = V2_VERSIONS[v2State.ver].label + ' · v2';
+
+  let h='';
+  // 1. 페르소나 카드
+  h += `<div class="o-rx-card" style="border-color:rgba(45,212,191,.4)">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--o-mint)">[오름] 성향 판정</div>
+    <div style="font-family:var(--serif);font-size:25px;font-weight:800;color:var(--o-ink);margin:5px 0 2px">${P.label}</div>
+    <div style="color:var(--o-mint2);font-size:14px;margin-bottom:8px">${P.sub}</div>
+    <div style="color:var(--o-ink2);line-height:1.7">${P.line}</div></div>`;
+
+  // 2. 6축 프로파일
+  h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">1.</span> 6축 프로파일</h2><div class="o-card">`;
+  Object.keys(V2_AXNAME).forEach(k=>{
+    const v=a.score[k], na=!a.counts[k];
+    const tag = na?'<span style="color:var(--o-mut)">측정 안 됨</span>' : (v>=60?'<span style="color:var(--o-mint)">강점</span>':v<=42?'<span style="color:var(--o-amber)">약점</span>':'<span style="color:var(--o-mut)">보통</span>');
+    h += `<div class="v2-axis"><div class="lab"><span>${V2_AXNAME[k]} · ${tag}</span><span class="v">${na?'—':v}</span></div><div class="v2-bar"><div style="width:${na?0:v}%"></div></div></div>`;
+  });
+  h += `</div>`;
+
+  // 3. 미니 과제 실측 (있을 때)
+  if(a.mt.total>0){
+    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">2.</span> 미니 과제 실측</h2>
+      <div class="o-card">정답 <b style="color:var(--o-mint)">${a.mt.correct}/${a.mt.total}</b>
+      &nbsp;·&nbsp; 확신했는데 틀림(<b style="color:var(--o-amber)">알았다 착각</b>) <b style="color:var(--o-amber)">${a.mt.착각}</b>개
+      &nbsp;·&nbsp; 확실히 맞힘 ${a.mt.진짜강점}개 &nbsp;·&nbsp; 찍음 ${a.mt.찍음}개
+      ${a.mt.착각>0?`<div style="margin-top:8px;color:var(--o-amber);font-size:14px">⚠ 자기 인식과 실제가 어긋나는 신호 — 같은 유형 오답 반복 위험.</div>`:''}</div>`;
+  }
+
+  // 4. 위험 신호 + 신뢰도
+  let risk=`고위험(★) 신호 <b style="color:var(--o-amber)">${a.stars}</b>개 감지.`;
+  if(a.stars>=4) risk+=' <b style="color:var(--o-amber)">즉시 점검 필요.</b>';
+  if(a.att) risk+=' <span style="color:var(--o-amber)">(주의력 체크 불일치 — 응답 신뢰도 주의)</span>';
+  h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">3.</span> 위험 신호</h2><div class="o-card">${risk}</div>`;
+
+  // 5. 학생-부모 인식 차이 (부모 응답 시)
+  if(a.hasParent){
+    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">4.</span> 학생–부모 인식 차이</h2><div class="o-card">`;
+    if(a.gap) h += `<b style="color:var(--o-amber)">${V2_AXNAME[a.gap.ax]}</b>에서 학생이 스스로를 부모 관찰보다 높게 평가합니다(자기 인식 과대평가 가능). 이 축은 실제 점검이 필요합니다.`;
+    else h += `학생 응답과 부모 관찰이 대체로 일치합니다(자기 인식 양호).`;
+    h += `</div>`;
+  }
+
+  // 6. 랭킹: 자기 우선순위 vs 실측 약점
+  const rk=v2State.responses['RK1'];
+  if(Array.isArray(rk) && rk.length){
+    const labels=rk.map(i=>V2_RANK_FIRST.items[i]);
+    const pickedAx=labels.map(l=>V2_RANK_AX[l]);
+    const matchWeak = a.weakest && pickedAx.includes(a.weakest);
+    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">5.</span> 우선순위 ↔ 실측</h2>
+      <div class="o-card">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>
+      실측상 가장 약한 축: <b style="color:var(--o-amber)">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>.
+      ${matchWeak?' 자기 인식과 실제 약점이 일치합니다.':' 스스로 꼽은 우선순위와 실제 약점이 달라, 상담에서 방향 조정이 필요합니다.'}</div>`;
+  }
+
+  // 7. 서답 (강사 검토)
+  if(a.mt.written.length){
+    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">6.</span> 서답 (강사 검토)</h2>`;
+    a.mt.written.forEach(w=>{ h += `<div class="o-card" style="margin-bottom:10px"><div style="color:var(--o-mint2);font-size:13px">${w.tag}</div><div style="color:var(--o-ink2);margin-top:4px">“${w.text.replace(/</g,'&lt;')}”</div></div>`; });
+  }
+
+  // 8. 마무리
+  h += `<div class="o-rx-card" style="margin-top:24px"><b>${info.name||'학생'}</b> 학생은 <b>${P.label}</b>입니다. ${P.line}
+    <div style="margin-top:10px;color:var(--o-mut);font-size:14px">[오름] 국어는 성향별 맞춤 수업·과제·오답 관리로 약점 축을 끌어올립니다.</div></div>`;
+
+  document.getElementById('v2-r-body').innerHTML = h;
+  goScreen('v2-results');
+  v2SendBackend(a);
+}
+
+// 시트 저장 (백엔드 미연결 시 무해)
+function v2SendBackend(a){
+  if(v2State.previewMode) return; // 강사 미리보기에서는 재전송 안 함
+  if(typeof CONFIG==='undefined' || !CONFIG.sheetUrl) return;
+  try{
+    const params=new URLSearchParams();
+    params.append('action','v2Save');
+    params.append('version', v2State.ver);
+    params.append('info', JSON.stringify(v2State.info));
+    params.append('responses', JSON.stringify(v2State.responses));
+    params.append('analysis', JSON.stringify({persona:a.persona, score:a.score, stars:a.stars, 착각:a.mt.착각, hasParent:a.hasParent}));
+    params.append('apiKey', CONFIG.apiKey||'');
+    fetch(CONFIG.sheetUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:params.toString(),mode:'no-cors'});
+  }catch(e){ console.warn('[v2] 백엔드 전송 실패:', e); }
+}
 
 // ════════════════════════════════════════════════════════════
 //  특별판 — 한티 MEXX 설명회 참여자 인증 + 진단 시작
@@ -8296,7 +9661,6 @@ window.onload = function(){
   win.document.close();
 }
 </script>
-
 <!-- ═══════════════════════════════════════════════════════════════
      result-viewer 전용: 미리보기 모드 (대시보드에서 풀 결과지 보기)
      URL 파라미터:
@@ -8312,6 +9676,33 @@ window.onload = function(){
   const targetMirrorCode = params.get('mirrorCode');
   const targetGeneralName = params.get('generalName');
   const previewMode = params.get('mode'); // 'parentSummary' 또는 없음
+
+  // --- v2 진단(비재원생/재원생) 미리보기 ---
+  const targetV2Name = params.get('v2Name');
+  if (targetV2Name) {
+    window.addEventListener('load', async () => {
+      document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
+      const le=document.createElement('div'); le.style.cssText='position:fixed;inset:0;background:#071A1B;color:#8FA596;display:flex;align-items:center;justify-content:center;font-family:sans-serif;z-index:9999;font-size:14px'; le.textContent=targetV2Name+' 학생 결과지 불러오는 중...'; document.body.appendChild(le);
+      try {
+        const resp = await fetch(CONFIG.sheetUrl+'?key='+encodeURIComponent(CONFIG.apiKey)+'&action=v2List');
+        const list = await resp.json();
+        const rows = (Array.isArray(list)?list:[]).filter(r=>r['이름']===targetV2Name);
+        if(!rows.length) throw new Error(targetV2Name+' 학생의 v2 결과를 찾을 수 없습니다');
+        const row = rows.sort((a,b)=>String(b['제출시각']||'').localeCompare(String(a['제출시각']||'')))[0];
+        const verMap={'비재원생':'brief','재원생 첫':'standard','재원생 심층':'precision'};
+        v2State.ver = verMap[row['버전']] || 'standard';
+        v2State.info = { name:row['이름'], school:row['학교'], grade:row['학년'], parentPhone:row['학부모연락처'] };
+        v2State.responses = JSON.parse(row['응답_JSON']||'{}');
+        v2State.items = V2_VERSIONS[v2State.ver].buildStudent(v2State.info.grade);
+        v2State.previewMode = true;
+        renderV2Results();
+        le.remove();
+        const stamp=document.getElementById('v2-r-stamp'); if(stamp) stamp.innerHTML += ' <span style="background:#0F2A2A;color:#8FD3A8;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px">강사 미리보기</span>';
+        const acts=document.querySelector('#v2-results .report-actions'); if(acts) acts.innerHTML='<button class="btn btn-ghost" onclick="window.print()">📄 인쇄</button> <button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
+      } catch(e){ le.textContent='불러오기 실패: '+e.message; le.style.color='#d4533b'; }
+    });
+    return;
+  }
   if (!targetName && !targetMirrorCode && !targetGeneralName) return;
 
   const isMirror = !!targetMirrorCode;
