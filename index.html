@@ -4813,8 +4813,8 @@ function v2PickByIds(ids){ const pool=[...V2_BIJAE_STUDENT, ...V2_JAE_EXTRA]; re
 // ─── 주의력 체크 2 (중간 배치, 정답 다르게 → 무지성/일관 클릭 탐지) ───
 const V2_ATTN2 = {type:'attention', id:'BC2', q:'이 문항도 응답 확인용입니다. ② \'아니다\'를 선택해 주세요.', scale:['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'], correct:2};
 // ─── 상담 문항 (점수 미반영, 강사 참고) ───
-const V2_PREF = {type:'choice', id:'PREF1', part:'학원 학습 방향', q:'우리 학원 국어 수업에서 지금 가장 받고 싶은 것은?', opts:[['개념·원리부터 차근차근',''],['유형을 충분히 반복·숙달',''],['고난도 문제 도전',''],['내신·수능 시험 대비',''],['놓친 기초부터 다지기','']]};
-const V2_PREV = {type:'choice', id:'PREV1', part:'이전 학습 이력', q:'이전에 다른 국어 학원·공부방을 다녔다면, 그만두고 우리 학원에 온 가장 큰 이유는?', opts:[['성적이 잘 오르지 않아서',''],['수업 방식이 안 맞아서',''],['관리·피드백이 부족해서',''],['거리·시간 문제로',''],['국어 학원을 다닌 적이 없음',''],['기타',''] ]};
+const V2_PREF = {type:'multi', id:'PREF1', part:'학원 학습 방향', q:'우리 학원 국어 수업에서 지금 가장 원하는 것은? (복수 선택 가능)', opts:[['내신 시험 점수 상승',''],['모의고사 점수 상승',''],['문학 및 문법의 개념 채우기',''],['국어 문제 푸는 방법 배우기',''],['기타','',true]]};
+const V2_PREV = {type:'choice', id:'PREV1', part:'이전 학습 이력', q:'이전에 다른 국어 학원·공부방을 다녔다면, 그만두고 우리 학원에 온 가장 큰 이유는?', opts:[['성적이 안 올라서',''],['수업이 나와 안 맞아서',''],['질문하기가 어려워서',''],['클리닉·내신 자료 등이 부족해서',''],['거리·시간이 맞지 않아서',''],['국어 학원을 다닌 적이 없음',''],['기타','',true]]};
 
 // ─── 버전 구성 (학년별 미니과제 분기 / 첫=선별 컴팩트 25 / 심층=전체+오답기록·랭킹2) ───
 const V2_VERSIONS = {
@@ -4864,11 +4864,27 @@ function renderV2(){
     if(it.part) html += `<div class="v2-part">${it.part}</div>`;
     html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div><div class="v2-choices">`;
     opts.forEach((o,i)=>{
-      const mk = '①②③④⑤⑥'[i];
+      const mk = '①②③④⑤⑥⑦⑧'[i];
       const sel = (r === i+1) ? ' sel' : '';
-      html += `<button class="v2-choice${sel}" onclick="v2PickChoice('${it.id}',${i+1})"><span class="mk">${it.type==='attention'?'':mk}</span><span>${it.type==='attention'?o[0]:o[0]}</span></button>`;
+      html += `<button class="v2-choice${sel}" onclick="v2PickChoice('${it.id}',${i+1})"><span class="mk">${it.type==='attention'?'':mk}</span><span>${o[0]}</span></button>`;
     });
     html += `</div>`;
+    // 기타(서술형) 선택 시 텍스트 입력
+    if(it.type==='choice' && typeof r==='number' && it.opts[r-1] && it.opts[r-1][2]){
+      html += `<textarea class="v2-textarea" style="margin-top:10px" oninput="v2ChoiceOther('${it.id}',this.value)" placeholder="기타 내용을 적어 주세요">${(v2State.responses[it.id+'_etc']||'').replace(/</g,'&lt;')}</textarea>`;
+    }
+  }
+  else if(it.type==='multi'){
+    const st = r || {sel:[]}; const selArr = st.sel || [];
+    if(it.part) html += `<div class="v2-part">${it.part}</div>`;
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div>`;
+    html += `<div class="v2-rank-help">해당하는 것을 모두 선택하세요 (복수 가능)</div><div class="v2-choices">`;
+    it.opts.forEach((o,i)=>{ const sel=selArr.includes(i)?' sel':''; html += `<button class="v2-choice${sel}" onclick="v2MultiTap('${it.id}',${i})"><span class="mk">${selArr.includes(i)?'✓':'○'}</span><span>${o[0]}</span></button>`; });
+    html += `</div>`;
+    const otherIdx = it.opts.findIndex(o=>o[2]);
+    if(otherIdx>=0 && selArr.includes(otherIdx)){
+      html += `<textarea class="v2-textarea" style="margin-top:10px" oninput="v2MultiOther('${it.id}',this.value)" placeholder="기타 내용을 적어 주세요">${(st.etc||'').replace(/</g,'&lt;')}</textarea>`;
+    }
   }
   else if(it.type==='minitask'){
     const st = r || {};
@@ -4909,8 +4925,14 @@ function renderV2(){
 function v2PickChoice(id, val){
   v2State.responses[id] = val;
   renderV2();
+  const it=v2State.items[v2State.idx];
+  const opt = it && it.opts && it.opts[val-1];
+  if(opt && opt[2]) return; // 기타(서술형) → 자동 진행 안 함 (텍스트 입력 받기)
   if(v2State.idx < v2State.items.length-1){ setTimeout(()=>{ v2State.idx++; renderV2(); }, 180); }
 }
+function v2ChoiceOther(id, v){ v2State.responses[id+'_etc']=v; }
+function v2MultiTap(id, i){ const st=v2State.responses[id]||{sel:[]}; if(!st.sel)st.sel=[]; const p=st.sel.indexOf(i); if(p>=0)st.sel.splice(p,1); else st.sel.push(i); v2State.responses[id]=st; renderV2(); }
+function v2MultiOther(id, v){ const st=v2State.responses[id]||{sel:[]}; st.etc=v; v2State.responses[id]=st; }
 function v2MtChoice(id, c){ const st=v2State.responses[id]||{}; st.c=c; v2State.responses[id]=st; renderV2(); }
 function v2MtText(id, val){ const st=v2State.responses[id]||{}; st.t=val; v2State.responses[id]=st; }
 function v2MtConf(id, n){ const st=v2State.responses[id]||{}; st.conf=n; v2State.responses[id]=st; renderV2(); }
@@ -4932,6 +4954,7 @@ function v2Next(){
     if(it.conf!==false && !(r&&r.conf)){ alert('확신도를 선택해주세요.'); return; }
   }
   else if(it.type==='ranking'){ if(!(Array.isArray(r)&&r.length===it.pick)){ alert(`${it.pick}개를 순서대로 골라주세요.`); return; } }
+  else if(it.type==='multi'){ if(!(r&&r.sel&&r.sel.length>=1)){ alert('하나 이상 선택해주세요.'); return; } }
   if(v2State.idx < v2State.items.length-1){ v2State.idx++; renderV2(); }
   else { v2EndPhase(); }
 }
@@ -5090,8 +5113,9 @@ function renderV2Results(){
   }
 
   // 7'. 상담 정보 (학원 방향·이전 학원 — 점수 미반영, 강사 참고)
-  const pickedText = (id)=>{ const it=v2FindItem(id); const r=v2State.responses[id]; return (it && it.opts && typeof r==='number' && it.opts[r-1]) ? it.opts[r-1][0] : null; };
-  const pref=pickedText('PREF1'), prev=pickedText('PREV1');
+  const choiceText = (id)=>{ const it=v2FindItem(id), r=v2State.responses[id]; if(!it||!it.opts||typeof r!=='number'||!it.opts[r-1]) return null; let t=it.opts[r-1][0]; if(it.opts[r-1][2] && v2State.responses[id+'_etc']) t+=': '+v2State.responses[id+'_etc']; return t; };
+  const multiText = (id)=>{ const it=v2FindItem(id), st=v2State.responses[id]; if(!it||!it.opts||!st||!st.sel||!st.sel.length) return null; const arr=st.sel.map(i=>it.opts[i]&&it.opts[i][0]).filter(Boolean); if(st.etc && st.sel.some(i=>it.opts[i]&&it.opts[i][2])) arr[arr.length-1]='기타: '+st.etc; return arr.join(', '); };
+  const pref=multiText('PREF1'), prev=choiceText('PREV1');
   if(pref || prev){
     h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">·</span> 상담 정보</h2><div class="o-card">`;
     if(pref) h += `<div>원하는 수업 방향: <b style="color:var(--o-mint)">${pref}</b></div>`;
