@@ -2962,9 +2962,9 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-num">3</div>
       <div class="version-info">
         <h4>재원생 첫 진단</h4>
-        <p>선별 문항 + 미니 과제 22개 · 약 8분<br>반 배치·수업 전략용 분류</p>
+        <p>선별 문항 + 미니 과제 25개 · 약 9분<br>반 배치·수업 전략용 분류</p>
       </div>
-      <div class="version-meta"><strong>22</strong><br>questions</div>
+      <div class="version-meta"><strong>25</strong><br>questions</div>
     </div>
 
     <!-- 4번: 재원생 심층 진단 (구 정밀형) -->
@@ -4719,7 +4719,7 @@ const V2_BIJAE_STUDENT = [
   {type:'choice', id:'B11', q:'처음 보는 외부 작품이 시험에 나왔다. 첫 반응은?', opts:[['배운 작품과 비슷한 점부터 떠올린다','적용+'],['일단 화제·상황부터 잡으려 한다','적용+'],['당황해서 머릿속이 굳는다','적용-★|정서-'],['아는 단어·표현만 찾아 읽는다','적용-'],['어차피 모를 거라 찍고 넘긴다','적용-★|메타-']]},
   {type:'choice', id:'B12', q:'〈보기〉가 붙은 문제를 보면 가장 먼저 하는 일은?', opts:[['〈보기〉를 먼저 해석한다','적용+'],['지문에서 관련 부분을 찾는다','적용+|변별+'],['선지를 읽으며 감을 잡는다','변별-'],['아는 개념이 있는지 본다',''],['길어 보이면 일단 넘긴다','시간-']]},
   {type:'choice', id:'B13', q:'"적절하지 않은 것을 고르라"는 발문을 보면 나는?', opts:[['발문(문제의 \'않은\')에 바로 표시부터 한다','변별+'],['풀다가 가끔 놓쳐서 적절한 것을 고를 때가 있다','변별-'],['다 풀고 나서 다시 확인한다',''],['급하면 반대로 고를 때가 있다','변별-★'],['그런 실수는 거의 없다','변별+']]},
-  {type:'choice', id:'B14', q:'공부하려고 책상에 앉았을 때, 내 국어 자료 풍경에 가깝다.', opts:[['단권화된 자료가 있다','장악+'],['프린트가 쌓여 있는데 순서는 없다','장악-'],['문제집 위주고 학교 자료는 잘 안 본다','장악-'],['뭐부터 펼쳐야 할지 모르겠다','장악-★'],['핸드폰부터 본다','정서-']]},
+  {type:'choice', id:'B14', q:'공부하려고 책상에 앉았을 때, 내 국어 자료 풍경에 가까운 것은?', opts:[['단권화된 자료가 있다','장악+'],['프린트가 쌓여 있는데 순서는 없다','장악-'],['문제집 위주고 학교 자료는 잘 안 본다','장악-'],['뭐부터 펼쳐야 할지 모르겠다','장악-★'],['핸드폰부터 본다','정서-']]},
   {type:'choice', id:'B15', q:'국어 숙제를 할 때 내 모습에 가까운 것을 고른다면?', opts:[['풀고 채점하고 틀린 이유까지 적는다','메타+'],['풀고 채점만 한다','메타-'],['답을 맞춰 보고 끝낸다','메타-'],['안 풀리면 답지부터 본다','장악-★|메타-'],['자주 미루거나 안 한다','정서-★']]},
   {type:'choice', id:'B16', q:'같은 실수를 또 했다는 걸 보통 언제 아는가?', opts:[['틀린 직후 바로 안다','메타+'],['오답 정리할 때 안다','메타+'],['다음 시험에서 또 틀리고서야 안다','메타-★'],['잘 모른다','메타-★'],['같은 실수를 거의 안 한다','메타+']]},
   {type:'choice', id:'B17', q:'시험에서 지문을 읽다가 모르는 단어가 나오면 나는?', opts:[['앞뒤 문맥으로 뜻을 추론한다','적용+'],['표시만 하고 일단 넘어간다',''],['거기서 멈춰 한참 고민한다','시간-'],['뜻을 모르면 그 문장을 못 읽는다','적용-★'],['그냥 무시하고 읽는다','메타-']]},
@@ -4810,10 +4810,16 @@ function v2MiniSet(grade){ return (grade==='고2'||grade==='고3') ? V2_MINI_고
 const V2_JAE_FIRST_IDS = ['B18','B4','B11','B7','B14','R3','R2','B8','R4','B13','B10','B3','R1','R5','B15'];
 function v2PickByIds(ids){ const pool=[...V2_BIJAE_STUDENT, ...V2_JAE_EXTRA]; return ids.map(id=>pool.find(x=>x.id===id)).filter(Boolean); }
 
-// ─── 버전 구성 (학년별 미니과제 분기 / 첫=선별 컴팩트 / 심층=전체+오답기록·랭킹2) ───
+// ─── 주의력 체크 2 (중간 배치, 정답 다르게 → 무지성/일관 클릭 탐지) ───
+const V2_ATTN2 = {type:'attention', id:'BC2', q:'이 문항도 응답 확인용입니다. ② \'아니다\'를 선택해 주세요.', scale:['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'], correct:2};
+// ─── 상담 문항 (점수 미반영, 강사 참고) ───
+const V2_PREF = {type:'choice', id:'PREF1', part:'학원 학습 방향', q:'우리 학원 국어 수업에서 지금 가장 받고 싶은 것은?', opts:[['개념·원리부터 차근차근',''],['유형을 충분히 반복·숙달',''],['고난도 문제 도전',''],['내신·수능 시험 대비',''],['놓친 기초부터 다지기','']]};
+const V2_PREV = {type:'choice', id:'PREV1', part:'이전 학습 이력', q:'이전에 다른 국어 학원·공부방을 다녔다면, 그만두고 우리 학원에 온 가장 큰 이유는?', opts:[['성적이 잘 오르지 않아서',''],['수업 방식이 안 맞아서',''],['관리·피드백이 부족해서',''],['거리·시간 문제로',''],['국어 학원을 다닌 적이 없음',''],['기타',''] ]};
+
+// ─── 버전 구성 (학년별 미니과제 분기 / 첫=선별 컴팩트 25 / 심층=전체+오답기록·랭킹2) ───
 const V2_VERSIONS = {
   brief:     {label:'비재원생 진단', hasParent:true, buildStudent:(g)=> V2_BIJAE_STUDENT.slice()},
-  standard:  {label:'재원생 첫 진단', hasParent:true, buildStudent:(g)=> [...v2PickByIds(V2_JAE_FIRST_IDS), ...v2MiniSet(g), V2_RANK_FIRST, V2_BIJAE_STUDENT[18]]},
+  standard:  {label:'재원생 첫 진단', hasParent:true, buildStudent:(g)=> { const sc=v2PickByIds(V2_JAE_FIRST_IDS); return [...sc.slice(0,8), V2_ATTN2, ...sc.slice(8), ...v2MiniSet(g), V2_RANK_FIRST, V2_PREF, V2_PREV, V2_BIJAE_STUDENT[18]]; }},
   precision: {label:'재원생 심층 진단', hasParent:true, buildStudent:(g)=> [...V2_BIJAE_STUDENT.slice(0,18), ...V2_JAE_EXTRA, ...v2MiniSet(g), V2_RANK_FIRST, V2_OBROK, V2_RANK_FALL, V2_BIJAE_STUDENT[18]]},
 };
 
@@ -4957,7 +4963,7 @@ const V2_PERSONA = {
 const V2_RANK_AX = {'긴 지문 독해':'적용','문학 해석':'적용','문법 적용':'변별','내신 암기':'장악','서술형 조건':'변별','시간 관리':'시간','오답 정리':'메타'};
 
 function v2FindItem(id){
-  return [...V2_BIJAE_STUDENT,...V2_JAE_EXTRA,...V2_MINI_고1,...V2_MINI_고2,V2_OBROK,V2_RANK_FIRST,V2_RANK_FALL,...V2_PARENT].find(x=>x.id===id) || (v2State.items||[]).find(x=>x.id===id);
+  return [...V2_BIJAE_STUDENT,...V2_JAE_EXTRA,...V2_MINI_고1,...V2_MINI_고2,V2_OBROK,V2_RANK_FIRST,V2_RANK_FALL,V2_ATTN2,V2_PREF,V2_PREV,...V2_PARENT].find(x=>x.id===id) || (v2State.items||[]).find(x=>x.id===id);
 }
 // 축 점수: -1~+1 평균 → 0~100. pred로 학생/부모 분리
 function v2CollectAxes(pred){
@@ -5008,8 +5014,9 @@ function v2Analyze(){
   const pa=hasParent?v2CollectAxes(id=>id[0]==='P'):null;
   const persona=v2Judge(st.score);
   const mt=v2MinitaskStats();
-  const attR=v2State.responses['BC1'];
-  const att=(typeof attR==='number' && attR!==3);
+  // 주의력 체크 — 응답한 attention 문항 중 정답과 다른 게 하나라도 있으면 신뢰도 주의
+  let att=false;
+  (v2State.items||[]).forEach(it=>{ if(it.type==='attention'){ const r=v2State.responses[it.id]; if(typeof r==='number' && r!==it.correct) att=true; } });
   let gap=null;
   if(pa){ let best=null; Object.keys(st.score).forEach(k=>{ if(st.counts[k]&&pa.counts[k]){ const d=st.score[k]-pa.score[k]; if(d>=15&&(!best||d>best.d)) best={ax:k,d}; } }); gap=best; }
   // 약점 축 (응답 있는 것 중 최저)
@@ -5080,6 +5087,16 @@ function renderV2Results(){
   if(a.mt.written.length){
     h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">6.</span> 서답 (강사 검토)</h2>`;
     a.mt.written.forEach(w=>{ h += `<div class="o-card" style="margin-bottom:10px"><div style="color:var(--o-mint2);font-size:13px">${w.tag}</div><div style="color:var(--o-ink2);margin-top:4px">“${w.text.replace(/</g,'&lt;')}”</div></div>`; });
+  }
+
+  // 7'. 상담 정보 (학원 방향·이전 학원 — 점수 미반영, 강사 참고)
+  const pickedText = (id)=>{ const it=v2FindItem(id); const r=v2State.responses[id]; return (it && it.opts && typeof r==='number' && it.opts[r-1]) ? it.opts[r-1][0] : null; };
+  const pref=pickedText('PREF1'), prev=pickedText('PREV1');
+  if(pref || prev){
+    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">·</span> 상담 정보</h2><div class="o-card">`;
+    if(pref) h += `<div>원하는 수업 방향: <b style="color:var(--o-mint)">${pref}</b></div>`;
+    if(prev) h += `<div style="margin-top:6px">이전 학원·전환 이유: <b style="color:var(--o-mint)">${prev}</b></div>`;
+    h += `</div>`;
   }
 
   // 8. 마무리
