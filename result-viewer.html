@@ -3777,9 +3777,9 @@ body.v2-skin{ background:var(--o-bg); }
 
     <div class="send-result-box">
       <h3 class="send-result-title">결과를 저장해 두세요</h3>
-      <p class="send-result-desc">이 결과지는 일회성으로 표시됩니다. <strong>화면 그대로(딥그린) 저장</strong>은 캡처/스크린샷이 편하고, <strong>종이 인쇄</strong>는 아래 버튼을 누르면 잉크를 아끼는 밝은 배경으로 출력됩니다. [오름] 상담 시 참고 자료로 활용하세요.</p>
+      <p class="send-result-desc">이 결과지는 일회성으로 표시됩니다. 아래 버튼으로 인쇄하거나 화면을 캡처해 보관하시고, [오름] 상담 시 참고 자료로 활용하세요.</p>
       <div class="send-result-buttons">
-        <button class="btn btn-primary special" onclick="oreumPrintLight()">📄 인쇄 (밝은 배경·잉크 절약)</button>
+        <button class="btn btn-primary special" onclick="oreumPrintLight()">📄 결과지 인쇄</button>
       </div>
     </div>
 
@@ -5091,14 +5091,16 @@ function v2SendBackend(a){
   if(v2State.previewMode) return; // 강사 미리보기에서는 재전송 안 함
   if(typeof CONFIG==='undefined' || !CONFIG.sheetUrl) return;
   try{
-    const params=new URLSearchParams();
-    params.append('action','v2Save');
-    params.append('version', v2State.ver);
-    params.append('info', JSON.stringify(v2State.info));
-    params.append('responses', JSON.stringify(v2State.responses));
-    params.append('analysis', JSON.stringify({persona:a.persona, score:a.score, stars:a.stars, 착각:a.mt.착각, hasParent:a.hasParent}));
-    params.append('apiKey', CONFIG.apiKey||'');
-    fetch(CONFIG.sheetUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:params.toString(),mode:'no-cors'});
+    // 한글 UTF-8 안전: text/plain + JSON 본문 → Apps Script e.postData.contents 경로 (e.parameter 깨짐 회피)
+    const payload = {
+      action:'v2Save',
+      version: v2State.ver,
+      info: v2State.info,
+      responses: v2State.responses,
+      analysis: {persona:a.persona, score:a.score, stars:a.stars, 착각:a.mt.착각, hasParent:a.hasParent},
+      apiKey: CONFIG.apiKey||''
+    };
+    fetch(CONFIG.sheetUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),mode:'no-cors'});
   }catch(e){ console.warn('[v2] 백엔드 전송 실패:', e); }
 }
 
