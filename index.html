@@ -4470,6 +4470,8 @@ function renderOreumQuestion(){
     : ['전혀 그렇지 않다', '별로 그렇지 않다', '보통이다', '대체로 그렇다', '매우 그렇다'];
 
   const isRiskZone = q.axis === 'R';
+  const showUnknown = oreumState.role === 'parent';
+  const isUnknown = oreumState.responses[q.id] === 'unknown';
   let partLabel = '';
   if(oreumState.role === 'parent'){
     partLabel = q.part === 1 ? 'Part 1 · 생활 속 모습'
@@ -4492,6 +4494,12 @@ function renderOreumQuestion(){
           </button>
         `).join('')}
       </div>
+      ${showUnknown ? `
+        <button class="unknown-btn ${isUnknown ? 'selected' : ''}" onclick="oreumPickUnknown('${q.id}')">
+          잘 모르겠습니다
+          <span class="unknown-hint">자녀에 대해 정확히 답하기 어려운 항목은 솔직히 모름으로 답해주세요. 모름 자체가 진단의 신호입니다.</span>
+        </button>
+      ` : ''}
     </div>
   `;
   document.getElementById('oreum-q-area').innerHTML = html;
@@ -4501,6 +4509,15 @@ function renderOreumQuestion(){
 
 function oreumPickScale(id, v){
   oreumState.responses[id] = v;
+  renderOreumQuestion();
+  const list = getOreumQuestionList();
+  if(oreumState.qIdx < list.length - 1){
+    setTimeout(() => { oreumState.qIdx++; renderOreumQuestion(); }, 200);
+  }
+}
+
+function oreumPickUnknown(id){
+  oreumState.responses[id] = 'unknown';
   renderOreumQuestion();
   const list = getOreumQuestionList();
   if(oreumState.qIdx < list.length - 1){
@@ -4867,6 +4884,10 @@ function renderV2(){
       const sel = (r === i+1) ? ' sel' : '';
       html += `<button class="v2-choice${sel}" onclick="v2PickChoice('${it.id}',${i+1})"><span class="mk">${it.type==='attention'?'':mk}</span><span>${o[0]}</span></button>`;
     });
+    if(v2State.phase==='parent'){
+      const usel = (r==='unknown') ? ' sel' : '';
+      html += `<button class="v2-choice v2-unknown${usel}" onclick="v2PickUnknown('${it.id}')" style="border-style:dashed;opacity:.92"><span class="mk">—</span><span>잘 모르겠습니다 <span style="opacity:.6;font-size:12px">· 자녀에 대해 확실치 않을 때</span></span></button>`;
+    }
     html += `</div>`;
     // 기타(서술형) 선택 시 텍스트 입력
     if(it.type==='choice' && typeof r==='number' && it.opts[r-1] && it.opts[r-1][2]){
@@ -4927,6 +4948,11 @@ function v2PickChoice(id, val){
   const it=v2State.items[v2State.idx];
   const opt = it && it.opts && it.opts[val-1];
   if(opt && opt[2]) return; // 기타(서술형) → 자동 진행 안 함 (텍스트 입력 받기)
+  if(v2State.idx < v2State.items.length-1){ setTimeout(()=>{ v2State.idx++; renderV2(); }, 180); }
+}
+function v2PickUnknown(id){
+  v2State.responses[id]='unknown';
+  renderV2();
   if(v2State.idx < v2State.items.length-1){ setTimeout(()=>{ v2State.idx++; renderV2(); }, 180); }
 }
 function v2ChoiceOther(id, v){ v2State.responses[id+'_etc']=v; }
@@ -7065,10 +7091,10 @@ function renderMirrorQuestion(){
   }
 
   // ★ "모름" 옵션 표시 여부
-  // - 학부모 + 비교형 문항(q_student/q_parent 동시 존재)에만 표시
-  // - 학부모 전용(P*) 문항에는 별도 옵션 안 붙임 (P3은 이미 "잘 모르겠음" 옵션 보유)
+  // - 학부모가 응답하는 모든 문항(비교형 + 학부모 전용)에 표시
+  // - P3은 이미 선지에 "잘 모르겠음"을 갖고 있어 중복 방지로 제외
   // - 학생은 자기 자신에 대한 답이라 모름 불필요
-  const showUnknown = (role === 'parent' && 'q_student' in q);
+  const showUnknown = (role === 'parent' && q.id !== 'P3');
   const isUnknown = mirrorState.responses[q.id] === 'unknown';
 
   let optionsHtml = '';
