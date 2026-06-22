@@ -166,6 +166,7 @@ body::before{
   color:var(--ink-soft);
   margin:12px 0 14px;
   padding-bottom:12px;
+  word-break:keep-all; overflow-wrap:break-word;
   border-bottom:1px dashed rgba(184,155,104,0.18);
 }
 .teacher-profile-intro strong{color:var(--gold-soft); font-weight:700}
@@ -250,6 +251,7 @@ body::before{
   .teacher-profile-name{font-size:22px; line-height:1.25}
   .teacher-profile-sub{display:block; margin-left:0; margin-top:4px; font-size:12px}
   .teacher-profile-intro{font-size:12.5px; line-height:1.7}
+  .teacher-profile-intro .br-pc{display:none}
   .teacher-profile-list li{font-size:12.5px; line-height:1.6}
   .t-tag{font-size:9.5px; padding:1px 6px}
   .career-col-title{font-size:10.5px; letter-spacing:.10em}
@@ -2896,8 +2898,8 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="teacher-profile-tag">담당 강사</div>
       <h2 class="teacher-profile-name">가경T <span class="teacher-profile-sub">국어 학습 진단 설계자</span></h2>
       <p class="teacher-profile-intro">
-        한티 MEXX 종합반에서 예비고1·고1·고2 국어를 가르칩니다.<br>
-        국제고·외고·자사고 및 학군지 일반고 학생들을 가르친 강의 경험을 바탕으로<br>
+        한티 MEXX 종합반에서 예비고1·고1·고2 국어를 가르칩니다.<br class="br-pc">
+        국제고·외고·자사고 및 학군지 일반고 학생들을 가르친 강의 경험을 바탕으로<br class="br-pc">
         <strong>학생의 국어 학습 처리 방식</strong>과 <strong>학교별 출제 스타일</strong>의 적합도를 진단하는 도구를 직접 설계했습니다.
       </p>
       <div class="teacher-profile-careers">
