@@ -307,6 +307,19 @@ body::before{
   box-shadow:0 8px 32px -8px rgba(184,155,104,0.25), 0 0 0 1px rgba(184,155,104,0.1);
 }
 .version-card.recommended{border-color:var(--gold);border-width:1.5px}
+.version-card.summer{border-color:rgba(45,212,191,.35)}
+.version-card.summer .version-num{color:#2DD4BF}
+.version-card.summer:hover{border-color:#2DD4BF;box-shadow:0 8px 32px -8px rgba(45,212,191,.25)}
+.summer-badge{background:linear-gradient(135deg,#14B8A6,#2DD4BF);color:#062018;border:none}
+.v2-bw-list{display:grid;gap:8px}
+.v2-bw-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(45,212,191,.22);border-radius:10px}
+.v2-bw-row.bw-best{border-color:#2DD4BF;background:rgba(45,212,191,.10)}
+.v2-bw-row.bw-worst{border-color:#b47a5a;background:rgba(180,120,90,.08);opacity:.9}
+.v2-bw-label{font-size:15px}
+.v2-bw-btns{display:flex;gap:6px;flex-shrink:0}
+.v2-bw-btn{font-size:12px;padding:5px 9px;border-radius:8px;border:1px solid rgba(160,170,180,.35);background:transparent;color:#8fd8cc;cursor:pointer;white-space:nowrap}
+.v2-bw-btn.best.on{background:#2DD4BF;color:#08160d;border-color:#2DD4BF}
+.v2-bw-btn.worst.on{background:#b47a5a;color:#fff;border-color:#b47a5a}
 .version-card.recommended::after{
   content:'권장';
   position:absolute;top:-10px;right:20px;
@@ -2949,9 +2962,19 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
 
-    <!-- 2번: 비재원생 진단 (구 간편형) -->
-    <div class="version-card" data-version="brief">
+    <!-- 2번: 여름방학 학습 점검 진단 (summer, NEW) -->
+    <div class="version-card summer" data-version="summer">
       <div class="version-num">2</div>
+      <div class="version-info">
+        <h4>여름방학 학습 점검 진단 <span class="version-badge summer-badge">여름</span></h4>
+        <p>자기보고 + 방향 선택 30문항 · 약 10분<br>관리 강도·막힘 대처·정서 신호 종합 점검</p>
+      </div>
+      <div class="version-meta"><strong>30</strong><br>questions</div>
+    </div>
+
+    <!-- 3번: 비재원생 진단 (구 간편형) -->
+    <div class="version-card" data-version="brief">
+      <div class="version-num">3</div>
       <div class="version-info">
         <h4>비재원생 진단</h4>
         <p>장면 선택 19문항 · 약 5분<br>첫 상담 전 빠르게 성향 파악</p>
@@ -2959,9 +2982,9 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-meta"><strong>19</strong><br>questions</div>
     </div>
 
-    <!-- 3번: 재원생 첫 진단 (구 표준형, 권장) -->
+    <!-- 4번: 재원생 첫 진단 (구 표준형, 권장) -->
     <div class="version-card recommended" data-version="standard">
-      <div class="version-num">3</div>
+      <div class="version-num">4</div>
       <div class="version-info">
         <h4>재원생 첫 진단</h4>
         <p>선별 문항 + 미니 과제 25개 · 약 9분<br>반 배치·수업 전략용 분류</p>
@@ -2969,9 +2992,9 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-meta"><strong>25</strong><br>questions</div>
     </div>
 
-    <!-- 4번: 재원생 심층 진단 (구 정밀형) -->
+    <!-- 5번: 재원생 심층 진단 (구 정밀형) -->
     <div class="version-card" data-version="precision">
-      <div class="version-num">4</div>
+      <div class="version-num">5</div>
       <div class="version-info">
         <h4>재원생 심층 진단</h4>
         <p>장면 + 미니 과제 + 오답 기록 33개 · 약 12분<br>성적 정체 원인·개별 처방용</p>
@@ -2979,9 +3002,9 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-meta"><strong>33</strong><br>questions</div>
     </div>
 
-    <!-- 5번: 김가경 국어 연구소 특별판 — 군포 6개교 성향별 학교 추천 -->
+    <!-- 6번: 김가경 국어 연구소 특별판 — 군포 6개교 성향별 학교 추천 -->
     <div class="version-card special" data-version="oreum">
-      <div class="version-num">5</div>
+      <div class="version-num">6</div>
       <div class="version-info">
         <h4>특별판 <span class="version-badge-special">[오름] 국어 한정</span></h4>
         <p>"나에게 어울리는 관내 고등학교는?"<br>군포 6개교 성향별 학교 추천 진단</p>
@@ -2989,9 +3012,9 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
 
-    <!-- 6번: 특별판 (한티 MEXX 한정) — 종료된 설명회용, 맨 아래 -->
+    <!-- 7번: 특별판 (한티 MEXX 한정) — 종료된 설명회용, 맨 아래 -->
     <div class="version-card special" data-version="special">
-      <div class="version-num">6</div>
+      <div class="version-num">7</div>
       <div class="version-info">
         <h4>특별판 <span class="version-badge-special">현 중3</span></h4>
         <p>2026.05.27(수) 한티 MEXX 설명회 참여자 한정 진단<br>자녀 학습 성향에 따른 고등학교 추천</p>
@@ -4251,8 +4274,8 @@ document.querySelectorAll('.version-card').forEach(c=>{
       return;
     }
 
-    // ★ v2 일반 진단 (비재원생/재원생 첫/재원생 심층) — 새 장면형 흐름
-    if(ver === 'brief' || ver === 'standard' || ver === 'precision'){
+    // ★ v2 일반 진단 (비재원생/재원생 첫/재원생 심층) + 여름방학 학습 점검 — 새 장면형 흐름
+    if(ver === 'brief' || ver === 'standard' || ver === 'precision' || ver === 'summer'){
       startV2(ver);
       return;
     }
@@ -4840,6 +4863,7 @@ const V2_VERSIONS = {
   brief:     {label:'비재원생 진단', hasParent:true, buildStudent:(g)=> V2_BIJAE_STUDENT.slice()},
   standard:  {label:'재원생 첫 진단', hasParent:true, buildStudent:(g)=> { const sc=v2PickByIds(V2_JAE_FIRST_IDS); return [...sc.slice(0,8), V2_ATTN2, ...sc.slice(8), ...v2MiniSet(g), V2_RANK_FIRST, V2_PREF, V2_PREV, V2_BIJAE_STUDENT[18]]; }},
   precision: {label:'재원생 심층 진단', hasParent:true, buildStudent:(g)=> [...V2_BIJAE_STUDENT.slice(0,18), ...V2_JAE_EXTRA, ...v2MiniSet(g), V2_RANK_FIRST, V2_OBROK, V2_RANK_FALL, V2_BIJAE_STUDENT[18]]},
+  summer:    {label:'여름방학 학습 점검 진단', hasParent:false, buildStudent:(g)=> SUMMER_ITEMS.slice()},
 };
 
 // ─── state ───
@@ -4939,6 +4963,24 @@ function renderV2(){
     });
     html += `</div>`;
   }
+  else if(it.type==='likert'){
+    const labs = it.scale || ['전혀 아니다','별로 아니다','대체로 그렇다','매우 그렇다'];
+    if(it.part) html += `<div class="v2-part">${it.part}</div>`;
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div><div class="v2-choices">`;
+    labs.forEach((t,i)=>{ const sel=(r===i+1)?' sel':''; html += `<button class="v2-choice${sel}" onclick="v2PickLikert('${it.id}',${i+1})"><span class="mk">${'①②③④'[i]}</span><span>${t}</span></button>`; });
+    html += `</div>`;
+  }
+  else if(it.type==='bestworst'){
+    const st = r || {best:null,worst:null};
+    if(it.part) html += `<div class="v2-part">${it.part}</div>`;
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div>`;
+    html += `<div class="v2-rank-help">가장 하고 싶은 것 하나(● 최고), 가장 하고 싶지 않은 것 하나(✕ 최악)를 고르세요.</div><div class="v2-bw-list">`;
+    it.options.forEach((o,i)=>{
+      const rowcls = (st.best===i?' bw-best':'') + (st.worst===i?' bw-worst':'');
+      html += `<div class="v2-bw-row${rowcls}"><span class="v2-bw-label">${o}</span><span class="v2-bw-btns"><button class="v2-bw-btn best${st.best===i?' on':''}" onclick="v2BwPick('${it.id}','best',${i})">● 최고</button><button class="v2-bw-btn worst${st.worst===i?' on':''}" onclick="v2BwPick('${it.id}','worst',${i})">✕ 최악</button></span></div>`;
+    });
+    html += `</div>`;
+  }
 
   document.getElementById('v2-area').innerHTML = html;
   document.getElementById('v2-prev').disabled = (idx===0);
@@ -4983,21 +5025,240 @@ function v2Next(){
   }
   else if(it.type==='ranking'){ if(!(Array.isArray(r)&&r.length===it.pick)){ alert(`${it.pick}개를 순서대로 골라주세요.`); return; } }
   else if(it.type==='multi'){ if(!(r&&r.sel&&r.sel.length>=1)){ alert('하나 이상 선택해주세요.'); return; } }
+  else if(it.type==='likert'){ if(!r){ alert('응답을 선택해주세요.'); return; } }
+  else if(it.type==='bestworst'){ if(!(r && r.best!=null && r.worst!=null)){ alert('가장 하고 싶은 것과 하기 싫은 것을 하나씩 골라 주세요.'); return; } }
   if(v2State.idx < v2State.items.length-1){ v2State.idx++; renderV2(); }
   else { v2EndPhase(); }
 }
 
+function v2Finish(){ if(v2State.ver==='summer') renderSummerResults(); else renderV2Results(); }
 function v2EndPhase(){
   if(v2State.phase==='student'){
     if(V2_VERSIONS[v2State.ver].hasParent){ goScreen('v2-parent-bridge'); }
-    else { renderV2Results(); }
-  } else { renderV2Results(); }
+    else { v2Finish(); }
+  } else { v2Finish(); }
 }
 function v2StartParent(){
   v2State.phase='parent'; v2State.items=V2_PARENT.slice(); v2State.idx=0;
   goScreen('v2-quiz'); renderV2();
 }
-function v2FinishStudentOnly(){ renderV2Results(); }
+function v2FinishStudentOnly(){ v2Finish(); }
+
+// ════════════════════════════════════════════════════════════
+//  여름방학 학습 점검 진단 (summer) — 자기보고 배터리 + Best-Worst
+//  + 응답 신뢰도(과대포장·직선응답·주의력) + 관리강도 스펙트럼 + 패턴 엔진
+//  (데카르트 수학 성향검사 요소를 국어 맥락으로 재설계)
+// ════════════════════════════════════════════════════════════
+function v2PickLikert(id, v){
+  v2State.responses[id]=v; renderV2();
+  if(v2State.idx < v2State.items.length-1){ setTimeout(()=>{ v2State.idx++; renderV2(); }, 160); }
+}
+function v2BwPick(id, kind, i){
+  const st = v2State.responses[id] || {best:null,worst:null};
+  if(kind==='best'){ if(st.worst===i) st.worst=null; st.best = (st.best===i?null:i); }
+  else { if(st.best===i) st.best=null; st.worst = (st.worst===i?null:i); }
+  v2State.responses[id]=st; renderV2();
+}
+
+// 척도 메타: side = low(낮으면 걱정) / high(높으면 걱정) / style(좋고 나쁨 없음)
+const SUMMER_FACETS = {
+  push_tolerance:{name:'다그침 내성', side:'style'},
+  guidance_pref:{name:'주도 위임 선호', side:'style'},
+  structure_pref:{name:'구조·마감 선호', side:'style'},
+  auto_A:{name:'자립적 질문', side:'low'},
+  auto_B:{name:'자료 의존', side:'high'},
+  auto_C:{name:'질문 회피', side:'high'},
+  perf_mal:{name:'완벽주의(부적응)', side:'high'},
+  anx_eval:{name:'평가 불안', side:'high'},
+  anx_learn:{name:'학습 불안', side:'high'},
+  efficacy:{name:'자기효능감', side:'low'},
+  understand:{name:'개념 이해 지향', side:'low'},
+  rote:{name:'암기·요령 지향', side:'high'},
+  growth:{name:'성장 마인드셋', side:'low'},
+  meta:{name:'점검·회고', side:'low'},
+  care:{name:'정독·검토', side:'low'},
+  effort:{name:'끈기', side:'low'},
+  testop:{name:'시험 운영', side:'low'},
+  value:{name:'흥미·가치', side:'low'},
+  comp_hyper:{name:'과경쟁 민감', side:'high'},
+};
+
+// L: 리커트(4점). os=선택지1~4 배점(역문항은 내림차순). w=가중치.
+const L = (id,facet,q,os,w,part)=>({type:'likert',id,facet,q,os,weight:w||1,part});
+const SUMMER_ITEMS = [
+  // ── 관리·지도 스타일 (신규상담 핵심) ──
+  L('SP1','push_tolerance','선생님이 "오늘은 여기까지 꼭 끝내자"며 강하게 밀어붙이면 오히려 더 잘된다.',[1,1.8,3.2,4],1.0,'나에게 맞는 관리 방식'),
+  L('SP2','push_tolerance','공부 양을 빡빡하게 정해 주고 다그치면 부담돼서 하기 싫어진다.',[4,3.2,1.8,1],1.0,'나에게 맞는 관리 방식'),
+  L('SG1','guidance_pref','무엇을 어떤 순서로 공부할지 선생님이 정해서 이끌어 주면 좋겠다.',[1,1.8,3,4],1.0,'나에게 맞는 관리 방식'),
+  L('SG2','guidance_pref','공부 순서를 정해 주면 따르기보다 답답하게 느껴진다.',[4,3,2,1],1.0,'나에게 맞는 관리 방식'),
+  L('SS1','structure_pref','매일 할 분량과 마감을 촘촘히 정해 주는 학원이 나에게 잘 맞는다.',[1,1.8,3,4],1.0,'나에게 맞는 관리 방식'),
+  L('SS2','structure_pref','일일이 확인받고 규칙대로 해야 하면 갑갑하다.',[4,3,2,1],1.0,'나에게 맞는 관리 방식'),
+  // ── 막혔을 때 자율성 ──
+  L('SA_A','auto_A','모르는 걸 물어볼 때 답보다 "어떻게 접근하면 되는지" 힌트를 달라고 한다.',[1,2,3.2,4],1.4,'막혔을 때'),
+  L('SA_B','auto_B','조금만 막혀도 해설·자습서를 보고 그대로 따라 적는다.',[1,1.8,3,4],1.3,'막혔을 때'),
+  L('SA_C','auto_C','이해가 안 되는 부분이 있어도 질문하지 않고 그냥 넘긴다.',[1,2,3,4],1.2,'막혔을 때'),
+  // ── 정서·완벽주의 ──
+  L('SPF','perf_mal','한 문제라도 틀리면 그날 공부를 다 망친 기분이 든다.',[1,2,3,4],1.0,'마음·정서'),
+  L('SXE','anx_eval','다가오는 국어 시험을 생각하면 불안하다.',[1,2,3,4],1.1,'마음·정서'),
+  L('SXL','anx_learn','수업에서 새로 배우는 내용을 못 따라갈까 봐 걱정된다.',[1,2,3,4],1.0,'마음·정서'),
+  L('SEF','efficacy','어려운 국어 문제도 노력하면 풀 수 있다고 믿는다.',[1,2,3.2,4],1.3,'마음·정서'),
+  L('SEFr','efficacy','어려운 지문을 보면 "난 못 읽겠다"는 생각부터 든다.',[4,3,2,1],1.2,'마음·정서'),
+  // ── 학습관·마인드셋 ──
+  L('SUN','understand','새 개념(문법·문학 용어)을 배우면 왜 그런지 원리를 알고 싶다.',[1,2,3.2,4],1.3,'공부하는 방식'),
+  L('SRO','rote','원리를 몰라도 푸는 방법·요령만 외워서 답을 내는 편이다.',[1,2,3,4],1.1,'공부하는 방식'),
+  L('SGR','growth','지금 약한 영역도 연습하면 충분히 나아질 수 있다고 느낀다.',[1,2,3,4],1.2,'공부하는 방식'),
+  L('SGRr','growth','국어 실력은 타고나는 거라 바꾸기 어렵다고 생각한다.',[4,3.2,2,1],1.4,'공부하는 방식'),
+  // ── 메타·실행·시험 ──
+  L('SME','meta','문제를 풀다 막히면 멈춰서 어디서 틀렸는지 되짚어 본다.',[1,1.8,3.2,4],1.4,'공부하는 방식'),
+  L('SCA','care','발문이나 지문을 끝까지 읽기 전에 선지부터 고르기 시작할 때가 많다.',[4,3,2,1],1.2,'공부하는 방식'),
+  L('SET','effort','어려운 지문·문제도 답이 나올 때까지 붙들고 푼다.',[1,1.8,3,4],1.3,'공부하는 방식'),
+  L('STO','testop','시험에서 한 문제가 안 풀리면 표시해 두고 넘어갔다가 나중에 다시 온다.',[1,2,3.2,4],1.1,'공부하는 방식'),
+  // ── 동기 ──
+  L('SVA','value','국어(글 읽기·문학·언어)를 배우는 게 재미있을 때가 있다.',[1,2,3.2,4],1.1,'동기'),
+  L('SCH','comp_hyper','친구가 나보다 국어 점수가 높으면 신경 쓰여 집중이 안 될 때가 있다.',[1,2,3,4],1.0,'동기'),
+  // ── 주의력 체크 ──
+  {type:'attention', id:'SATT', q:'이 문항은 응답 확인용입니다. "별로 아니다(②)"를 선택해 주세요.', scale:['전혀 아니다','별로 아니다','대체로 그렇다','매우 그렇다'], correct:2},
+  // ── 과대포장(사회적 바람직성) 탐지 ──
+  L('SSD1','_sd','나는 지금까지 한 번도 거짓말을 한 적이 없다.',[1,2,3,4],1.0,'응답 확인'),
+  L('SSD2','_sd','국어 지문을 한 번도 대충 읽은 적이 없다.',[1,2,3,4],1.0,'응답 확인'),
+  // ── Best-Worst: 여름 학습 방향 ──
+  {type:'bestworst', id:'SBW', part:'여름 학습 방향', q:'이번 여름방학 국어 공부에서 가장 하고 싶은 것과 가장 하고 싶지 않은 것을 하나씩 고르세요.',
+    options:['안 읽히던 지문 독해 뚫기','문학 작품 감상법 잡기','문법 개념 채우기','틀린 유형·오답 정리','어휘·배경지식 쌓기']},
+  // ── 상담 문항 (점수 미반영) ──
+  {type:'multi', id:'SC1', part:'상담', q:'이번 여름방학, 국어에서 가장 채우고 싶은 것은? (복수 선택 가능)',
+    opts:[['지문 독해력',''],['문학 감상',''],['문법 개념',''],['어휘·배경지식',''],['시험 점수',''],['공부 습관·태도',''],['기타','',true]]},
+  {type:'choice', id:'SC2', part:'상담', q:'여름방학 국어 공부, 지금 가장 큰 걸림돌은?',
+    opts:[['뭘 해야 할지 모르겠다',''],['시간이 없다',''],['집중이 안 된다',''],['재미가 없다',''],['혼자서는 못 하겠다',''],['기타','',true]]},
+];
+
+function summerFacets(){
+  const acc={}, wsum={};
+  SUMMER_ITEMS.forEach(it=>{
+    if(it.type!=='likert' || !it.facet) return;
+    const v=v2State.responses[it.id]; if(!v) return;
+    const s=(it.os||[1,2,3,4])[v-1]; const w=it.weight||1;
+    acc[it.facet]=(acc[it.facet]||0)+s*w; wsum[it.facet]=(wsum[it.facet]||0)+w;
+  });
+  const F={}; Object.keys(wsum).forEach(k=> F[k]= Math.round((acc[k]/wsum[k])*100)/100);
+  return F;
+}
+function summerReliability(F){
+  let attnFail=false;
+  SUMMER_ITEMS.forEach(it=>{ if(it.type==='attention'){ const r=v2State.responses[it.id]; if(typeof r==='number' && r!==it.correct) attnFail=true; } });
+  const faking = (F._sd!=null && F._sd>=3.5);
+  const vals=[]; SUMMER_ITEMS.forEach(it=>{ if(it.type==='likert'){ const v=v2State.responses[it.id]; if(v) vals.push(v); } });
+  let straight=false;
+  if(vals.length>=10){ const m=vals.reduce((a,b)=>a+b,0)/vals.length; const sd=Math.sqrt(vals.reduce((a,b)=>a+(b-m)*(b-m),0)/vals.length); if(sd<0.5) straight=true; }
+  return {attnFail, faking, straight, flagged:(attnFail||faking||straight)};
+}
+function summerMgmt(F){
+  const parts=['push_tolerance','guidance_pref','structure_pref'].map(k=>F[k]).filter(x=>x!=null);
+  if(!parts.length) return null;
+  const m=parts.reduce((a,b)=>a+b,0)/parts.length;
+  let label, note;
+  if(m>=3.0){ label='밀착 관리형'; note='분량·마감을 촘촘히 정해 주고 강하게 끌어 줄 때 가장 잘 따라옵니다. 데일리 체크·계획표가 잘 맞습니다.'; }
+  else if(m<=2.2){ label='자율형'; note='스스로 정하는 여백이 있을 때 동기가 삽니다. 과한 통제·다그침은 역효과 — 목표만 합의하고 방법은 맡기는 게 유리합니다.'; }
+  else { label='혼합형'; note='큰 틀은 잡아 주되 세부는 맡기는 방식이 맞습니다. 관리 강도를 상황에 따라 조절하세요.'; }
+  return {index:Math.round(m*100)/100, label, note, pct:Math.max(0,Math.min(100,Math.round((m-1)/3*100)))};
+}
+function summerPatterns(F){
+  const P=[]; const g=(k)=>F[k]!=null?F[k]:2.5;
+  if(g('perf_mal')>3 && g('anx_eval')>3) P.push({name:'완벽주의·불안형', note:'높은 기준과 시험 불안이 실력 발휘를 막습니다. 실수=데이터로 재프레이밍하고 쉬운 문제부터 워밍업하는 루틴이 필요합니다.'});
+  if(g('rote')>3 && g('understand')<2.3) P.push({name:'암기 의존형', note:'요령·암기에 기대 변형·낯선 지문에서 무너질 위험. 맞힌 문제도 "왜"를 한 줄로 설명하게 하세요.'});
+  if(g('auto_B')>3) P.push({name:'자료 의존형', note:'막히면 해설부터 봅니다. 해설 덮고 백지 재풀이 → 선(先)시도 후(後)확인 순서로 교정.'});
+  if(g('auto_C')>3) P.push({name:'질문 회피형', note:'모르는 걸 덮고 넘어갑니다. "별표 1개는 반드시 질문" 같은 저부담 질문 채널이 필요합니다.'});
+  if(g('anx_eval')>3 && (g('care')<2.3 || g('testop')<2.3)) P.push({name:'시험 취약형', note:'아는 것에 비해 시험장에서 덜 나옵니다. 불안 관리와 시간·검토 운영을 따로 훈련하세요.'});
+  if(g('growth')<2.3 && g('efficacy')<2.3) P.push({name:'고정관념·저효능형', note:'"해도 안 된다"는 믿음이 강합니다. 작은 성공 경험 설계와 "아직 안 됨" 언어 전환이 우선.'});
+  if(g('auto_A')>3 && g('meta')>3 && g('effort')>3) P.push({name:'자기주도 강점형', note:'스스로 점검하고 끝까지 붙듭니다. 개입보다 난도 상향·확장 과제가 맞습니다.', good:true});
+  if(g('value')<2.2) P.push({name:'저동기형', note:'국어의 재미·의미가 약합니다. 관심사와 지문을 연결하고 작은 완료를 인정해 주세요.'});
+  return P;
+}
+const SUMMER_RX = {
+  auto_B:'막혔을 때 해설 먼저 보지 않기 — 3분 버티고, 해설은 덮고 백지 재풀이.',
+  auto_C:'모르는 문제 1개는 반드시 질문하기(저부담 채널로).',
+  auto_A:'좋은 질문 만들기 코칭 — 막힌 지점을 한 문장으로 물어보게.',
+  perf_mal:'한 문제 틀림 ≠ 망친 날. 오답은 감정 없이 데이터로 기록만.',
+  anx_eval:'시험 전 걱정 3줄 쏟아쓰기 + 쉬운 문제부터 풀어 워밍업.',
+  anx_learn:'새 단원은 범위를 잘게 쪼개 "오늘 여기까지"로 좁혀 주기.',
+  efficacy:'맞히는 문제 3~5개 먼저 풀어 성공 경험부터 쌓기.',
+  understand:'맞힌 문제도 "왜 그렇게 되는지" 한 줄 설명 붙이기.',
+  rote:'요령은 빠르게, 단 변형 문제는 원리로 되돌아가 확인.',
+  growth:'"못한다"를 "아직 안 됐다"로 바꿔 말하기 + 과정 칭찬.',
+  meta:'풀기 전 30초 계획 1줄 + 막히면 멈춰 되짚기.',
+  care:'답 적기 전 발문·조건 다시 읽고 3초 점검.',
+  effort:'어려운 문제 타이머 10분 버티기 훈련.',
+  testop:'안 풀리면 표시하고 넘어갔다 마지막 3분 검토.',
+  value:'좋아하는 주제의 글부터 붙여 재미 접점 만들기.',
+  comp_hyper:'비교 대신 "어제의 나" 기준으로 목표 재설정.',
+};
+function summerFindItem(id){ return SUMMER_ITEMS.find(x=>x.id===id); }
+function summerChoiceText(id){ const it=summerFindItem(id), r=v2State.responses[id]; if(!it||!it.opts||typeof r!=='number'||!it.opts[r-1])return null; let t=it.opts[r-1][0]; if(it.opts[r-1][2]&&v2State.responses[id+'_etc'])t+=': '+v2State.responses[id+'_etc']; return t; }
+function summerMultiText(id){ const it=summerFindItem(id), st=v2State.responses[id]; if(!it||!it.opts||!st||!st.sel||!st.sel.length)return null; const arr=st.sel.map(i=>it.opts[i]&&it.opts[i][0]).filter(Boolean); if(st.etc&&st.sel.some(i=>it.opts[i]&&it.opts[i][2]))arr[arr.length-1]='기타: '+st.etc; return arr.join(', '); }
+
+function renderSummerResults(){
+  const info=v2State.info, F=summerFacets(), rel=summerReliability(F), mg=summerMgmt(F), pats=summerPatterns(F);
+  document.getElementById('v2-r-stamp').textContent='여름방학 학습 점검 진단 결과';
+  document.getElementById('v2-r-name').textContent=`${info.name||'학생'} 의 여름 점검 결과`;
+  document.getElementById('v2-r-meta').textContent=`${info.school||''} · ${info.grade||''} · 김가경 국어 연구소`;
+  document.getElementById('v2-r-foot').textContent='여름방학 학습 점검 진단 · v2';
+  const sect=(n,t)=>`<h2 class="section-title" style="margin-top:22px;color:var(--o-ink)"><span style="color:var(--o-mint)">${n}</span> ${t}</h2>`;
+  let h='';
+  // 응답 신뢰도
+  if(rel.flagged){
+    const why=[]; if(rel.attnFail)why.push('응답 확인 문항 불일치'); if(rel.faking)why.push('과대포장 경향(모든 걸 이상적으로 응답)'); if(rel.straight)why.push('같은 번호만 연속 선택');
+    h+=`<div class="o-card" style="border-color:var(--o-amber);background:rgba(230,160,90,.08)"><b style="color:var(--o-amber)">⚠ 응답 신뢰도 주의</b> — ${why.join(' · ')}. 아래 결과는 참고용으로만 보고 상담에서 다시 확인하세요.</div>`;
+  } else {
+    h+=`<div class="o-card"><b style="color:var(--o-mint)">응답 신뢰도 양호</b> — 비교적 성실하게 응답했습니다.</div>`;
+  }
+  // 1. 관리 강도
+  if(mg){
+    h+=sect('1.','이 학생에게 맞는 관리 강도')+`<div class="o-card"><div style="font-family:var(--serif);font-size:22px;font-weight:800;color:var(--o-ink)">${mg.label}</div>
+      <div class="v2-bar" style="margin:10px 0"><div style="width:${mg.pct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--o-mut)"><span>자율형</span><span>밀착 관리형</span></div>
+      <div style="color:var(--o-ink2);line-height:1.7;margin-top:8px">${mg.note}</div></div>`;
+  }
+  // 2. 막혔을 때
+  const autos=[['auto_A','자립형 · 힌트로 스스로 뚫음'],['auto_B','자료 의존형 · 해설부터 봄'],['auto_C','회피형 · 질문 안 하고 넘김']].map(([k,l])=>({k,l,v:F[k]!=null?F[k]:0}));
+  const topAuto=autos.slice().sort((a,b)=>b.v-a.v)[0];
+  h+=sect('2.','막혔을 때 행동')+`<div class="o-card">가장 두드러진 반응: <b style="color:var(--o-mint)">${topAuto.l}</b>${topAuto.k!=='auto_A'?' <span style="color:var(--o-amber)">— 개입 필요</span>':''}</div>`;
+  // 3. 정서
+  const emo=[]; if(F.anx_eval>3)emo.push('평가 불안'); if(F.anx_learn>3)emo.push('학습 불안'); if(F.perf_mal>3)emo.push('완벽주의(부적응)'); if(F.efficacy!=null&&F.efficacy<2.3)emo.push('낮은 자기효능감');
+  h+=sect('3.','정서·마음 신호')+`<div class="o-card">${emo.length?'<b style="color:var(--o-amber)">'+emo.join(' · ')+'</b> 신호가 감지됩니다. 정서 면담을 권장합니다.':'뚜렷한 정서 위험 신호는 없습니다.'}</div>`;
+  // 4. 학습관 바
+  h+=sect('4.','학습관·태도')+`<div class="o-card">`;
+  [['understand','개념 이해 지향'],['growth','성장 마인드셋'],['efficacy','자기효능감'],['meta','점검·회고'],['effort','끈기'],['value','흥미·가치']].forEach(([k,l])=>{
+    const v=F[k]; if(v==null)return; const pct=Math.max(0,Math.min(100,Math.round((v-1)/3*100)));
+    h+=`<div class="v2-axis"><div class="lab"><span>${l}</span><span class="v">${v}</span></div><div class="v2-bar"><div style="width:${pct}%"></div></div></div>`;
+  });
+  h+=`</div>`;
+  // 5. 패턴
+  if(pats.length){ h+=sect('5.','발동 패턴'); pats.forEach(p=>{ h+=`<div class="o-card" style="margin-bottom:10px"><b style="color:${p.good?'var(--o-mint)':'var(--o-amber)'}">${p.name}</b><div style="color:var(--o-ink2);margin-top:4px;line-height:1.6">${p.note}</div></div>`; }); }
+  // 6. 처방
+  const concerns=[];
+  Object.keys(SUMMER_FACETS).forEach(k=>{ const side=SUMMER_FACETS[k].side, v=F[k]; if(v==null||side==='style')return; if((side==='low'&&v<2.7)||(side==='high'&&v>2.7)){ if(SUMMER_RX[k]) concerns.push({k,v,side}); } });
+  concerns.sort((a,b)=> (a.side==='low'?a.v:4-a.v) - (b.side==='low'?b.v:4-b.v));
+  if(concerns.length){ h+=sect('6.','여름 처방 (우선순위)')+`<div class="o-card">`; concerns.slice(0,5).forEach((c,i)=>{ h+=`<div style="margin-bottom:8px"><b style="color:var(--o-mint)">${i+1}. ${SUMMER_FACETS[c.k].name}</b> — ${SUMMER_RX[c.k]}</div>`; }); h+=`</div>`; }
+  // Best-Worst
+  const bw=v2State.responses['SBW'], bwItem=summerFindItem('SBW');
+  if(bw && bwItem && bw.best!=null){ h+=sect('·','여름 학습 방향 (본인 선택)')+`<div class="o-card">가장 하고 싶은 것: <b style="color:var(--o-mint)">${bwItem.options[bw.best]}</b>${bw.worst!=null?` &nbsp;·&nbsp; 가장 피하고 싶은 것: <b style="color:var(--o-mut)">${bwItem.options[bw.worst]}</b>`:''}</div>`; }
+  // 상담 메모
+  const sc1=summerMultiText('SC1'), sc2=summerChoiceText('SC2');
+  if(sc1||sc2){ h+=sect('·','상담 메모')+`<div class="o-card">`; if(sc1)h+=`<div>채우고 싶은 것: <b style="color:var(--o-mint)">${sc1}</b></div>`; if(sc2)h+=`<div style="margin-top:6px">가장 큰 걸림돌: <b style="color:var(--o-mint)">${sc2}</b></div>`; h+=`</div>`; }
+
+  document.getElementById('v2-r-body').innerHTML=h;
+  goScreen('v2-results');
+  summerSendBackend(F, rel, mg, pats);
+}
+function summerSendBackend(F, rel, mg, pats){
+  if(v2State.previewMode) return;
+  if(typeof CONFIG==='undefined' || !CONFIG.sheetUrl) return;
+  try{
+    const payload={ action:'v2Save', version:'summer', info:v2State.info, responses:v2State.responses,
+      analysis:{ persona:(mg?mg.label:'') + (pats.length?(' / '+pats.map(p=>p.name).join(',')):''), score:F, stars:(rel.flagged?1:0), reliability:rel, mgmt:mg, patterns:pats.map(p=>p.name) },
+      apiKey:CONFIG.apiKey||'' };
+    fetch(CONFIG.sheetUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),mode:'no-cors'});
+  }catch(e){ console.warn('[summer] 백엔드 전송 실패:', e); }
+}
 
 // ════════════════ [3] v2 채점 · 페르소나 엔진 ════════════════
 const V2_AXNAME = {장악:'자료 장악',적용:'사고 적용',변별:'조건 변별',메타:'오답 메타인지',시간:'시간 운영',정서:'정서 회복'};
