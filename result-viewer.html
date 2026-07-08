@@ -320,6 +320,14 @@ body::before{
 .v2-bw-btn{font-size:12px;padding:5px 9px;border-radius:8px;border:1px solid rgba(160,170,180,.35);background:transparent;color:#8fd8cc;cursor:pointer;white-space:nowrap}
 .v2-bw-btn.best.on{background:#2DD4BF;color:#08160d;border-color:#2DD4BF}
 .v2-bw-btn.worst.on{background:#b47a5a;color:#fff;border-color:#b47a5a}
+.v2-scale{display:flex;gap:8px;margin-top:6px}
+.v2-scale-btn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:13px 6px;border:1px solid rgba(45,212,191,.25);border-radius:12px;background:rgba(255,255,255,.02);color:var(--o-ink2,#cdeee7);cursor:pointer;transition:all .15s}
+.v2-scale-btn .n{font-size:16px;font-weight:800;color:#2DD4BF}
+.v2-scale-btn .t{font-size:12px;line-height:1.3;text-align:center;color:inherit;word-break:keep-all}
+.v2-scale-btn:hover{border-color:#2DD4BF;background:rgba(45,212,191,.07)}
+.v2-scale-btn.sel{background:linear-gradient(135deg,#14B8A6,#2DD4BF);border-color:#2DD4BF;color:#062018}
+.v2-scale-btn.sel .n{color:#062018}
+@media(max-width:560px){.v2-scale{gap:5px}.v2-scale-btn{padding:11px 3px}.v2-scale-btn .t{font-size:10.5px}.v2-scale-btn .n{font-size:15px}}
 .version-card.recommended::after{
   content:'권장';
   position:absolute;top:-10px;right:20px;
@@ -2967,7 +2975,7 @@ body.v2-skin{ background:var(--o-bg); }
       <div class="version-num">2</div>
       <div class="version-info">
         <h4>여름방학 학습 점검 진단 <span class="version-badge summer-badge">여름</span></h4>
-        <p>자기보고 + 방향 선택 30문항 · 약 10분<br>관리 강도·막힘 대처·정서 신호 종합 점검</p>
+        <p>자기보고 + 방향 선택 30문항, 약 10분<br>관리 강도, 막힘 대처, 정서 신호 종합 점검</p>
       </div>
       <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
@@ -4966,8 +4974,8 @@ function renderV2(){
   else if(it.type==='likert'){
     const labs = it.scale || ['전혀 아니다','별로 아니다','대체로 그렇다','매우 그렇다'];
     if(it.part) html += `<div class="v2-part">${it.part}</div>`;
-    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div><div class="v2-choices">`;
-    labs.forEach((t,i)=>{ const sel=(r===i+1)?' sel':''; html += `<button class="v2-choice${sel}" onclick="v2PickLikert('${it.id}',${i+1})"><span class="mk">${'①②③④'[i]}</span><span>${t}</span></button>`; });
+    html += `<div class="v2-q"><span class="qn">${idx+1}.</span>${it.q}</div><div class="v2-scale">`;
+    labs.forEach((t,i)=>{ const sel=(r===i+1)?' sel':''; html += `<button class="v2-scale-btn${sel}" onclick="v2PickLikert('${it.id}',${i+1})"><span class="n">${i+1}</span><span class="t">${t}</span></button>`; });
     html += `</div>`;
   }
   else if(it.type==='bestworst'){
@@ -5064,7 +5072,7 @@ function v2BwPick(id, kind, i){
 const SUMMER_FACETS = {
   push_tolerance:{name:'다그침 내성', side:'style'},
   guidance_pref:{name:'주도 위임 선호', side:'style'},
-  structure_pref:{name:'구조·마감 선호', side:'style'},
+  structure_pref:{name:'구조와 마감 선호', side:'style'},
   auto_A:{name:'자립적 질문', side:'low'},
   auto_B:{name:'자료 의존', side:'high'},
   auto_C:{name:'질문 회피', side:'high'},
@@ -5073,20 +5081,20 @@ const SUMMER_FACETS = {
   anx_learn:{name:'학습 불안', side:'high'},
   efficacy:{name:'자기효능감', side:'low'},
   understand:{name:'개념 이해 지향', side:'low'},
-  rote:{name:'암기·요령 지향', side:'high'},
+  rote:{name:'암기와 요령 지향', side:'high'},
   growth:{name:'성장 마인드셋', side:'low'},
-  meta:{name:'점검·회고', side:'low'},
-  care:{name:'정독·검토', side:'low'},
+  meta:{name:'점검과 회고', side:'low'},
+  care:{name:'정독과 검토', side:'low'},
   effort:{name:'끈기', side:'low'},
   testop:{name:'시험 운영', side:'low'},
-  value:{name:'흥미·가치', side:'low'},
+  value:{name:'흥미와 가치', side:'low'},
   comp_hyper:{name:'과경쟁 민감', side:'high'},
 };
 
 // L: 리커트(4점). os=선택지1~4 배점(역문항은 내림차순). w=가중치.
 const L = (id,facet,q,os,w,part)=>({type:'likert',id,facet,q,os,weight:w||1,part});
 const SUMMER_ITEMS = [
-  // ── 관리·지도 스타일 (신규상담 핵심) ──
+  // ── 관리와 지도 스타일 (신규상담 핵심) ──
   L('SP1','push_tolerance','선생님이 "오늘은 여기까지 꼭 끝내자"며 강하게 밀어붙이면 오히려 더 잘된다.',[1,1.8,3.2,4],1.0,'나에게 맞는 관리 방식'),
   L('SP2','push_tolerance','공부 양을 빡빡하게 정해 주고 다그치면 부담돼서 하기 싫어진다.',[4,3.2,1.8,1],1.0,'나에게 맞는 관리 방식'),
   L('SG1','guidance_pref','무엇을 어떤 순서로 공부할지 선생님이 정해서 이끌어 주면 좋겠다.',[1,1.8,3,4],1.0,'나에게 맞는 관리 방식'),
@@ -5095,26 +5103,26 @@ const SUMMER_ITEMS = [
   L('SS2','structure_pref','일일이 확인받고 규칙대로 해야 하면 갑갑하다.',[4,3,2,1],1.0,'나에게 맞는 관리 방식'),
   // ── 막혔을 때 자율성 ──
   L('SA_A','auto_A','모르는 걸 물어볼 때 답보다 "어떻게 접근하면 되는지" 힌트를 달라고 한다.',[1,2,3.2,4],1.4,'막혔을 때'),
-  L('SA_B','auto_B','조금만 막혀도 해설·자습서를 보고 그대로 따라 적는다.',[1,1.8,3,4],1.3,'막혔을 때'),
+  L('SA_B','auto_B','조금만 막혀도 해설이나 자습서를 보고 그대로 따라 적는다.',[1,1.8,3,4],1.3,'막혔을 때'),
   L('SA_C','auto_C','이해가 안 되는 부분이 있어도 질문하지 않고 그냥 넘긴다.',[1,2,3,4],1.2,'막혔을 때'),
-  // ── 정서·완벽주의 ──
-  L('SPF','perf_mal','한 문제라도 틀리면 그날 공부를 다 망친 기분이 든다.',[1,2,3,4],1.0,'마음·정서'),
-  L('SXE','anx_eval','다가오는 국어 시험을 생각하면 불안하다.',[1,2,3,4],1.1,'마음·정서'),
-  L('SXL','anx_learn','수업에서 새로 배우는 내용을 못 따라갈까 봐 걱정된다.',[1,2,3,4],1.0,'마음·정서'),
-  L('SEF','efficacy','어려운 국어 문제도 노력하면 풀 수 있다고 믿는다.',[1,2,3.2,4],1.3,'마음·정서'),
-  L('SEFr','efficacy','어려운 지문을 보면 "난 못 읽겠다"는 생각부터 든다.',[4,3,2,1],1.2,'마음·정서'),
-  // ── 학습관·마인드셋 ──
-  L('SUN','understand','새 개념(문법·문학 용어)을 배우면 왜 그런지 원리를 알고 싶다.',[1,2,3.2,4],1.3,'공부하는 방식'),
-  L('SRO','rote','원리를 몰라도 푸는 방법·요령만 외워서 답을 내는 편이다.',[1,2,3,4],1.1,'공부하는 방식'),
+  // ── 정서와 완벽주의 ──
+  L('SPF','perf_mal','한 문제라도 틀리면 그날 공부를 다 망친 기분이 든다.',[1,2,3,4],1.0,'마음과 정서'),
+  L('SXE','anx_eval','다가오는 국어 시험을 생각하면 불안하다.',[1,2,3,4],1.1,'마음과 정서'),
+  L('SXL','anx_learn','수업에서 새로 배우는 내용을 못 따라갈까 봐 걱정된다.',[1,2,3,4],1.0,'마음과 정서'),
+  L('SEF','efficacy','어려운 국어 문제도 노력하면 풀 수 있다고 믿는다.',[1,2,3.2,4],1.3,'마음과 정서'),
+  L('SEFr','efficacy','어려운 지문을 보면 "난 못 읽겠다"는 생각부터 든다.',[4,3,2,1],1.2,'마음과 정서'),
+  // ── 학습관과 마인드셋 ──
+  L('SUN','understand','새 개념(문법이나 문학 용어)을 배우면 왜 그런지 원리를 알고 싶다.',[1,2,3.2,4],1.3,'공부하는 방식'),
+  L('SRO','rote','원리를 몰라도 푸는 방법이나 요령만 외워서 답을 내는 편이다.',[1,2,3,4],1.1,'공부하는 방식'),
   L('SGR','growth','지금 약한 영역도 연습하면 충분히 나아질 수 있다고 느낀다.',[1,2,3,4],1.2,'공부하는 방식'),
   L('SGRr','growth','국어 실력은 타고나는 거라 바꾸기 어렵다고 생각한다.',[4,3.2,2,1],1.4,'공부하는 방식'),
-  // ── 메타·실행·시험 ──
+  // ── 메타, 실행, 시험 ──
   L('SME','meta','문제를 풀다 막히면 멈춰서 어디서 틀렸는지 되짚어 본다.',[1,1.8,3.2,4],1.4,'공부하는 방식'),
   L('SCA','care','발문이나 지문을 끝까지 읽기 전에 선지부터 고르기 시작할 때가 많다.',[4,3,2,1],1.2,'공부하는 방식'),
-  L('SET','effort','어려운 지문·문제도 답이 나올 때까지 붙들고 푼다.',[1,1.8,3,4],1.3,'공부하는 방식'),
+  L('SET','effort','어려운 지문이나 문제도 답이 나올 때까지 붙들고 푼다.',[1,1.8,3,4],1.3,'공부하는 방식'),
   L('STO','testop','시험에서 한 문제가 안 풀리면 표시해 두고 넘어갔다가 나중에 다시 온다.',[1,2,3.2,4],1.1,'공부하는 방식'),
   // ── 동기 ──
-  L('SVA','value','국어(글 읽기·문학·언어)를 배우는 게 재미있을 때가 있다.',[1,2,3.2,4],1.1,'동기'),
+  L('SVA','value','국어(글 읽기, 문학, 언어)를 배우는 게 재미있을 때가 있다.',[1,2,3.2,4],1.1,'동기'),
   L('SCH','comp_hyper','친구가 나보다 국어 점수가 높으면 신경 쓰여 집중이 안 될 때가 있다.',[1,2,3,4],1.0,'동기'),
   // ── 주의력 체크 ──
   {type:'attention', id:'SATT', q:'이 문항은 응답 확인용입니다. "별로 아니다(②)"를 선택해 주세요.', scale:['전혀 아니다','별로 아니다','대체로 그렇다','매우 그렇다'], correct:2},
@@ -5123,10 +5131,10 @@ const SUMMER_ITEMS = [
   L('SSD2','_sd','국어 지문을 한 번도 대충 읽은 적이 없다.',[1,2,3,4],1.0,'응답 확인'),
   // ── Best-Worst: 여름 학습 방향 ──
   {type:'bestworst', id:'SBW', part:'여름 학습 방향', q:'이번 여름방학 국어 공부에서 가장 하고 싶은 것과 가장 하고 싶지 않은 것을 하나씩 고르세요.',
-    options:['안 읽히던 지문 독해 뚫기','문학 작품 감상법 잡기','문법 개념 채우기','틀린 유형·오답 정리','어휘·배경지식 쌓기']},
+    options:['안 읽히던 지문 독해 뚫기','문학 작품 감상법 잡기','문법 개념 채우기','틀린 유형과 오답 정리','어휘와 배경지식 쌓기']},
   // ── 상담 문항 (점수 미반영) ──
   {type:'multi', id:'SC1', part:'상담', q:'이번 여름방학, 국어에서 가장 채우고 싶은 것은? (복수 선택 가능)',
-    opts:[['지문 독해력',''],['문학 감상',''],['문법 개념',''],['어휘·배경지식',''],['시험 점수',''],['공부 습관·태도',''],['기타','',true]]},
+    opts:[['지문 독해력',''],['문학 감상',''],['문법 개념',''],['어휘와 배경지식',''],['시험 점수',''],['공부 습관과 태도',''],['기타','',true]]},
   {type:'choice', id:'SC2', part:'상담', q:'여름방학 국어 공부, 지금 가장 큰 걸림돌은?',
     opts:[['뭘 해야 할지 모르겠다',''],['시간이 없다',''],['집중이 안 된다',''],['재미가 없다',''],['혼자서는 못 하겠다',''],['기타','',true]]},
 ];
@@ -5156,21 +5164,21 @@ function summerMgmt(F){
   if(!parts.length) return null;
   const m=parts.reduce((a,b)=>a+b,0)/parts.length;
   let label, note;
-  if(m>=3.0){ label='밀착 관리형'; note='분량·마감을 촘촘히 정해 주고 강하게 끌어 줄 때 가장 잘 따라옵니다. 데일리 체크·계획표가 잘 맞습니다.'; }
-  else if(m<=2.2){ label='자율형'; note='스스로 정하는 여백이 있을 때 동기가 삽니다. 과한 통제·다그침은 역효과 — 목표만 합의하고 방법은 맡기는 게 유리합니다.'; }
+  if(m>=3.0){ label='밀착 관리형'; note='분량과 마감을 촘촘히 정해 주고 강하게 끌어 줄 때 가장 잘 따라옵니다. 데일리 체크와 계획표가 잘 맞습니다.'; }
+  else if(m<=2.2){ label='자율형'; note='스스로 정하는 여백이 있을 때 동기가 삽니다. 과한 통제나 다그침은 역효과 — 목표만 합의하고 방법은 맡기는 게 유리합니다.'; }
   else { label='혼합형'; note='큰 틀은 잡아 주되 세부는 맡기는 방식이 맞습니다. 관리 강도를 상황에 따라 조절하세요.'; }
   return {index:Math.round(m*100)/100, label, note, pct:Math.max(0,Math.min(100,Math.round((m-1)/3*100)))};
 }
 function summerPatterns(F){
   const P=[]; const g=(k)=>F[k]!=null?F[k]:2.5;
-  if(g('perf_mal')>3 && g('anx_eval')>3) P.push({name:'완벽주의·불안형', note:'높은 기준과 시험 불안이 실력 발휘를 막습니다. 실수=데이터로 재프레이밍하고 쉬운 문제부터 워밍업하는 루틴이 필요합니다.'});
-  if(g('rote')>3 && g('understand')<2.3) P.push({name:'암기 의존형', note:'요령·암기에 기대 변형·낯선 지문에서 무너질 위험. 맞힌 문제도 "왜"를 한 줄로 설명하게 하세요.'});
+  if(g('perf_mal')>3 && g('anx_eval')>3) P.push({name:'완벽주의 불안형', note:'높은 기준과 시험 불안이 실력 발휘를 막습니다. 실수=데이터로 재프레이밍하고 쉬운 문제부터 워밍업하는 루틴이 필요합니다.'});
+  if(g('rote')>3 && g('understand')<2.3) P.push({name:'암기 의존형', note:'요령이나 암기에 기대 변형이나 낯선 지문에서 무너질 위험. 맞힌 문제도 "왜"를 한 줄로 설명하게 하세요.'});
   if(g('auto_B')>3) P.push({name:'자료 의존형', note:'막히면 해설부터 봅니다. 해설 덮고 백지 재풀이 → 선(先)시도 후(後)확인 순서로 교정.'});
   if(g('auto_C')>3) P.push({name:'질문 회피형', note:'모르는 걸 덮고 넘어갑니다. "별표 1개는 반드시 질문" 같은 저부담 질문 채널이 필요합니다.'});
-  if(g('anx_eval')>3 && (g('care')<2.3 || g('testop')<2.3)) P.push({name:'시험 취약형', note:'아는 것에 비해 시험장에서 덜 나옵니다. 불안 관리와 시간·검토 운영을 따로 훈련하세요.'});
-  if(g('growth')<2.3 && g('efficacy')<2.3) P.push({name:'고정관념·저효능형', note:'"해도 안 된다"는 믿음이 강합니다. 작은 성공 경험 설계와 "아직 안 됨" 언어 전환이 우선.'});
-  if(g('auto_A')>3 && g('meta')>3 && g('effort')>3) P.push({name:'자기주도 강점형', note:'스스로 점검하고 끝까지 붙듭니다. 개입보다 난도 상향·확장 과제가 맞습니다.', good:true});
-  if(g('value')<2.2) P.push({name:'저동기형', note:'국어의 재미·의미가 약합니다. 관심사와 지문을 연결하고 작은 완료를 인정해 주세요.'});
+  if(g('anx_eval')>3 && (g('care')<2.3 || g('testop')<2.3)) P.push({name:'시험 취약형', note:'아는 것에 비해 시험장에서 덜 나옵니다. 불안 관리와 시간과 검토 운영을 따로 훈련하세요.'});
+  if(g('growth')<2.3 && g('efficacy')<2.3) P.push({name:'고정관념 저효능형', note:'"해도 안 된다"는 믿음이 강합니다. 작은 성공 경험 설계와 "아직 안 됨" 언어 전환이 우선.'});
+  if(g('auto_A')>3 && g('meta')>3 && g('effort')>3) P.push({name:'자기주도 강점형', note:'스스로 점검하고 끝까지 붙듭니다. 개입보다 난도 상향과 확장 과제가 맞습니다.', good:true});
+  if(g('value')<2.2) P.push({name:'저동기형', note:'국어의 재미와 의미가 약합니다. 관심사와 지문을 연결하고 작은 완료를 인정해 주세요.'});
   return P;
 }
 const SUMMER_RX = {
@@ -5185,7 +5193,7 @@ const SUMMER_RX = {
   rote:'요령은 빠르게, 단 변형 문제는 원리로 되돌아가 확인.',
   growth:'"못한다"를 "아직 안 됐다"로 바꿔 말하기 + 과정 칭찬.',
   meta:'풀기 전 30초 계획 1줄 + 막히면 멈춰 되짚기.',
-  care:'답 적기 전 발문·조건 다시 읽고 3초 점검.',
+  care:'답 적기 전 발문과 조건 다시 읽고 3초 점검.',
   effort:'어려운 문제 타이머 10분 버티기 훈련.',
   testop:'안 풀리면 표시하고 넘어갔다 마지막 3분 검토.',
   value:'좋아하는 주제의 글부터 붙여 재미 접점 만들기.',
@@ -5199,14 +5207,14 @@ function renderSummerResults(){
   const info=v2State.info, F=summerFacets(), rel=summerReliability(F), mg=summerMgmt(F), pats=summerPatterns(F);
   document.getElementById('v2-r-stamp').textContent='여름방학 학습 점검 진단 결과';
   document.getElementById('v2-r-name').textContent=`${info.name||'학생'} 의 여름 점검 결과`;
-  document.getElementById('v2-r-meta').textContent=`${info.school||''} · ${info.grade||''} · 김가경 국어 연구소`;
-  document.getElementById('v2-r-foot').textContent='여름방학 학습 점검 진단 · v2';
+  document.getElementById('v2-r-meta').textContent=`${[info.school,info.grade].filter(Boolean).join(' ')} — 김가경 국어 연구소`;
+  document.getElementById('v2-r-foot').textContent='여름방학 학습 점검 진단 v2';
   const sect=(n,t)=>`<h2 class="section-title" style="margin-top:22px;color:var(--o-ink)"><span style="color:var(--o-mint)">${n}</span> ${t}</h2>`;
   let h='';
   // 응답 신뢰도
   if(rel.flagged){
     const why=[]; if(rel.attnFail)why.push('응답 확인 문항 불일치'); if(rel.faking)why.push('과대포장 경향(모든 걸 이상적으로 응답)'); if(rel.straight)why.push('같은 번호만 연속 선택');
-    h+=`<div class="o-card" style="border-color:var(--o-amber);background:rgba(230,160,90,.08)"><b style="color:var(--o-amber)">⚠ 응답 신뢰도 주의</b> — ${why.join(' · ')}. 아래 결과는 참고용으로만 보고 상담에서 다시 확인하세요.</div>`;
+    h+=`<div class="o-card" style="border-color:var(--o-amber);background:rgba(230,160,90,.08)"><b style="color:var(--o-amber)">⚠ 응답 신뢰도 주의</b> — ${why.join(', ')}. 아래 결과는 참고용으로만 보고 상담에서 다시 확인하세요.</div>`;
   } else {
     h+=`<div class="o-card"><b style="color:var(--o-mint)">응답 신뢰도 양호</b> — 비교적 성실하게 응답했습니다.</div>`;
   }
@@ -5218,15 +5226,15 @@ function renderSummerResults(){
       <div style="color:var(--o-ink2);line-height:1.7;margin-top:8px">${mg.note}</div></div>`;
   }
   // 2. 막혔을 때
-  const autos=[['auto_A','자립형 · 힌트로 스스로 뚫음'],['auto_B','자료 의존형 · 해설부터 봄'],['auto_C','회피형 · 질문 안 하고 넘김']].map(([k,l])=>({k,l,v:F[k]!=null?F[k]:0}));
+  const autos=[['auto_A','자립형 (힌트로 스스로 뚫음)'],['auto_B','자료 의존형 (해설부터 봄)'],['auto_C','회피형 (질문 안 하고 넘김)']].map(([k,l])=>({k,l,v:F[k]!=null?F[k]:0}));
   const topAuto=autos.slice().sort((a,b)=>b.v-a.v)[0];
   h+=sect('2.','막혔을 때 행동')+`<div class="o-card">가장 두드러진 반응: <b style="color:var(--o-mint)">${topAuto.l}</b>${topAuto.k!=='auto_A'?' <span style="color:var(--o-amber)">— 개입 필요</span>':''}</div>`;
   // 3. 정서
   const emo=[]; if(F.anx_eval>3)emo.push('평가 불안'); if(F.anx_learn>3)emo.push('학습 불안'); if(F.perf_mal>3)emo.push('완벽주의(부적응)'); if(F.efficacy!=null&&F.efficacy<2.3)emo.push('낮은 자기효능감');
-  h+=sect('3.','정서·마음 신호')+`<div class="o-card">${emo.length?'<b style="color:var(--o-amber)">'+emo.join(' · ')+'</b> 신호가 감지됩니다. 정서 면담을 권장합니다.':'뚜렷한 정서 위험 신호는 없습니다.'}</div>`;
+  h+=sect('3.','정서와 마음 신호')+`<div class="o-card">${emo.length?'<b style="color:var(--o-amber)">'+emo.join(', ')+'</b> 신호가 감지됩니다. 정서 면담을 권장합니다.':'뚜렷한 정서 위험 신호는 없습니다.'}</div>`;
   // 4. 학습관 바
-  h+=sect('4.','학습관·태도')+`<div class="o-card">`;
-  [['understand','개념 이해 지향'],['growth','성장 마인드셋'],['efficacy','자기효능감'],['meta','점검·회고'],['effort','끈기'],['value','흥미·가치']].forEach(([k,l])=>{
+  h+=sect('4.','학습관과 태도')+`<div class="o-card">`;
+  [['understand','개념 이해 지향'],['growth','성장 마인드셋'],['efficacy','자기효능감'],['meta','점검과 회고'],['effort','끈기'],['value','흥미와 가치']].forEach(([k,l])=>{
     const v=F[k]; if(v==null)return; const pct=Math.max(0,Math.min(100,Math.round((v-1)/3*100)));
     h+=`<div class="v2-axis"><div class="lab"><span>${l}</span><span class="v">${v}</span></div><div class="v2-bar"><div style="width:${pct}%"></div></div></div>`;
   });
@@ -5240,10 +5248,10 @@ function renderSummerResults(){
   if(concerns.length){ h+=sect('6.','여름 처방 (우선순위)')+`<div class="o-card">`; concerns.slice(0,5).forEach((c,i)=>{ h+=`<div style="margin-bottom:8px"><b style="color:var(--o-mint)">${i+1}. ${SUMMER_FACETS[c.k].name}</b> — ${SUMMER_RX[c.k]}</div>`; }); h+=`</div>`; }
   // Best-Worst
   const bw=v2State.responses['SBW'], bwItem=summerFindItem('SBW');
-  if(bw && bwItem && bw.best!=null){ h+=sect('·','여름 학습 방향 (본인 선택)')+`<div class="o-card">가장 하고 싶은 것: <b style="color:var(--o-mint)">${bwItem.options[bw.best]}</b>${bw.worst!=null?` &nbsp;·&nbsp; 가장 피하고 싶은 것: <b style="color:var(--o-mut)">${bwItem.options[bw.worst]}</b>`:''}</div>`; }
+  if(bw && bwItem && bw.best!=null){ h+=sect('•','여름 학습 방향 (본인 선택)')+`<div class="o-card">가장 하고 싶은 것: <b style="color:var(--o-mint)">${bwItem.options[bw.best]}</b>${bw.worst!=null?` &nbsp;—&nbsp; 가장 피하고 싶은 것: <b style="color:var(--o-mut)">${bwItem.options[bw.worst]}</b>`:''}</div>`; }
   // 상담 메모
   const sc1=summerMultiText('SC1'), sc2=summerChoiceText('SC2');
-  if(sc1||sc2){ h+=sect('·','상담 메모')+`<div class="o-card">`; if(sc1)h+=`<div>채우고 싶은 것: <b style="color:var(--o-mint)">${sc1}</b></div>`; if(sc2)h+=`<div style="margin-top:6px">가장 큰 걸림돌: <b style="color:var(--o-mint)">${sc2}</b></div>`; h+=`</div>`; }
+  if(sc1||sc2){ h+=sect('•','상담 메모')+`<div class="o-card">`; if(sc1)h+=`<div>채우고 싶은 것: <b style="color:var(--o-mint)">${sc1}</b></div>`; if(sc2)h+=`<div style="margin-top:6px">가장 큰 걸림돌: <b style="color:var(--o-mint)">${sc2}</b></div>`; h+=`</div>`; }
 
   document.getElementById('v2-r-body').innerHTML=h;
   goScreen('v2-results');
