@@ -390,9 +390,9 @@ body::before{
 <section id="dashboard-screen" style="display:none">
   <div class="dash-head">
     <div>
-      <div class="dash-subtitle">가경 국어 연구소 · 오름 국어학원</div>
+      <div class="dash-subtitle">가경 국어 연구소 — 오름 국어학원</div>
       <h1 class="dash-title">진단 대시보드 — 학생군 분석</h1>
-      <p class="dash-meta">총 <strong id="meta-total">0</strong>명 · 마지막 새로고침 <span id="meta-time">—</span></p>
+      <p class="dash-meta">총 <strong id="meta-total">0</strong>명　마지막 새로고침 <span id="meta-time">—</span></p>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-ghost btn-sm" onclick="loadData()">↻ 새로고침</button>
@@ -422,8 +422,8 @@ body::before{
   <!-- ★ 최신 응답 (전 진단 통합, 최상단 우선 영역) -->
   <div class="data-section" id="recent-section" style="margin-bottom:26px;border:1px solid rgba(212,168,90,.45);border-radius:12px;overflow:hidden">
     <div class="table-controls">
-      <h3 style="margin:0">최신 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합 · 새 응답부터</span></h3>
-      <input type="text" id="recent-search" placeholder="이름·학교 검색" oninput="renderRecentTable()" style="margin-left:auto">
+      <h3 style="margin:0">최신 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합, 새 응답부터</span></h3>
+      <input type="text" id="recent-search" placeholder="이름/학교 검색" oninput="renderRecentTable()" style="margin-left:auto">
       <span id="recent-count" style="color:var(--ink-muted);font-size:13px;margin-left:12px"></span>
     </div>
     <div id="recent-wrap"><div style="padding:20px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
@@ -466,7 +466,7 @@ body::before{
 
   <!-- 학교별 응답자 (전 진단 통합) -->
   <div class="data-section" style="margin-bottom:26px;border:1px solid var(--line);border-radius:12px;overflow:hidden">
-    <div class="table-controls"><h3 style="margin:0">학교별 응답자 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합 · 주의는 빨강</span></h3></div>
+    <div class="table-controls"><h3 style="margin:0">학교별 응답자 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합, 주의는 빨강</span></h3></div>
     <div id="school-roster"><div style="padding:16px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
   </div>
 
@@ -479,7 +479,7 @@ body::before{
   <!-- 학생 명단 -->
   <div class="student-table-wrap">
     <div class="table-controls">
-      <input type="search" id="search-input" placeholder="이름·학교 검색">
+      <input type="search" id="search-input" placeholder="이름/학교 검색">
       <select id="filter-quadrant">
         <option value="">전체 4분면</option>
         <option value="완성 전략가">완성 전략가</option>
@@ -512,7 +512,7 @@ body::before{
     </table>
     <div class="empty-state" id="empty-state" style="display:none">
       <h3>해당 조건의 학생이 없습니다</h3>
-      <p>검색·필터를 조정해보세요.</p>
+      <p>검색과 필터를 조정해보세요.</p>
     </div>
   </div>
 
@@ -580,7 +580,7 @@ body::before{
     <!-- 특별판 응답자 명단 -->
     <div class="student-table-wrap">
       <div class="table-controls">
-        <input type="search" id="special-search-input" placeholder="이름·학교 검색">
+        <input type="search" id="special-search-input" placeholder="이름/학교 검색">
         <select id="special-filter-role">
           <option value="">전체 응답자</option>
           <option value="parent">학부모</option>
@@ -636,7 +636,7 @@ body::before{
     <!-- 가족 명단 -->
     <div class="student-table-wrap">
       <div class="table-controls">
-        <input type="search" id="mirror-search-input" placeholder="이름·학교·코드 검색">
+        <input type="search" id="mirror-search-input" placeholder="이름/학교/코드 검색">
         <select id="mirror-filter-status">
           <option value="">전체 상태</option>
           <option value="both">양쪽 완료</option>
@@ -669,7 +669,7 @@ body::before{
   </div><!-- /tab-mirror -->
 
   <p style="text-align:center;color:var(--ink-muted);font-size:12px;margin-top:48px;border-top:1px solid var(--line);padding-top:20px">
-    가경 국어 연구소 · 진단 대시보드 v2.0
+    가경 국어 연구소 — 진단 대시보드 v2.0
   </p>
 </section>
 
@@ -849,7 +849,7 @@ async function loadRecentPanel(){
   const rows = [];
   (allStudents||[]).forEach(s=>{
     rows.push({ date:d10(s['제출일시']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'일반', col:'#a9c29c', bg:'rgba(155,179,142,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(' · '),
+      kind:'일반', col:'#a9c29c', bg:'rgba(155,179,142,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(', '),
       warn:e(s['주의 신호']), url:'result-viewer.html?generalName='+encodeURIComponent(e(s['이름'])) });
   });
   v2.forEach(s=>{
@@ -882,8 +882,8 @@ function renderSchoolRoster(){
   let h='';
   schools.forEach(([school,list])=>{
     const warnN=list.filter(r=>r.warn).length;
-    h+=`<div style="padding:12px 14px;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><strong style="color:var(--ink);font-size:14px">${school}</strong><span style="color:var(--ink-muted);font-size:12px">${list.length}명</span>${warnN?`<span style="color:var(--crimson);font-size:12px">· 주의 ${warnN}명</span>`:''}</div><div style="display:flex;flex-wrap:wrap;gap:6px">`;
-    list.forEach(r=>{ h+=`<span onclick="window.open('${r.url}','_blank')" title="${r.kind}${r.warn?' · '+r.warn:''}" style="cursor:pointer;font-size:12.5px;padding:3px 10px;border-radius:12px;background:var(--bg-deep);color:${r.warn?'var(--crimson)':'var(--ink-soft)'};border:1px solid ${r.warn?'rgba(229,115,115,.4)':'var(--line)'}">${r.name}${r.warn?' ⚠':''}</span>`; });
+    h+=`<div style="padding:12px 14px;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><strong style="color:var(--ink);font-size:14px">${school}</strong><span style="color:var(--ink-muted);font-size:12px">${list.length}명</span>${warnN?`<span style="color:var(--crimson);font-size:12px">주의 ${warnN}명</span>`:''}</div><div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    list.forEach(r=>{ h+=`<span onclick="window.open('${r.url}','_blank')" title="${r.kind}${r.warn?', '+r.warn:''}" style="cursor:pointer;font-size:12.5px;padding:3px 10px;border-radius:12px;background:var(--bg-deep);color:${r.warn?'var(--crimson)':'var(--ink-soft)'};border:1px solid ${r.warn?'rgba(229,115,115,.4)':'var(--line)'}">${r.name}${r.warn?' ⚠':''}</span>`; });
     h+='</div></div>';
   });
   el.innerHTML=h;
@@ -892,7 +892,7 @@ function warnPill(w){
   if(!w) return '<span style="color:var(--ink-faint);font-size:12px">—</span>';
   const parts=String(w).split(',').map(x=>x.trim()).filter(Boolean);
   const t=String(w).replace(/"/g,'&quot;');
-  const label=parts.length>2 ? ('주의 '+parts.length+'개') : parts.join(' · ');
+  const label=parts.length>2 ? ('주의 '+parts.length+'개') : parts.join(', ');
   return `<span class="pill" title="${t}">⚠ ${label}</span>`;
 }
 function renderRecentTable(){
@@ -906,9 +906,9 @@ function renderRecentTable(){
   show.forEach(r=>{
     const isV2=/v2Name=/.test(r.url); const nm=encodeURIComponent(r.name);
     const acts = isV2 ? `<a class="rc-btn" href="result-viewer.html?v2Name=${nm}&report=teacher" target="_blank">강사용 확인</a><a class="rc-btn ghost" href="result-viewer.html?v2Name=${nm}&report=parent&print=1" target="_blank">통신문 인쇄</a>` : `<a class="rc-btn plain" href="${r.url}" target="_blank">결과지</a>`;
-    h+=`<div class="rc-row"><div class="rc-date">${r.date}</div><div><div class="rc-name">${r.name}</div><div class="rc-sub">${[r.school,r.grade].filter(Boolean).join(' · ')}</div></div><div class="rc-chip" style="background:${r.bg};color:${r.col}">${r.kind}</div><div class="rc-summary">${r.summary||'—'}</div><div class="rc-warn">${warnPill(r.warn)}</div><div></div><div class="rc-actions">${acts}</div></div>`;
+    h+=`<div class="rc-row"><div class="rc-date">${r.date}</div><div><div class="rc-name">${r.name}</div><div class="rc-sub">${[r.school,r.grade].filter(Boolean).join(' ')}</div></div><div class="rc-chip" style="background:${r.bg};color:${r.col}">${r.kind}</div><div class="rc-summary">${r.summary||'—'}</div><div class="rc-warn">${warnPill(r.warn)}</div><div></div><div class="rc-actions">${acts}</div></div>`;
   });
-  if(rows.length>show.length) h+=`<div style="padding:13px 18px;color:var(--ink-faint);font-size:12px;text-align:center;border-top:1px solid var(--line)">최근 ${show.length}건 · 전체 ${rows.length}건 — 진단별 상세는 아래 탭</div>`;
+  if(rows.length>show.length) h+=`<div style="padding:13px 18px;color:var(--ink-faint);font-size:12px;text-align:center;border-top:1px solid var(--line)">최근 ${show.length}건, 전체 ${rows.length}건 — 진단별 상세는 아래 탭</div>`;
   wrap.innerHTML=h;
 }
 
@@ -1461,8 +1461,8 @@ let mirrorAnalysisData = null;
 let mirrorChartsRendered = false;
 
 const TAB_DESC = {
-  general: '8개 영역·내신/수능 대응력을 보는 종합 진단 (8축·80문항)',
-  v2: '장면형 문항으로 학습 성향과 필요한 관리 방식을 보는 진단 (비재원생·재원생·여름 점검)',
+  general: '8개 영역과 내신/수능 대응력을 보는 종합 진단 (8축 80문항)',
+  v2: '장면형 문항으로 학습 성향과 필요한 관리 방식을 보는 진단 (비재원생, 재원생, 여름 점검)',
   special: '특별판 — 한티 MEXX 설명회용 / 오름 관내 학교 추천',
   mirror: '학부모와 자녀의 인식 차이를 비교하는 거울 진단'
 };
@@ -1548,7 +1548,7 @@ function renderV2Table() {
   if (!rows.length) { wrap.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
   const now = Date.now(), WK = 7*24*3600*1000;
-  let h = `<table class="data-table"><thead><tr><th>응답일</th><th>이름</th><th>학교·학년</th><th>버전</th><th>판정</th><th>신호</th><th></th></tr></thead><tbody>`;
+  let h = `<table class="data-table"><thead><tr><th>응답일</th><th>이름</th><th>학교／학년</th><th>버전</th><th>판정</th><th>신호</th><th></th></tr></thead><tbody>`;
   rows.forEach(r => {
     const t = Date.parse(r['제출시각']);
     const dt = r['제출시각'] ? String(r['제출시각']).slice(0,10) : '';
