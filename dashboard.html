@@ -413,18 +413,19 @@ body::before{
   <!-- 탭 네비게이션 -->
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
-      일반 진단 <span class="tab-count" id="tab-count-general">0</span>
+      종합 진단 <span class="tab-count" id="tab-count-general">0</span>
     </button>
     <button class="tab-btn" data-tab="v2" onclick="switchTab('v2')">
-      학습 성향 진단 <span class="tab-badge mirror">v2</span> <span class="tab-count" id="tab-count-v2">0</span>
+      학습 성향 진단 <span class="tab-count" id="tab-count-v2">0</span>
     </button>
     <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
-      특별판 진단 <span class="tab-badge">한티 MEXX</span> <span class="tab-count" id="tab-count-special">0</span>
+      특별판 진단 <span class="tab-count" id="tab-count-special">0</span>
     </button>
     <button class="tab-btn" data-tab="mirror" onclick="switchTab('mirror')">
-      거울 진단 <span class="tab-badge mirror">NEW</span> <span class="tab-count" id="tab-count-mirror">0</span>
+      거울 진단 <span class="tab-count" id="tab-count-mirror">0</span>
     </button>
   </div>
+  <div id="tab-desc" style="margin:-6px 0 20px;padding:10px 14px;background:var(--bg-paper);border-left:2px solid var(--gold);border-radius:0 6px 6px 0;font-size:13px;color:var(--ink-muted)"></div>
 
   <!-- ════════ 일반 진단 탭 ════════ -->
   <div id="tab-general" class="tab-pane active">
@@ -812,6 +813,7 @@ function renderAll() {
   applyFilters();
   attachListeners();
   loadRecentPanel();
+  const td = document.getElementById('tab-desc'); if (td) td.textContent = TAB_DESC.general;
 }
 
 // ═══════════ 최신 응답 (전 진단 통합 · 최상단) ═══════════
@@ -821,6 +823,8 @@ async function loadRecentPanel(){
   const key = localStorage.getItem(STORAGE_KEY);
   const get = async (a)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${a}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
   const [v2, sp, mi] = await Promise.all([get('v2List'), get('specialList'), get('mirrorList')]);
+  const setC=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent=n; };
+  setC('tab-count-v2', v2.length); setC('tab-count-special', sp.length); setC('tab-count-mirror', mi.length);
   const e = v => String(v==null?'':v);
   const d10 = v => e(v).slice(0,10);
   const rows = [];
@@ -1430,6 +1434,12 @@ let mirrorList = [];
 let mirrorAnalysisData = null;
 let mirrorChartsRendered = false;
 
+const TAB_DESC = {
+  general: '8개 영역·내신/수능 대응력을 보는 종합 진단 (8축·80문항)',
+  v2: '장면형 문항으로 학습 성향과 필요한 관리 방식을 보는 진단 (비재원생·재원생·여름 점검)',
+  special: '특별판 — 한티 MEXX 설명회용 / 오름 관내 학교 추천',
+  mirror: '학부모와 자녀의 인식 차이를 비교하는 거울 진단'
+};
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
@@ -1437,6 +1447,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-pane').forEach(p => {
     p.classList.toggle('active', p.id === `tab-${tab}`);
   });
+  const td = document.getElementById('tab-desc'); if (td) td.textContent = TAB_DESC[tab] || '';
   if (tab === 'special' && !specialChartsRendered) {
     loadSpecialData();
   }
