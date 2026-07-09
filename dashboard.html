@@ -351,6 +351,20 @@ body::before{
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 
+.v2-week-badge{font-size:12px;font-weight:600;color:var(--olive)}
+.v2-newdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:6px;vertical-align:middle}
+.v2-verpill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--line);white-space:nowrap}
+.v2-verpill.summer{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.4);color:#7fe6d6}
+.v2-flag{font-size:12px;color:var(--ink-muted)}
+.v2-flag.warn{color:var(--crimson);font-weight:600}
+.v2-ok{font-size:12px;color:var(--ink-faint)}
+.v2-filter{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:13px}
+.v2-pbars{display:grid;gap:6px;margin-top:8px}
+.v2-pbar{display:grid;grid-template-columns:92px 1fr 26px;align-items:center;gap:8px;font-size:12px}
+.v2-pbar-l{color:var(--ink)}
+.v2-pbar-t{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.v2-pbar-f{display:block;height:100%;background:var(--olive)}
+.v2-pbar-n{text-align:right;color:var(--ink-muted)}
 </style>
 </head>
 <body>
@@ -392,7 +406,7 @@ body::before{
       일반 진단 <span class="tab-count" id="tab-count-general">0</span>
     </button>
     <button class="tab-btn" data-tab="v2" onclick="switchTab('v2')">
-      비재원생·재원생 <span class="tab-badge mirror">v2</span> <span class="tab-count" id="tab-count-v2">0</span>
+      학습 성향 진단 <span class="tab-badge mirror">v2</span> <span class="tab-count" id="tab-count-v2">0</span>
     </button>
     <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
       특별판 진단 <span class="tab-badge">한티 MEXX</span> <span class="tab-count" id="tab-count-special">0</span>
@@ -478,18 +492,29 @@ body::before{
 
   <!-- ════════ v2 진단 탭 (비재원생/재원생) ════════ -->
   <div id="tab-v2" class="tab-pane">
-    <div class="stat-grid" id="v2-stat-grid" style="margin-bottom:24px"></div>
-    <div class="data-section">
+    <!-- 우선: 최근 신규 응답 -->
+    <div class="data-section" style="margin-bottom:20px">
       <div class="table-controls">
-        <h3 style="margin:0">응답 명단</h3>
-        <input type="text" id="v2-search" placeholder="이름·학교 검색" oninput="renderV2Table()" style="margin-left:auto">
+        <h3 style="margin:0">최근 응답 <span id="v2-week-badge" class="v2-week-badge"></span></h3>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="v2-ver-filter" class="v2-filter" onchange="renderV2Table()">
+            <option value="">전체 버전</option>
+            <option value="brief">비재원생</option>
+            <option value="standard">재원생 첫</option>
+            <option value="precision">재원생 심층</option>
+            <option value="summer">여름 점검</option>
+          </select>
+          <input type="text" id="v2-search" placeholder="이름, 학교 검색" oninput="renderV2Table()">
+        </div>
       </div>
       <div id="v2-table-wrap"></div>
       <div id="v2-empty" class="empty-state" style="display:none">
-        <h3>v2 진단 응답이 아직 없습니다</h3>
-        <p>비재원생/재원생 진단에 응답하면 여기에 표시됩니다. (Apps Script에 v2Save 배포 필요)</p>
+        <h3>학습 진단 응답이 아직 없습니다</h3>
+        <p>비재원생, 재원생, 여름 점검 진단에 응답하면 여기에 표시됩니다.</p>
       </div>
     </div>
+    <!-- 보조: 요약 지표 -->
+    <div class="stat-grid" id="v2-stat-grid"></div>
   </div><!-- /tab-v2 -->
 
   <!-- ════════ 특별판 진단 탭 ════════ -->
@@ -1387,30 +1412,64 @@ async function loadV2Data() {
   }
 }
 
+const V2_VER_LABEL = { brief:'비재원생', standard:'재원생 첫', precision:'재원생 심층', summer:'여름 점검' };
+function v2NeedsAttention(r){
+  const stars = +r['고위험수'] || 0;
+  if (r['버전'] === 'summer') return stars >= 1;
+  return stars >= 3;
+}
 function renderV2Dashboard() {
   const a = v2Ana || {};
+  const list = v2List || [];
+  const total = a.totalCount || list.length || 0;
+  const now = Date.now(), WK = 7*24*3600*1000;
+  const weekNew = list.filter(r => { const t = Date.parse(r['제출시각']); return t && (now - t) <= WK; }).length;
+  const attn = list.filter(v2NeedsAttention).length;
+  const wb = document.getElementById('v2-week-badge');
+  if (wb) wb.textContent = weekNew ? `이번 주 ${weekNew}명 신규` : '';
   const pc = a.personaCounts || {};
-  const personaTop = Object.entries(pc).sort((x,y)=>y[1]-x[1]).map(([k,v])=>`${k} ${v}`).join(' · ') || '—';
+  const entries = Object.entries(pc).sort((x,y)=>y[1]-x[1]);
+  const max = entries.length ? entries[0][1] : 1;
+  const bars = entries.map(([k,v]) => `<div class="v2-pbar"><span class="v2-pbar-l">${k}</span><span class="v2-pbar-t"><span class="v2-pbar-f" style="width:${Math.round(v/max*100)}%"></span></span><span class="v2-pbar-n">${v}</span></div>`).join('') || '<span style="color:var(--ink-muted)">아직 없음</span>';
   document.getElementById('v2-stat-grid').innerHTML = `
-    <div class="stat-card"><div class="stat-label">총 응답</div><div class="stat-value">${a.totalCount||0}</div></div>
-    <div class="stat-card"><div class="stat-label">고위험 신호(누적)</div><div class="stat-value">${a.totalStars||0}</div></div>
-    <div class="stat-card"><div class="stat-label">"알았다 착각"(누적)</div><div class="stat-value">${a.totalChakgak||0}</div></div>
-    <div class="stat-card" style="grid-column:span 2"><div class="stat-label">페르소나 분포</div><div class="stat-value" style="font-size:15px;line-height:1.5">${personaTop}</div></div>`;
+    <div class="stat-card"><div class="stat-label">총 응답</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">이번 주 신규</div><div class="stat-value">${weekNew}</div></div>
+    <div class="stat-card"><div class="stat-label">주의 학생</div><div class="stat-value" style="color:${attn?'var(--crimson)':'inherit'}">${attn}</div></div>
+    <div class="stat-card" style="grid-column:1/-1"><div class="stat-label">페르소나 분포</div><div class="v2-pbars">${bars}</div></div>`;
 }
 
 function renderV2Table() {
   const q = (document.getElementById('v2-search').value || '').trim();
-  let rows = v2List;
+  const vf = (document.getElementById('v2-ver-filter') || {}).value || '';
+  let rows = (v2List || []).slice();
+  rows.sort((a,b) => (Date.parse(b['제출시각'])||0) - (Date.parse(a['제출시각'])||0));
+  if (vf) rows = rows.filter(r => r['버전'] === vf);
   if (q) rows = rows.filter(r => (r['이름']||'').includes(q) || (r['학교']||'').includes(q));
   const wrap = document.getElementById('v2-table-wrap');
   const empty = document.getElementById('v2-empty');
   if (!rows.length) { wrap.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
-  let h = `<table class="data-table"><thead><tr><th>응답시각</th><th>이름</th><th>학교</th><th>학년</th><th>버전</th><th>페르소나</th><th>고위험</th><th>착각</th><th>부모</th><th></th></tr></thead><tbody>`;
+  const now = Date.now(), WK = 7*24*3600*1000;
+  let h = `<table class="data-table"><thead><tr><th>응답일</th><th>이름</th><th>학교·학년</th><th>버전</th><th>판정</th><th>신호</th><th></th></tr></thead><tbody>`;
   rows.forEach(r => {
+    const t = Date.parse(r['제출시각']);
     const dt = r['제출시각'] ? String(r['제출시각']).slice(0,10) : '';
+    const isNew = t && (now - t) <= WK;
     const nm = (r['이름']||'').replace(/'/g,'');
-    h += `<tr style="cursor:pointer" onclick="openV2Result('${nm}')"><td>${dt}</td><td>${r['이름']||''}</td><td>${r['학교']||''}</td><td>${r['학년']||''}</td><td>${r['버전']||''}</td><td><strong>${r['페르소나']||''}</strong></td><td>${r['고위험수']||0}</td><td>${r['착각수']||0}</td><td>${r['부모응답']==='Y'?'✓':'—'}</td><td style="color:var(--olive)">풀 결과지 →</td></tr>`;
+    const ver = r['버전'] || '';
+    const verLabel = V2_VER_LABEL[ver] || ver;
+    const stars = +r['고위험수'] || 0, chak = +r['착각수'] || 0;
+    let sig = '<span class="v2-ok">—</span>';
+    if (ver === 'summer') sig = stars ? '<span class="v2-flag warn">신뢰도 주의</span>' : '<span class="v2-ok">양호</span>';
+    else { const pp=[]; if(stars) pp.push(`고위험 ${stars}`); if(chak) pp.push(`착각 ${chak}`); if(pp.length) sig = `<span class="v2-flag${stars>=3?' warn':''}">${pp.join(', ')}</span>`; }
+    h += `<tr style="cursor:pointer" onclick="openV2Result('${nm}')">`
+      + `<td style="white-space:nowrap">${isNew?'<span class="v2-newdot" title="이번 주 신규"></span>':''}${dt}</td>`
+      + `<td><strong>${r['이름']||''}</strong></td>`
+      + `<td>${r['학교']||''} ${r['학년']||''}</td>`
+      + `<td><span class="v2-verpill${ver==='summer'?' summer':''}">${verLabel}</span></td>`
+      + `<td>${r['페르소나']||''}</td>`
+      + `<td>${sig}</td>`
+      + `<td style="color:var(--olive);white-space:nowrap">열기 →</td></tr>`;
   });
   h += `</tbody></table>`;
   wrap.innerHTML = h;

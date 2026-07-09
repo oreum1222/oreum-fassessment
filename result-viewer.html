@@ -10034,13 +10034,14 @@ window.onload = function(){
         const rows = (Array.isArray(list)?list:[]).filter(r=>r['이름']===targetV2Name);
         if(!rows.length) throw new Error(targetV2Name+' 학생의 v2 결과를 찾을 수 없습니다');
         const row = rows.sort((a,b)=>String(b['제출시각']||'').localeCompare(String(a['제출시각']||'')))[0];
-        const verMap={'비재원생':'brief','재원생 첫':'standard','재원생 심층':'precision'};
-        v2State.ver = verMap[row['버전']] || 'standard';
+        const verMap={'비재원생':'brief','재원생 첫':'standard','재원생 심층':'precision','여름 점검':'summer'};
+        const rawVer=row['버전'];
+        v2State.ver = V2_VERSIONS[rawVer] ? rawVer : (verMap[rawVer] || 'standard');
         v2State.info = { name:row['이름'], school:row['학교'], grade:row['학년'], parentPhone:row['학부모연락처'] };
         v2State.responses = JSON.parse(row['응답_JSON']||'{}');
         v2State.items = V2_VERSIONS[v2State.ver].buildStudent(v2State.info.grade);
         v2State.previewMode = true;
-        renderV2Results();
+        v2Finish();
         le.remove();
         const stamp=document.getElementById('v2-r-stamp'); if(stamp) stamp.innerHTML += ' <span style="background:#0F2A2A;color:#8FD3A8;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px">강사 미리보기</span>';
         const acts=document.querySelector('#v2-results .report-actions'); if(acts) acts.innerHTML='<button class="btn btn-ghost" onclick="window.print()">📄 인쇄</button> <button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
