@@ -2888,6 +2888,19 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-stat .cap{ font-size:12px; color:#5c6672; margin-top:6px; line-height:1.4; }
 .rpt-mnote{ margin-top:11px; font-size:13.5px; line-height:1.7; color:#5c6672; }
 .rpt-mnote b{ color:#ae3b36; }
+.rpt-mini{ display:flex; flex-direction:column; gap:6px; }
+.rpt-mini-row{ display:flex; align-items:center; gap:10px; padding:9px 13px; border:1px solid #e4e8ea; border-radius:4px; font-size:13.5px; }
+.rpt-mini-row.ok{ background:#eef7f4; border-color:#d3e8e2; }
+.rpt-mini-row.bad{ background:#f7ecea; border-color:#e6cfcc; }
+.rpt-mini-row .mk{ font-weight:800; font-size:15px; width:16px; text-align:center; }
+.rpt-mini-row.ok .mk{ color:#0f766e; }
+.rpt-mini-row.bad .mk{ color:#ae3b36; }
+.rpt-mini-row .tag{ font-weight:600; color:#1b1e24; flex:1; }
+.rpt-mini-row .conf{ font-size:12px; color:#5c6672; white-space:nowrap; }
+.rpt-mini-row.bad .conf{ color:#ae3b36; }
+.rpt-mini-sum{ margin-top:12px; font-size:13.5px; color:#5c6672; }
+.rpt-mini-sum b{ color:#1b1e24; }
+.rpt-mini-sum b.warn{ color:#ae3b36; }
 .rpt-risklead{ font-size:14px; color:#5c6672; line-height:1.7; margin:0 0 13px; }
 .rpt-signal{ border:1px solid #e4e8ea; border-radius:4px; padding:15px 17px; margin-bottom:11px; background:#f7ecea; }
 .rpt-signal .axl{ display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; letter-spacing:.05em; color:#ae3b36; margin-bottom:6px; }
@@ -5369,13 +5382,13 @@ function v2FindItem(id){
 }
 // 축 점수: -1~+1 평균 → 0~100. pred로 학생/부모 분리
 const V2_SIGNAL_DESC = {
-  장악:'학습 자료·시험 범위를 스스로 장악하지 못하는 신호입니다.',
-  적용:'낯선 지문·응용 상황에서 원리를 적용하지 못하는 신호입니다.',
-  변별:'발문·선지·조건을 정확히 가려내지 못하는 신호입니다.',
+  장악:'학습 자료와 시험 범위를 스스로 챙기지 못하는 신호입니다.',
+  적용:'낯선 지문이나 응용 상황에서 원리를 적용하지 못하는 신호입니다.',
+  변별:'발문과 선지, 조건을 정확히 가려내지 못하는 신호입니다.',
   메타:'틀린 이유를 스스로 분류하지 못하는 신호 — 같은 유형 오답이 반복될 위험이 큽니다.',
   시간:'제한 시간 안에서 풀이 운영이 무너지는 신호입니다.',
-  정서:'점수가 떨어진 뒤 회복·지속에서 흔들리는 신호입니다.',
-  '':'모의고사·내신 어느 쪽도 점수가 안 나오는 전반적 저조 신호입니다.'
+  정서:'점수가 떨어진 뒤 회복과 지속에서 흔들리는 신호입니다.',
+  '':'모의고사와 내신 어느 쪽도 점수가 안 나오는 전반적 저조 신호입니다.'
 };
 function v2CollectAxes(pred){
   const acc={장악:[],적용:[],변별:[],메타:[],시간:[],정서:[]}; let stars=0; const signals=[];
@@ -5391,7 +5404,7 @@ function v2CollectAxes(pred){
   return {score, counts, stars, signals};
 }
 function v2MinitaskStats(){
-  const out={total:0, correct:0, 착각:0, 진짜강점:0, 찍음:0, written:[]};
+  const out={total:0, correct:0, 착각:0, 진짜강점:0, 찍음:0, written:[], items:[]};
   [...V2_MINI_고1, ...V2_MINI_고2, V2_OBROK].forEach(it=>{
     const r=v2State.responses[it.id]; if(!r) return;
     if(it.opts){
@@ -5402,6 +5415,7 @@ function v2MinitaskStats(){
       if(!correct && r.conf===3) out.착각++;
       if(correct && r.conf===3) out.진짜강점++;
       if(r.conf===1) out.찍음++;
+      out.items.push({tag:it.tag||'미니 과제', correct:correct, conf:r.conf||0, chakgak:(!correct && r.conf===3)});
     }
     if(it.answer && r.t && r.t.trim()) out.written.push({tag:it.tag, text:r.t.trim()});
   });
@@ -5444,6 +5458,7 @@ function renderV2Results(){
   const verLabel = (V2_VERSIONS[v2State.ver]&&V2_VERSIONS[v2State.ver].label) || '학습 성향 진단';
   const st=document.getElementById('v2-r-stamp'); if(st) st.textContent='';
   const esc=x=>String(x==null?'':x).replace(/</g,'&lt;');
+  const dm=x=>String(x==null?'':x).replace(/\s*·\s*/g,', ');
   const dateStr=((info.date||new Date().toISOString().slice(0,10))+'').replace(/-/g,'. ')+'.';
   let n=1; const sec=(t,note)=>`<div class="rpt-sec-h"><span class="rpt-n">${n++}</span><span class="rpt-t">${t}</span>${note?`<span class="rpt-note">${note}</span>`:''}</div>`;
   let h='<div class="rpt">';
@@ -5454,24 +5469,24 @@ function renderV2Results(){
   h+=`<button class="rpt-print" onclick="window.print()">인쇄</button>`;
   if(preview) h+=`<button class="rpt-print" onclick="window.close()">창 닫기</button>`;
   h+='</div></div>';
-  h+=`<header class="rpt-mast"><div><div class="rpt-eyebrow">김가경 국어 연구소 · 학습 성향 진단</div><h1 class="rpt-title">${teacher?'학습 성향 진단 · 강사용 전체':'학습 성향 진단 결과 통지'}</h1><div class="rpt-ver">${esc(verLabel)}${teacher?' · 내부 검토용':' · 여름학기 반 배치·수업 설계용'}</div></div><div class="rpt-brand"><div class="n">김가경 국어 연구소</div><div class="en">OREUM KOREAN</div></div></header>`;
+  h+=`<header class="rpt-mast"><div><div class="rpt-eyebrow">김가경 국어 연구소 — 학습 성향 진단</div><h1 class="rpt-title">${teacher?'학습 성향 진단 · 강사용 전체':'학습 성향 진단 결과 통지'}</h1><div class="rpt-ver">${esc(verLabel)}${teacher?' — 내부 검토용':' — 여름학기 반 배치와 수업 설계용'}</div></div><div class="rpt-brand"><div class="n">김가경 국어 연구소</div><div class="en">OREUM KOREAN</div></div></header>`;
   h+=`<div class="rpt-info"><div class="c"><div class="k">학생</div><div class="v">${esc(info.name||'-')}</div></div><div class="c"><div class="k">학교</div><div class="v">${esc(info.school||'-')}</div></div><div class="c"><div class="k">학년</div><div class="v">${esc(info.grade||'-')}</div></div><div class="c"><div class="k">응시일</div><div class="v">${dateStr}</div></div></div>`;
-  h+=`<div class="rpt-verdict"><div class="lab">종합 판정</div><div class="type">${esc(P.label)}</div><div class="sub">${esc(P.sub)}</div><p>${esc(P.line)}</p></div>`;
+  h+=`<div class="rpt-verdict"><div class="lab">종합 판정</div><div class="type">${esc(P.label)}</div><div class="sub">${esc(dm(P.sub))}</div><p>${esc(dm(P.line))}</p></div>`;
   h+=`<section class="rpt-sec">${sec('여섯 축 프로필','점수 서열이 아니라 ‘어떻게 공부하는가’의 지도')}`;
   Object.keys(V2_AXNAME).forEach(k=>{ const v=a.score[k], na=!a.counts[k];
     const tag=na?'<span class="rpt-tag mid">측정 안 됨</span>':(v>=60?'<span class="rpt-tag strong">강점</span>':v<=42?'<span class="rpt-tag weak">약점</span>':'<span class="rpt-tag mid">보통</span>');
     h+=`<div class="rpt-axis"><div class="row"><span class="nm">${V2_AXNAME[k]}${tag}</span><span class="sc">${na?'—':v}</span></div><div class="rpt-track"><div class="rpt-fill${v<=42?' weak':''}" style="width:${na?0:v}%"></div></div></div>`; });
   h+=`</section>`;
   if(a.mt.total>0){
-    h+=`<section class="rpt-sec">${sec('미니 과제 실측','자기보고가 아닌, 실제로 풀어 본 결과')}<div class="rpt-measure"><div class="rpt-stat"><div class="num">${a.mt.correct}<span>/${a.mt.total}</span></div><div class="cap">실제 정답</div></div><div class="rpt-stat${a.mt['착각']>0?' alert':''}"><div class="num">${a.mt['착각']}</div><div class="cap">‘알았다 착각’<br>확신했는데 틀림</div></div><div class="rpt-stat"><div class="num">${a.mt['진짜강점']}</div><div class="cap">확실히 맞힘</div></div><div class="rpt-stat"><div class="num">${a.mt['찍음']}</div><div class="cap">찍음</div></div></div>${a.mt['착각']>0?`<p class="rpt-mnote">확신하고 적은 답 중 <b>${a.mt['착각']}개가 틀렸습니다.</b> 아는 것과 실제 실력 사이 간극이 있어 같은 유형 오답이 반복될 수 있습니다.</p>`:''}</section>`;
+    h+=`<section class="rpt-sec">${sec('미니 과제 실측','실제로 풀어 본 문제 — 맞고 틀림')}<div class="rpt-mini">${(a.mt.items||[]).map(it=>`<div class="rpt-mini-row ${it.correct?'ok':'bad'}"><span class="mk">${it.correct?'✓':'✗'}</span><span class="tag">${esc(dm(it.tag))}</span><span class="conf">${['','찍음','애매','확신'][it.conf]||''}${it.chakgak?' ⚠ 알았다 착각':''}</span></div>`).join('')}</div><div class="rpt-mini-sum">정답 <b>${a.mt.correct} / ${a.mt.total}</b>　확신했는데 틀림 <b class="warn">${a.mt['착각']}</b>개　찍음 ${a.mt['찍음']}개</div>${a.mt['착각']>0?`<p class="rpt-mnote">확신하고 적은 답 중 <b>${a.mt['착각']}개가 틀렸습니다.</b> 아는 것과 실제 실력 사이 간극이 있어 같은 유형 오답이 반복될 수 있습니다.</p>`:''}</section>`;
   }
   h+=`<section class="rpt-sec">${sec('위험 신호', a.signals.length?`고위험 응답 ${a.signals.length}건 — 아래가 그 내용`:'')}`;
   if(a.signals.length){
     h+=`<p class="rpt-risklead">학생이 특정 문항에서 <b>가장 우려되는 선택지</b>를 고른 지점입니다. 개수가 아니라 무엇을 어떻게 답했는지를 그대로 옮깁니다.</p>`;
-    a.signals.forEach(sg=>{ h+=`<div class="rpt-signal"><div class="axl">${V2_AXNAME[sg.ax]||sg.ax||'종합 저조'}</div><div class="what">${esc(V2_SIGNAL_DESC[sg.ax]||'점검이 필요한 응답입니다.')}</div><div class="basis"><span class="q">문항 “${esc(sg.q)}”</span> → 학생이 고른 답: <span class="ans">“${esc(sg.ans)}”</span></div></div>`; });
+    a.signals.forEach(sg=>{ h+=`<div class="rpt-signal"><div class="axl">${V2_AXNAME[sg.ax]||sg.ax||'종합 저조'}</div><div class="what">${esc(V2_SIGNAL_DESC[sg.ax]||'점검이 필요한 응답입니다.')}</div><div class="basis"><span class="q">문항 “${esc(sg.q)}”</span><br>→ 학생이 고른 답: <span class="ans">“${esc(sg.ans)}”</span></div></div>`; });
   } else { h+=`<div class="rpt-ok">두드러진 고위험 응답은 없습니다. 강점을 유지하며 약점 축을 조금씩 끌어올리면 됩니다.</div>`; }
   h+=`</section>`;
-  h+=`<section class="rpt-sec">${sec('강사 코멘트 · 여름 방향')}<div class="rpt-comment"><p><b>${esc(info.name||'학생')}</b> 학생은 <b>${esc(P.label)}</b>입니다. ${esc(P.line)}</p><div class="rpt-rx"><div class="no">1</div><div class="t">가장 약한 축(<b>${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>)부터 한 축씩 기초를 세웁니다.</div></div><div class="rpt-rx"><div class="no">2</div><div class="t">틀린 문제마다 ‘몰라서 vs 알았는데 틀림’을 한 줄로 구분해, 오답 원인 인식을 훈련합니다.</div></div></div></section>`;
+  h+=`<section class="rpt-sec">${sec('강사 코멘트와 여름 방향')}<div class="rpt-comment"><p><b>${esc(info.name||'학생')}</b> 학생은 <b>${esc(P.label)}</b>입니다. ${esc(dm(P.line))}</p><div class="rpt-rx"><div class="no">1</div><div class="t">가장 약한 축(<b>${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>)부터 한 축씩 기초를 세웁니다.</div></div><div class="rpt-rx"><div class="no">2</div><div class="t">틀린 문제마다 ‘몰라서 vs 알았는데 틀림’을 한 줄로 구분해, 오답 원인 인식을 훈련합니다.</div></div></div></section>`;
   if(teacher){
     h+=`<div class="rpt-divider">여기부터 강사 전용 — 학부모 배부 제외</div>`;
     h+=`<section class="rpt-sec">${sec('응답 신뢰도')}<div class="rpt-box">${a.att?'<b class="rpt-warn">주의력 체크 불일치 — 응답 신뢰도 주의</b>':'주의력 체크 통과 — 응답 신뢰 가능'}</div></section>`;
@@ -5485,7 +5500,7 @@ function renderV2Results(){
     const pref=multiText('PREF1'), prev=choiceText('PREV1');
     if(pref||prev){ h+=`<section class="rpt-sec">${sec('상담 정보')}<div class="rpt-box">${pref?`<div>원하는 수업 방향: <b>${esc(pref)}</b></div>`:''}${prev?`<div style="margin-top:6px">이전 학원·전환 이유: <b>${esc(prev)}</b></div>`:''}</div></section>`; }
   }
-  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향·습관·태도</b>의 프로필이며 학생 간 서열이 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 배치·수업 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
+  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향과 습관, 태도</b>의 프로필이며 학생 간 서열이 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 배치와 수업 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
   h+='</div>';
   document.getElementById('v2-r-body').innerHTML=h;
   goScreen('v2-results');
