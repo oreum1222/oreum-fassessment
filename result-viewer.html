@@ -10105,7 +10105,9 @@ window.onload = function(){
         v2State.responses = JSON.parse(row['응답_JSON']||'{}');
         v2State.items = V2_VERSIONS[v2State.ver].buildStudent(v2State.info.grade);
         v2State.previewMode = true;
+        v2State.reportMode = (params.get('report')==='parent') ? 'parent' : 'teacher';
         v2Finish();
+        if(params.get('print')){ setTimeout(function(){ try{ window.print(); }catch(e){} }, 700); }
         le.remove();
         const stamp=document.getElementById('v2-r-stamp'); if(stamp) stamp.innerHTML += ' <span style="background:#0F2A2A;color:#8FD3A8;padding:2px 8px;font-size:10px;letter-spacing:.1em;margin-left:8px">강사 미리보기</span>';
         const acts=document.querySelector('#v2-results .report-actions'); if(acts) acts.innerHTML='<button class="btn btn-ghost" onclick="window.print()">📄 인쇄</button> <button class="btn btn-ghost" onclick="window.close()">✕ 창 닫기</button>';
