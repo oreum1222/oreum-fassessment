@@ -400,6 +400,16 @@ body::before{
     </div>
   </div>
 
+  <!-- ★ 최신 응답 (전 진단 통합, 최상단 우선 영역) -->
+  <div class="data-section" id="recent-section" style="margin-bottom:26px;border:1px solid rgba(212,168,90,.45);border-radius:12px;overflow:hidden">
+    <div class="table-controls">
+      <h3 style="margin:0">최신 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합 · 새 응답부터</span></h3>
+      <input type="text" id="recent-search" placeholder="이름·학교 검색" oninput="renderRecentTable()" style="margin-left:auto">
+      <span id="recent-count" style="color:var(--ink-muted);font-size:13px;margin-left:12px"></span>
+    </div>
+    <div id="recent-wrap"><div style="padding:20px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
+  </div>
+
   <!-- 탭 네비게이션 -->
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
@@ -803,6 +813,59 @@ function renderAll() {
   renderRiskGrid();
   applyFilters();
   attachListeners();
+  loadRecentPanel();
+}
+
+// ═══════════ 최신 응답 (전 진단 통합 · 최상단) ═══════════
+let recentRows = [];
+const V2_VER_KO = { brief:'비재원생', standard:'재원생 첫', precision:'재원생 심층', summer:'여름 점검' };
+async function loadRecentPanel(){
+  const key = localStorage.getItem(STORAGE_KEY);
+  const get = async (a)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${a}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
+  const [v2, sp, mi] = await Promise.all([get('v2List'), get('specialList'), get('mirrorList')]);
+  const e = v => String(v==null?'':v);
+  const d10 = v => e(v).slice(0,10);
+  const rows = [];
+  (allStudents||[]).forEach(s=>{
+    rows.push({ date:d10(s['제출일시']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:'일반', col:'#9bb38e', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(' · '),
+      warn:e(s['주의 신호']), url:'result-viewer.html?generalName='+encodeURIComponent(e(s['이름'])) });
+  });
+  v2.forEach(s=>{
+    const w=[]; if(Number(s['고위험수'])>0)w.push('고위험 '+s['고위험수']); if(Number(s['착각수'])>0)w.push('착각 '+s['착각수']);
+    rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:(V2_VER_KO[e(s['버전'])]||e(s['버전'])||'성향'), col:'#2dd4bf', summary:e(s['페르소나']),
+      warn:w.join(', '), url:'result-viewer.html?v2Name='+encodeURIComponent(e(s['이름'])) });
+  });
+  sp.forEach(s=>{
+    rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:'특별판', col:'#5b8def', summary:e(s['판정']), warn:e(s['위험신호']),
+      url:'result-viewer.html?name='+encodeURIComponent(e(s['이름'])) });
+  });
+  mi.forEach(s=>{
+    rows.push({ date:d10(s['제출시각']), name:e(s['학생이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:'거울', col:'#d4a85a', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
+      url:'result-viewer.html?mirrorCode='+encodeURIComponent(e(s['가족코드'])) });
+  });
+  rows.sort((a,b)=> b.date.localeCompare(a.date));
+  recentRows = rows;
+  renderRecentTable();
+}
+function renderRecentTable(){
+  const wrap=document.getElementById('recent-wrap'); if(!wrap) return;
+  const q=(document.getElementById('recent-search')?.value||'').trim();
+  let rows=recentRows; if(q) rows=rows.filter(r=> (r.name||'').includes(q)||(r.school||'').includes(q));
+  const cnt=document.getElementById('recent-count'); if(cnt) cnt.textContent='총 '+rows.length+'건';
+  if(!rows.length){ wrap.innerHTML='<div style="padding:20px;color:var(--ink-muted);font-size:13px">응답이 없습니다.</div>'; return; }
+  const show=rows.slice(0,15);
+  const badge=r=>`<span style="display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;border:1px solid ${r.col};color:${r.col};white-space:nowrap">${r.kind}</span>`;
+  let h='<table class="data-table"><thead><tr><th>제출일</th><th>이름</th><th>학교</th><th>학년</th><th>진단</th><th>요약</th><th>주의 신호</th><th></th></tr></thead><tbody>';
+  show.forEach(r=>{
+    h+=`<tr style="cursor:pointer" onclick="window.open('${r.url}','_blank')"><td style="white-space:nowrap">${r.date}</td><td style="font-weight:700;color:var(--ink)">${r.name}</td><td>${r.school}</td><td>${r.grade}</td><td>${badge(r)}</td><td>${r.summary||'—'}</td><td style="color:var(--crimson);font-size:12px">${r.warn||''}</td><td style="color:var(--olive);white-space:nowrap">결과지 →</td></tr>`;
+  });
+  h+='</tbody></table>';
+  if(rows.length>show.length) h+=`<div style="padding:10px 14px;color:var(--ink-muted);font-size:12px">최근 ${show.length}건 표시 · 전체 ${rows.length}건 — 아래 탭에서 진단별로 확인</div>`;
+  wrap.innerHTML=h;
 }
 
 function renderStats() {
