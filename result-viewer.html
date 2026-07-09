@@ -2835,6 +2835,86 @@ body.oreum-skin{ background:var(--o-bg); }
    장면 단일선택 · 미니과제 · 랭킹 · 주의력 · 부모 선택
    ═══════════════════════════════════════════════════════════ */
 body.v2-skin{ background:var(--o-bg); }
+/* rpt document */
+body.v2-report{ background:#e9efec !important; }
+body.v2-report #v2-results .report-header, body.v2-report #v2-results .footer, body.v2-report #v2-results .report-actions{ display:none !important; }
+body.v2-report #v2-results .report{ padding:22px 10px 60px; }
+.rpt{ max-width:800px; margin:0 auto; background:#fff; border:1px solid #e4e8ea; border-radius:5px; box-shadow:0 24px 60px -30px rgba(15,118,110,.25); padding:44px 50px 36px; color:#1b1e24; font-family:var(--sans); }
+@media(max-width:600px){ .rpt{ padding:26px 18px 26px; } }
+.rpt-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:24px; }
+.rpt-seg{ display:inline-flex; border:1px solid #cfe4df; border-radius:999px; overflow:hidden; }
+.rpt-seg button{ border:none; background:#fff; color:#5c6672; font-size:13px; font-weight:600; padding:7px 16px; cursor:pointer; font-family:inherit; }
+.rpt-seg button.on{ background:#0f766e; color:#fff; }
+.rpt-print{ border:1px solid #cfe4df; background:#fff; color:#0f766e; font-weight:600; font-size:13px; padding:7px 15px; border-radius:8px; cursor:pointer; font-family:inherit; }
+.rpt-mast{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; padding-bottom:16px; border-bottom:2px solid #0f766e; }
+.rpt-eyebrow{ font-size:11.5px; letter-spacing:.14em; color:#14b8a6; font-weight:700; margin-bottom:9px; }
+.rpt-title{ font-family:var(--serif); font-weight:800; font-size:27px; line-height:1.15; margin:0; color:#1b1e24; letter-spacing:-.01em; }
+.rpt-ver{ font-size:13px; color:#5c6672; margin-top:7px; }
+.rpt-brand{ text-align:right; flex:0 0 auto; }
+.rpt-brand .n{ font-family:var(--serif); font-weight:800; font-size:14px; color:#0f766e; white-space:nowrap; }
+.rpt-brand .en{ font-size:10px; letter-spacing:.14em; color:#8b939d; margin-top:3px; }
+.rpt-info{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:#e4e8ea; border:1px solid #e4e8ea; margin:20px 0 26px; border-radius:3px; overflow:hidden; }
+.rpt-info .c{ background:#fff; padding:11px 14px; }
+.rpt-info .k{ font-size:11px; color:#8b939d; margin-bottom:5px; }
+.rpt-info .v{ font-size:15px; font-weight:600; color:#1b1e24; }
+@media(max-width:600px){ .rpt-info{ grid-template-columns:1fr 1fr; } }
+.rpt-verdict{ background:#e7f3f0; border:1px solid #d3e8e2; border-radius:4px; padding:20px 22px; }
+.rpt-verdict .lab{ font-size:11.5px; letter-spacing:.1em; color:#0f766e; font-weight:700; }
+.rpt-verdict .type{ font-family:var(--serif); font-weight:800; font-size:25px; color:#1b1e24; margin:6px 0 3px; }
+.rpt-verdict .sub{ font-size:13.5px; color:#0f766e; margin-bottom:9px; }
+.rpt-verdict p{ margin:0; font-size:14.5px; line-height:1.75; color:#1b1e24; }
+.rpt-sec{ margin-top:30px; }
+.rpt-sec-h{ display:flex; align-items:baseline; gap:9px; margin-bottom:13px; }
+.rpt-n{ font-family:var(--serif); font-weight:800; font-size:15px; color:#0f766e; }
+.rpt-t{ font-family:var(--serif); font-weight:800; font-size:18px; color:#1b1e24; }
+.rpt-note{ margin-left:auto; font-size:12px; color:#8b939d; text-align:right; }
+.rpt-axis{ margin:12px 0; }
+.rpt-axis .row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+.rpt-axis .nm{ font-size:14px; color:#1b1e24; font-weight:600; }
+.rpt-axis .sc{ font-size:14px; font-weight:700; color:#1b1e24; }
+.rpt-tag{ font-size:11px; font-weight:700; margin-left:7px; padding:1px 8px; border-radius:10px; }
+.rpt-tag.strong{ color:#0f766e; background:#e7f3f0; }
+.rpt-tag.weak{ color:#ae3b36; background:#f7ecea; }
+.rpt-tag.mid{ color:#5c6672; background:#f1f3f2; }
+.rpt-track{ height:7px; background:#e7f3f0; border-radius:4px; overflow:hidden; }
+.rpt-fill{ height:100%; background:#14b8a6; border-radius:4px; }
+.rpt-fill.weak{ background:#ae3b36; }
+.rpt-measure{ display:flex; flex-wrap:wrap; gap:9px; }
+.rpt-stat{ flex:1; min-width:108px; border:1px solid #e4e8ea; border-radius:4px; padding:13px 15px; }
+.rpt-stat.alert{ border-color:#e2b5b1; background:#f7ecea; }
+.rpt-stat .num{ font-family:var(--serif); font-weight:800; font-size:25px; color:#1b1e24; line-height:1; }
+.rpt-stat .num span{ font-size:15px; color:#5c6672; }
+.rpt-stat.alert .num{ color:#ae3b36; }
+.rpt-stat .cap{ font-size:12px; color:#5c6672; margin-top:6px; line-height:1.4; }
+.rpt-mnote{ margin-top:11px; font-size:13.5px; line-height:1.7; color:#5c6672; }
+.rpt-mnote b{ color:#ae3b36; }
+.rpt-risklead{ font-size:14px; color:#5c6672; line-height:1.7; margin:0 0 13px; }
+.rpt-signal{ border:1px solid #e4e8ea; border-radius:4px; padding:15px 17px; margin-bottom:11px; background:#f7ecea; }
+.rpt-signal .axl{ display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; letter-spacing:.05em; color:#ae3b36; margin-bottom:6px; }
+.rpt-signal .axl::before{ content:""; width:7px; height:7px; border-radius:50%; background:#ae3b36; }
+.rpt-signal .what{ font-size:15px; font-weight:700; color:#1b1e24; line-height:1.55; margin-bottom:9px; }
+.rpt-signal .basis{ font-size:13px; color:#5c6672; line-height:1.7; padding-top:9px; border-top:1px dashed #e0d3d1; }
+.rpt-signal .basis .q{ color:#1b1e24; }
+.rpt-signal .basis .ans{ color:#ae3b36; font-weight:600; }
+.rpt-ok{ font-size:14px; color:#0f766e; background:#e7f3f0; border-radius:4px; padding:14px 16px; }
+.rpt-comment{ background:#e7f3f0; border-radius:4px; padding:18px 20px; }
+.rpt-comment p{ margin:0 0 12px; font-size:14.5px; line-height:1.8; color:#1b1e24; }
+.rpt-rx{ display:flex; gap:11px; align-items:flex-start; margin-top:10px; }
+.rpt-rx .no{ flex:0 0 auto; width:21px; height:21px; border-radius:50%; background:#0f766e; color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.rpt-rx .t{ font-size:14px; line-height:1.7; color:#1b1e24; }
+.rpt-rx .t b{ color:#0f766e; }
+.rpt-divider{ margin:34px 0 6px; font-size:11.5px; font-weight:700; letter-spacing:.06em; color:#ae3b36; text-align:center; padding:9px; border-top:1px dashed #e2b5b1; border-bottom:1px dashed #e2b5b1; background:#fbf3f2; }
+.rpt-box{ border:1px solid #e4e8ea; border-radius:4px; padding:14px 16px; font-size:14px; line-height:1.7; color:#1b1e24; background:#fbfcfb; }
+.rpt-tagline{ font-size:12px; color:#0f766e; font-weight:700; margin-bottom:4px; }
+.rpt-warn{ color:#ae3b36; }
+.rpt-foot{ margin-top:34px; padding-top:16px; border-top:1px solid #e4e8ea; display:flex; justify-content:space-between; align-items:flex-end; gap:14px; }
+.rpt-foot .disc{ font-size:11.5px; color:#8b939d; line-height:1.7; max-width:64%; }
+.rpt-foot .disc b{ color:#5c6672; }
+.rpt-foot .sign{ text-align:right; }
+.rpt-foot .sign .n{ font-family:var(--serif); font-weight:800; font-size:14px; color:#0f766e; }
+.rpt-foot .sign .d{ font-size:11.5px; color:#8b939d; margin-top:4px; }
+@media print{ .no-print{ display:none !important; } body.v2-report{ background:#fff !important; } .rpt{ box-shadow:none; border:none; max-width:none; padding:14px; } .rpt-signal,.rpt-stat,.rpt-sec{ break-inside:avoid; } }
+@media(max-width:600px){ .rpt-foot{ flex-direction:column; align-items:flex-start; } .rpt-foot .disc{ max-width:100%; } }
 #v2-quiz .q-progress-fill, #v2-quiz .q-mode{ }
 #v2-quiz .q-progress-fill{ background:linear-gradient(90deg,var(--o-mint-deep),var(--o-mint)); box-shadow:0 0 8px rgba(45,212,191,.5); }
 #v2-quiz .q-mode{ color:var(--o-mint); border:1px solid var(--o-mint-deep); background:rgba(45,212,191,.10); font-family:var(--serif); font-weight:700; font-size:11px; letter-spacing:.06em; padding:4px 10px; margin-left:auto; }
@@ -4249,6 +4329,7 @@ function goScreen(id){
   // 김가경 국어 연구소 특별판 화면 진입 시 딥그린 스킨
   document.body.classList.toggle('oreum-skin', id.indexOf('oreum-') === 0);
   document.body.classList.toggle('v2-skin', id.indexOf('v2-') === 0);
+  document.body.classList.remove('v2-report');
   window.scrollTo({top:0, behavior:'smooth'});
 }
 // 거울 진단에서 사용하는 별칭
@@ -4893,6 +4974,7 @@ function startV2Quiz(){
   if(!name || !school || !grade){ err.textContent='이름·학교·학년은 필수입니다.'; err.style.display='block'; return; }
   err.style.display='none';
   v2State.info = { name, school, grade, parentPhone };
+  v2State.sent=false; v2State.reportMode=null;
   v2State.phase = 'student';
   v2State.items = V2_VERSIONS[v2State.ver].buildStudent(grade);
   v2State.idx = 0;
@@ -5286,18 +5368,27 @@ function v2FindItem(id){
   return [...V2_BIJAE_STUDENT,...V2_JAE_EXTRA,...V2_MINI_고1,...V2_MINI_고2,V2_OBROK,V2_RANK_FIRST,V2_RANK_FALL,V2_ATTN2,V2_PREF,V2_PREV,...V2_PARENT].find(x=>x.id===id) || (v2State.items||[]).find(x=>x.id===id);
 }
 // 축 점수: -1~+1 평균 → 0~100. pred로 학생/부모 분리
+const V2_SIGNAL_DESC = {
+  장악:'학습 자료·시험 범위를 스스로 장악하지 못하는 신호입니다.',
+  적용:'낯선 지문·응용 상황에서 원리를 적용하지 못하는 신호입니다.',
+  변별:'발문·선지·조건을 정확히 가려내지 못하는 신호입니다.',
+  메타:'틀린 이유를 스스로 분류하지 못하는 신호 — 같은 유형 오답이 반복될 위험이 큽니다.',
+  시간:'제한 시간 안에서 풀이 운영이 무너지는 신호입니다.',
+  정서:'점수가 떨어진 뒤 회복·지속에서 흔들리는 신호입니다.',
+  '':'모의고사·내신 어느 쪽도 점수가 안 나오는 전반적 저조 신호입니다.'
+};
 function v2CollectAxes(pred){
-  const acc={장악:[],적용:[],변별:[],메타:[],시간:[],정서:[]}; let stars=0;
+  const acc={장악:[],적용:[],변별:[],메타:[],시간:[],정서:[]}; let stars=0; const signals=[];
   Object.entries(v2State.responses).forEach(([id,val])=>{
     if(!pred(id)) return;
     const it=v2FindItem(id); if(!it||!it.opts) return;
     const v=(it.type==='minitask')?(val&&val.c):val;
     if(!v) return; const opt=it.opts[v-1]; if(!opt) return;
-    v2Flags(opt[1]).forEach(f=>{ if(f.ax && acc[f.ax]) acc[f.ax].push(f.d); if(f.star) stars++; });
+    v2Flags(opt[1]).forEach(f=>{ if(f.ax && acc[f.ax]) acc[f.ax].push(f.d); if(f.star){ stars++; signals.push({ax:f.ax, q:(it.q||'').trim(), ans:(opt[0]||'').trim()}); } });
   });
   const score={}, counts={};
   Object.keys(acc).forEach(k=>{ const a=acc[k]; counts[k]=a.length; score[k]=a.length?Math.round(50+50*(a.reduce((s,x)=>s+x,0)/a.length)):50; });
-  return {score, counts, stars};
+  return {score, counts, stars, signals};
 }
 function v2MinitaskStats(){
   const out={total:0, correct:0, 착각:0, 진짜강점:0, 찍음:0, written:[]};
@@ -5341,92 +5432,65 @@ function v2Analyze(){
   if(pa){ let best=null; Object.keys(st.score).forEach(k=>{ if(st.counts[k]&&pa.counts[k]){ const d=st.score[k]-pa.score[k]; if(d>=15&&(!best||d>best.d)) best={ax:k,d}; } }); gap=best; }
   // 약점 축 (응답 있는 것 중 최저)
   let weakest=null; Object.keys(st.score).forEach(k=>{ if(st.counts[k] && (!weakest||st.score[k]<st.score[weakest])) weakest=k; });
-  return {score:st.score, counts:st.counts, stars:st.stars, persona, mt, att, hasParent, parentScore:pa?pa.score:null, gap, weakest};
+  return {score:st.score, counts:st.counts, stars:st.stars, signals:st.signals||[], persona, mt, att, hasParent, parentScore:pa?pa.score:null, gap, weakest};
 }
 
+function v2SetReportMode(m){ v2State.reportMode=m; renderV2Results(); }
 function renderV2Results(){
-  const info=v2State.info, a=v2Analyze(), P=V2_PERSONA[a.persona];
-  document.getElementById('v2-r-stamp').textContent = V2_VERSIONS[v2State.ver].label + ' 결과';
-  document.getElementById('v2-r-name').textContent = `${info.name||'학생'} 의 진단 결과`;
-  document.getElementById('v2-r-meta').textContent = `${info.school||''} · ${info.grade||''} · 김가경 국어 연구소`;
-  document.getElementById('v2-r-foot').textContent = V2_VERSIONS[v2State.ver].label + ' · v2';
-
-  let h='';
-  // 1. 페르소나 카드
-  h += `<div class="o-rx-card" style="border-color:rgba(45,212,191,.4)">
-    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--o-mint)">김가경 국어 연구소 성향 판정</div>
-    <div style="font-family:var(--serif);font-size:25px;font-weight:800;color:var(--o-ink);margin:5px 0 2px">${P.label}</div>
-    <div style="color:var(--o-mint2);font-size:14px;margin-bottom:8px">${P.sub}</div>
-    <div style="color:var(--o-ink2);line-height:1.7">${P.line}</div></div>`;
-
-  // 2. 6축 프로파일
-  h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">1.</span> 6축 프로파일</h2><div class="o-card">`;
-  Object.keys(V2_AXNAME).forEach(k=>{
-    const v=a.score[k], na=!a.counts[k];
-    const tag = na?'<span style="color:var(--o-mut)">측정 안 됨</span>' : (v>=60?'<span style="color:var(--o-mint)">강점</span>':v<=42?'<span style="color:var(--o-amber)">약점</span>':'<span style="color:var(--o-mut)">보통</span>');
-    h += `<div class="v2-axis"><div class="lab"><span>${V2_AXNAME[k]} · ${tag}</span><span class="v">${na?'—':v}</span></div><div class="v2-bar"><div style="width:${na?0:v}%"></div></div></div>`;
-  });
-  h += `</div>`;
-
-  // 3. 미니 과제 실측 (있을 때)
+  const info=v2State.info, a=v2Analyze(), P=V2_PERSONA[a.persona]||{label:'-',sub:'',line:''};
+  const preview=!!v2State.previewMode;
+  const mode = preview ? (v2State.reportMode||'teacher') : 'parent';
+  const teacher = (mode==='teacher');
+  const verLabel = (V2_VERSIONS[v2State.ver]&&V2_VERSIONS[v2State.ver].label) || '학습 성향 진단';
+  const st=document.getElementById('v2-r-stamp'); if(st) st.textContent='';
+  const esc=x=>String(x==null?'':x).replace(/</g,'&lt;');
+  const dateStr=((info.date||new Date().toISOString().slice(0,10))+'').replace(/-/g,'. ')+'.';
+  let n=1; const sec=(t,note)=>`<div class="rpt-sec-h"><span class="rpt-n">${n++}</span><span class="rpt-t">${t}</span>${note?`<span class="rpt-note">${note}</span>`:''}</div>`;
+  let h='<div class="rpt">';
+  h+='<div class="rpt-toolbar no-print">';
+  h+= preview ? `<div class="rpt-seg"><button class="${!teacher?'on':''}" onclick="v2SetReportMode('parent')">학부모용 통신문</button><button class="${teacher?'on':''}" onclick="v2SetReportMode('teacher')">강사용 전체</button></div>` : '<div></div>';
+  h+='<div style="display:flex;gap:8px">';
+  if(!preview) h+=`<button class="rpt-print" onclick="goScreen('welcome')">처음으로</button>`;
+  h+=`<button class="rpt-print" onclick="window.print()">인쇄</button>`;
+  if(preview) h+=`<button class="rpt-print" onclick="window.close()">창 닫기</button>`;
+  h+='</div></div>';
+  h+=`<header class="rpt-mast"><div><div class="rpt-eyebrow">김가경 국어 연구소 · 학습 성향 진단</div><h1 class="rpt-title">${teacher?'학습 성향 진단 · 강사용 전체':'학습 성향 진단 결과 통지'}</h1><div class="rpt-ver">${esc(verLabel)}${teacher?' · 내부 검토용':' · 여름학기 반 배치·수업 설계용'}</div></div><div class="rpt-brand"><div class="n">김가경 국어 연구소</div><div class="en">OREUM KOREAN</div></div></header>`;
+  h+=`<div class="rpt-info"><div class="c"><div class="k">학생</div><div class="v">${esc(info.name||'-')}</div></div><div class="c"><div class="k">학교</div><div class="v">${esc(info.school||'-')}</div></div><div class="c"><div class="k">학년</div><div class="v">${esc(info.grade||'-')}</div></div><div class="c"><div class="k">응시일</div><div class="v">${dateStr}</div></div></div>`;
+  h+=`<div class="rpt-verdict"><div class="lab">종합 판정</div><div class="type">${esc(P.label)}</div><div class="sub">${esc(P.sub)}</div><p>${esc(P.line)}</p></div>`;
+  h+=`<section class="rpt-sec">${sec('여섯 축 프로필','점수 서열이 아니라 ‘어떻게 공부하는가’의 지도')}`;
+  Object.keys(V2_AXNAME).forEach(k=>{ const v=a.score[k], na=!a.counts[k];
+    const tag=na?'<span class="rpt-tag mid">측정 안 됨</span>':(v>=60?'<span class="rpt-tag strong">강점</span>':v<=42?'<span class="rpt-tag weak">약점</span>':'<span class="rpt-tag mid">보통</span>');
+    h+=`<div class="rpt-axis"><div class="row"><span class="nm">${V2_AXNAME[k]}${tag}</span><span class="sc">${na?'—':v}</span></div><div class="rpt-track"><div class="rpt-fill${v<=42?' weak':''}" style="width:${na?0:v}%"></div></div></div>`; });
+  h+=`</section>`;
   if(a.mt.total>0){
-    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">2.</span> 미니 과제 실측</h2>
-      <div class="o-card">정답 <b style="color:var(--o-mint)">${a.mt.correct}/${a.mt.total}</b>
-      &nbsp;·&nbsp; 확신했는데 틀림(<b style="color:var(--o-amber)">알았다 착각</b>) <b style="color:var(--o-amber)">${a.mt.착각}</b>개
-      &nbsp;·&nbsp; 확실히 맞힘 ${a.mt.진짜강점}개 &nbsp;·&nbsp; 찍음 ${a.mt.찍음}개
-      ${a.mt.착각>0?`<div style="margin-top:8px;color:var(--o-amber);font-size:14px">⚠ 자기 인식과 실제가 어긋나는 신호 — 같은 유형 오답 반복 위험.</div>`:''}</div>`;
+    h+=`<section class="rpt-sec">${sec('미니 과제 실측','자기보고가 아닌, 실제로 풀어 본 결과')}<div class="rpt-measure"><div class="rpt-stat"><div class="num">${a.mt.correct}<span>/${a.mt.total}</span></div><div class="cap">실제 정답</div></div><div class="rpt-stat${a.mt['착각']>0?' alert':''}"><div class="num">${a.mt['착각']}</div><div class="cap">‘알았다 착각’<br>확신했는데 틀림</div></div><div class="rpt-stat"><div class="num">${a.mt['진짜강점']}</div><div class="cap">확실히 맞힘</div></div><div class="rpt-stat"><div class="num">${a.mt['찍음']}</div><div class="cap">찍음</div></div></div>${a.mt['착각']>0?`<p class="rpt-mnote">확신하고 적은 답 중 <b>${a.mt['착각']}개가 틀렸습니다.</b> 아는 것과 실제 실력 사이 간극이 있어 같은 유형 오답이 반복될 수 있습니다.</p>`:''}</section>`;
   }
-
-  // 4. 위험 신호 + 신뢰도
-  let risk=`고위험(★) 신호 <b style="color:var(--o-amber)">${a.stars}</b>개 감지.`;
-  if(a.stars>=4) risk+=' <b style="color:var(--o-amber)">즉시 점검 필요.</b>';
-  if(a.att) risk+=' <span style="color:var(--o-amber)">(주의력 체크 불일치 — 응답 신뢰도 주의)</span>';
-  h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">3.</span> 위험 신호</h2><div class="o-card">${risk}</div>`;
-
-  // 5. 학생-부모 인식 차이 (부모 응답 시)
-  if(a.hasParent){
-    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">4.</span> 학생–부모 인식 차이</h2><div class="o-card">`;
-    if(a.gap) h += `<b style="color:var(--o-amber)">${V2_AXNAME[a.gap.ax]}</b>에서 학생이 스스로를 부모 관찰보다 높게 평가합니다(자기 인식 과대평가 가능). 이 축은 실제 점검이 필요합니다.`;
-    else h += `학생 응답과 부모 관찰이 대체로 일치합니다(자기 인식 양호).`;
-    h += `</div>`;
+  h+=`<section class="rpt-sec">${sec('위험 신호', a.signals.length?`고위험 응답 ${a.signals.length}건 — 아래가 그 내용`:'')}`;
+  if(a.signals.length){
+    h+=`<p class="rpt-risklead">학생이 특정 문항에서 <b>가장 우려되는 선택지</b>를 고른 지점입니다. 개수가 아니라 무엇을 어떻게 답했는지를 그대로 옮깁니다.</p>`;
+    a.signals.forEach(sg=>{ h+=`<div class="rpt-signal"><div class="axl">${V2_AXNAME[sg.ax]||sg.ax||'종합 저조'}</div><div class="what">${esc(V2_SIGNAL_DESC[sg.ax]||'점검이 필요한 응답입니다.')}</div><div class="basis"><span class="q">문항 “${esc(sg.q)}”</span> → 학생이 고른 답: <span class="ans">“${esc(sg.ans)}”</span></div></div>`; });
+  } else { h+=`<div class="rpt-ok">두드러진 고위험 응답은 없습니다. 강점을 유지하며 약점 축을 조금씩 끌어올리면 됩니다.</div>`; }
+  h+=`</section>`;
+  h+=`<section class="rpt-sec">${sec('강사 코멘트 · 여름 방향')}<div class="rpt-comment"><p><b>${esc(info.name||'학생')}</b> 학생은 <b>${esc(P.label)}</b>입니다. ${esc(P.line)}</p><div class="rpt-rx"><div class="no">1</div><div class="t">가장 약한 축(<b>${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>)부터 한 축씩 기초를 세웁니다.</div></div><div class="rpt-rx"><div class="no">2</div><div class="t">틀린 문제마다 ‘몰라서 vs 알았는데 틀림’을 한 줄로 구분해, 오답 원인 인식을 훈련합니다.</div></div></div></section>`;
+  if(teacher){
+    h+=`<div class="rpt-divider">여기부터 강사 전용 — 학부모 배부 제외</div>`;
+    h+=`<section class="rpt-sec">${sec('응답 신뢰도')}<div class="rpt-box">${a.att?'<b class="rpt-warn">주의력 체크 불일치 — 응답 신뢰도 주의</b>':'주의력 체크 통과 — 응답 신뢰 가능'}</div></section>`;
+    if(a.hasParent){ h+=`<section class="rpt-sec">${sec('학생–부모 인식 차이')}<div class="rpt-box">${a.gap?`<b class="rpt-warn">${V2_AXNAME[a.gap.ax]}</b>에서 학생이 스스로를 부모 관찰보다 높게 평가(자기 인식 과대평가 가능).`:'학생 응답과 부모 관찰이 대체로 일치.'}</div></section>`; }
+    const rk=v2State.responses['RK1'];
+    if(Array.isArray(rk)&&rk.length){ const labels=rk.map(i=>V2_RANK_FIRST.items[i]); const pAx=labels.map(l=>V2_RANK_AX[l]); const mw=a.weakest&&pAx.includes(a.weakest);
+      h+=`<section class="rpt-sec">${sec('우선순위 ↔ 실측')}<div class="rpt-box">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>실측상 가장 약한 축: <b class="rpt-warn">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>. ${mw?'자기 인식과 실제 약점이 일치.':'스스로 꼽은 우선순위와 실제 약점이 달라 방향 조정 필요.'}</div></section>`; }
+    if(a.mt.written.length){ h+=`<section class="rpt-sec">${sec('서답 원문')}`; a.mt.written.forEach(w=>{ h+=`<div class="rpt-box" style="margin-bottom:8px"><div class="rpt-tagline">${esc(w.tag)}</div>“${esc(w.text)}”</div>`; }); h+=`</section>`; }
+    const choiceText=(id)=>{ const it=v2FindItem(id), r=v2State.responses[id]; if(!it||!it.opts||typeof r!=='number'||!it.opts[r-1])return null; let t=it.opts[r-1][0]; if(it.opts[r-1][2]&&v2State.responses[id+'_etc'])t+=': '+v2State.responses[id+'_etc']; return t; };
+    const multiText=(id)=>{ const it=v2FindItem(id), stt=v2State.responses[id]; if(!it||!it.opts||!stt||!stt.sel||!stt.sel.length)return null; const arr=stt.sel.map(i=>it.opts[i]&&it.opts[i][0]).filter(Boolean); if(stt.etc&&stt.sel.some(i=>it.opts[i]&&it.opts[i][2]))arr[arr.length-1]='기타: '+stt.etc; return arr.join(', '); };
+    const pref=multiText('PREF1'), prev=choiceText('PREV1');
+    if(pref||prev){ h+=`<section class="rpt-sec">${sec('상담 정보')}<div class="rpt-box">${pref?`<div>원하는 수업 방향: <b>${esc(pref)}</b></div>`:''}${prev?`<div style="margin-top:6px">이전 학원·전환 이유: <b>${esc(prev)}</b></div>`:''}</div></section>`; }
   }
-
-  // 6. 랭킹: 자기 우선순위 vs 실측 약점
-  const rk=v2State.responses['RK1'];
-  if(Array.isArray(rk) && rk.length){
-    const labels=rk.map(i=>V2_RANK_FIRST.items[i]);
-    const pickedAx=labels.map(l=>V2_RANK_AX[l]);
-    const matchWeak = a.weakest && pickedAx.includes(a.weakest);
-    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">5.</span> 우선순위 ↔ 실측</h2>
-      <div class="o-card">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>
-      실측상 가장 약한 축: <b style="color:var(--o-amber)">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>.
-      ${matchWeak?' 자기 인식과 실제 약점이 일치합니다.':' 스스로 꼽은 우선순위와 실제 약점이 달라, 상담에서 방향 조정이 필요합니다.'}</div>`;
-  }
-
-  // 7. 서답 (강사 검토)
-  if(a.mt.written.length){
-    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">6.</span> 서답 (강사 검토)</h2>`;
-    a.mt.written.forEach(w=>{ h += `<div class="o-card" style="margin-bottom:10px"><div style="color:var(--o-mint2);font-size:13px">${w.tag}</div><div style="color:var(--o-ink2);margin-top:4px">“${w.text.replace(/</g,'&lt;')}”</div></div>`; });
-  }
-
-  // 7'. 상담 정보 (학원 방향·이전 학원 — 점수 미반영, 강사 참고)
-  const choiceText = (id)=>{ const it=v2FindItem(id), r=v2State.responses[id]; if(!it||!it.opts||typeof r!=='number'||!it.opts[r-1]) return null; let t=it.opts[r-1][0]; if(it.opts[r-1][2] && v2State.responses[id+'_etc']) t+=': '+v2State.responses[id+'_etc']; return t; };
-  const multiText = (id)=>{ const it=v2FindItem(id), st=v2State.responses[id]; if(!it||!it.opts||!st||!st.sel||!st.sel.length) return null; const arr=st.sel.map(i=>it.opts[i]&&it.opts[i][0]).filter(Boolean); if(st.etc && st.sel.some(i=>it.opts[i]&&it.opts[i][2])) arr[arr.length-1]='기타: '+st.etc; return arr.join(', '); };
-  const pref=multiText('PREF1'), prev=choiceText('PREV1');
-  if(pref || prev){
-    h += `<h2 class="section-title" style="margin-top:24px;color:var(--o-ink)"><span style="color:var(--o-mint)">·</span> 상담 정보</h2><div class="o-card">`;
-    if(pref) h += `<div>원하는 수업 방향: <b style="color:var(--o-mint)">${pref}</b></div>`;
-    if(prev) h += `<div style="margin-top:6px">이전 학원·전환 이유: <b style="color:var(--o-mint)">${prev}</b></div>`;
-    h += `</div>`;
-  }
-
-  // 8. 마무리
-  h += `<div class="o-rx-card" style="margin-top:24px"><b>${info.name||'학생'}</b> 학생은 <b>${P.label}</b>입니다. ${P.line}
-    <div style="margin-top:10px;color:var(--o-mut);font-size:14px">김가경 국어 연구소는 성향별 맞춤 수업·과제·오답 관리로 약점 축을 끌어올립니다.</div></div>`;
-
-  document.getElementById('v2-r-body').innerHTML = h;
+  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향·습관·태도</b>의 프로필이며 학생 간 서열이 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 배치·수업 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
+  h+='</div>';
+  document.getElementById('v2-r-body').innerHTML=h;
   goScreen('v2-results');
-  v2SendBackend(a);
+  document.body.classList.add('v2-report');
+  if(!preview && !v2State.sent){ v2State.sent=true; v2SendBackend(a); }
 }
 
 // 시트 저장 (백엔드 미연결 시 무해)
