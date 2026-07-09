@@ -400,6 +400,22 @@ body::before{
     </div>
   </div>
 
+  <style>
+  .rc-head,.rc-row{display:grid;grid-template-columns:98px minmax(130px,1.5fr) 104px minmax(150px,1.6fr) minmax(120px,1.5fr) 26px;gap:16px;align-items:center;padding:13px 18px}
+  .rc-head{font-size:11px;letter-spacing:.05em;color:var(--ink-faint);border-bottom:1px solid var(--line)}
+  .rc-row{border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .12s}
+  .rc-row:hover{background:rgba(255,255,255,.035)}
+  .rc-row:last-child{border-bottom:none}
+  .rc-date{font-size:12px;color:var(--ink-faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .rc-name{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.25}
+  .rc-sub{font-size:12px;color:var(--ink-muted);margin-top:2px}
+  .rc-summary{font-size:13.5px;color:var(--ink-soft)}
+  .rc-chip{justify-self:start;padding:3px 12px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+  .rc-warn .pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(229,115,115,.14);color:#e8908f;white-space:nowrap}
+  .rc-open{color:var(--gold);text-align:center;font-size:17px;opacity:.45;transition:opacity .12s}
+  .rc-row:hover .rc-open{opacity:1}
+  @media(max-width:860px){.rc-head{display:none}.rc-row{grid-template-columns:1fr auto;gap:6px 10px}.rc-date,.rc-row .rc-summary{grid-column:1/-1;margin-top:2px}}
+  </style>
   <!-- ★ 최신 응답 (전 진단 통합, 최상단 우선 영역) -->
   <div class="data-section" id="recent-section" style="margin-bottom:26px;border:1px solid rgba(212,168,90,.45);border-radius:12px;overflow:hidden">
     <div class="table-controls">
@@ -830,23 +846,23 @@ async function loadRecentPanel(){
   const rows = [];
   (allStudents||[]).forEach(s=>{
     rows.push({ date:d10(s['제출일시']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'일반', col:'#9bb38e', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(' · '),
+      kind:'일반', col:'#a9c29c', bg:'rgba(155,179,142,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(' · '),
       warn:e(s['주의 신호']), url:'result-viewer.html?generalName='+encodeURIComponent(e(s['이름'])) });
   });
   v2.forEach(s=>{
     const w=[]; if(Number(s['고위험수'])>0)w.push('고위험 '+s['고위험수']); if(Number(s['착각수'])>0)w.push('착각 '+s['착각수']);
     rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:(V2_VER_KO[e(s['버전'])]||e(s['버전'])||'성향'), col:'#2dd4bf', summary:e(s['페르소나']),
+      kind:(V2_VER_KO[e(s['버전'])]||e(s['버전'])||'성향'), col:'#3fe0cd', bg:'rgba(45,212,191,.13)', summary:e(s['페르소나']),
       warn:w.join(', '), url:'result-viewer.html?v2Name='+encodeURIComponent(e(s['이름'])) });
   });
   sp.forEach(s=>{
     rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'특별판', col:'#5b8def', summary:e(s['판정']), warn:e(s['위험신호']),
+      kind:'특별판', col:'#7aa2f5', bg:'rgba(91,141,239,.16)', summary:e(s['판정']), warn:e(s['위험신호']),
       url:'result-viewer.html?name='+encodeURIComponent(e(s['이름'])) });
   });
   mi.forEach(s=>{
     rows.push({ date:d10(s['제출시각']), name:e(s['학생이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'거울', col:'#d4a85a', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
+      kind:'거울', col:'#e0bd7e', bg:'rgba(212,168,90,.15)', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
       url:'result-viewer.html?mirrorCode='+encodeURIComponent(e(s['가족코드'])) });
   });
   rows.sort((a,b)=> b.date.localeCompare(a.date));
@@ -869,20 +885,25 @@ function renderSchoolRoster(){
   });
   el.innerHTML=h;
 }
+function warnPill(w){
+  if(!w) return '<span style="color:var(--ink-faint);font-size:12px">—</span>';
+  const parts=String(w).split(',').map(x=>x.trim()).filter(Boolean);
+  const t=String(w).replace(/"/g,'&quot;');
+  const label=parts.length>2 ? ('주의 '+parts.length+'개') : parts.join(' · ');
+  return `<span class="pill" title="${t}">⚠ ${label}</span>`;
+}
 function renderRecentTable(){
   const wrap=document.getElementById('recent-wrap'); if(!wrap) return;
   const q=(document.getElementById('recent-search')?.value||'').trim();
   let rows=recentRows; if(q) rows=rows.filter(r=> (r.name||'').includes(q)||(r.school||'').includes(q));
   const cnt=document.getElementById('recent-count'); if(cnt) cnt.textContent='총 '+rows.length+'건';
-  if(!rows.length){ wrap.innerHTML='<div style="padding:20px;color:var(--ink-muted);font-size:13px">응답이 없습니다.</div>'; return; }
+  if(!rows.length){ wrap.innerHTML='<div style="padding:26px;color:var(--ink-muted);font-size:13px;text-align:center">응답이 없습니다.</div>'; return; }
   const show=rows.slice(0,15);
-  const badge=r=>`<span style="display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;border:1px solid ${r.col};color:${r.col};white-space:nowrap">${r.kind}</span>`;
-  let h='<table class="data-table"><thead><tr><th>제출일</th><th>이름</th><th>학교</th><th>학년</th><th>진단</th><th>요약</th><th>주의 신호</th><th></th></tr></thead><tbody>';
+  let h='<div class="rc-head"><div>제출일</div><div>이름</div><div>진단</div><div>요약</div><div>주의 신호</div><div></div></div>';
   show.forEach(r=>{
-    h+=`<tr style="cursor:pointer" onclick="window.open('${r.url}','_blank')"><td style="white-space:nowrap">${r.date}</td><td style="font-weight:700;color:var(--ink)">${r.name}</td><td>${r.school}</td><td>${r.grade}</td><td>${badge(r)}</td><td>${r.summary||'—'}</td><td style="color:var(--crimson);font-size:12px">${r.warn||''}</td><td style="color:var(--olive);white-space:nowrap">결과지 →</td></tr>`;
+    h+=`<div class="rc-row" onclick="window.open('${r.url}','_blank')"><div class="rc-date">${r.date}</div><div><div class="rc-name">${r.name}</div><div class="rc-sub">${[r.school,r.grade].filter(Boolean).join(' · ')}</div></div><div class="rc-chip" style="background:${r.bg};color:${r.col}">${r.kind}</div><div class="rc-summary">${r.summary||'—'}</div><div class="rc-warn">${warnPill(r.warn)}</div><div class="rc-open">→</div></div>`;
   });
-  h+='</tbody></table>';
-  if(rows.length>show.length) h+=`<div style="padding:10px 14px;color:var(--ink-muted);font-size:12px">최근 ${show.length}건 표시 · 전체 ${rows.length}건 — 아래 탭에서 진단별로 확인</div>`;
+  if(rows.length>show.length) h+=`<div style="padding:13px 18px;color:var(--ink-faint);font-size:12px;text-align:center;border-top:1px solid var(--line)">최근 ${show.length}건 · 전체 ${rows.length}건 — 진단별 상세는 아래 탭</div>`;
   wrap.innerHTML=h;
 }
 
