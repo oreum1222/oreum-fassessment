@@ -435,14 +435,6 @@ body::before{
   <!-- 차트 -->
   <div class="chart-grid">
     <div class="chart-card">
-      <h3>4분면 유형 분포 <small>학생 학습 좌표</small></h3>
-      <div class="chart-canvas-wrap"><canvas id="chart-quadrant"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>16유형 분포 <small>학습 코드 조합</small></h3>
-      <div class="chart-canvas-wrap"><canvas id="chart-types"></canvas></div>
-    </div>
-    <div class="chart-card">
       <h3>8개 영역 평균 <small>전체 학생 평균 점수</small></h3>
       <div class="chart-canvas-wrap"><canvas id="chart-sections"></canvas></div>
     </div>
@@ -450,6 +442,12 @@ body::before{
       <h3>학교별 학생 수 <small>응시 학교 분포</small></h3>
       <div class="chart-canvas-wrap"><canvas id="chart-schools"></canvas></div>
     </div>
+  </div>
+
+  <!-- 학교별 응답자 (전 진단 통합) -->
+  <div class="data-section" style="margin-bottom:26px;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+    <div class="table-controls"><h3 style="margin:0">학교별 응답자 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합 · 주의는 빨강</span></h3></div>
+    <div id="school-roster"><div style="padding:16px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
   </div>
 
   <!-- 위험 신호 -->
@@ -850,6 +848,22 @@ async function loadRecentPanel(){
   rows.sort((a,b)=> b.date.localeCompare(a.date));
   recentRows = rows;
   renderRecentTable();
+  renderSchoolRoster();
+}
+function renderSchoolRoster(){
+  const el=document.getElementById('school-roster'); if(!el) return;
+  const g={};
+  (recentRows||[]).forEach(r=>{ const s=r.school||'(미기재)'; (g[s]=g[s]||[]).push(r); });
+  const schools=Object.entries(g).sort((a,b)=> b[1].length-a[1].length);
+  if(!schools.length){ el.innerHTML='<div style="padding:16px;color:var(--ink-muted);font-size:13px">응답 없음</div>'; return; }
+  let h='';
+  schools.forEach(([school,list])=>{
+    const warnN=list.filter(r=>r.warn).length;
+    h+=`<div style="padding:12px 14px;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><strong style="color:var(--ink);font-size:14px">${school}</strong><span style="color:var(--ink-muted);font-size:12px">${list.length}명</span>${warnN?`<span style="color:var(--crimson);font-size:12px">· 주의 ${warnN}명</span>`:''}</div><div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    list.forEach(r=>{ h+=`<span onclick="window.open('${r.url}','_blank')" title="${r.kind}${r.warn?' · '+r.warn:''}" style="cursor:pointer;font-size:12.5px;padding:3px 10px;border-radius:12px;background:var(--bg-deep);color:${r.warn?'var(--crimson)':'var(--ink-soft)'};border:1px solid ${r.warn?'rgba(229,115,115,.4)':'var(--line)'}">${r.name}${r.warn?' ⚠':''}</span>`; });
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
 }
 function renderRecentTable(){
   const wrap=document.getElementById('recent-wrap'); if(!wrap) return;
@@ -894,11 +908,6 @@ function renderStats() {
       <div class="stat-value">${risk}</div>
       <div class="stat-sub">${total > 0 ? (risk / total * 100).toFixed(1) : 0}% — 우선 상담 필요</div>
     </div>
-    <div class="stat-card success">
-      <div class="stat-label">최다 4분면 유형</div>
-      <div class="stat-value" style="font-size:18px;line-height:1.2;padding-top:6px">${topQuadStr.split(' (')[0]}</div>
-      <div class="stat-sub">${topQuadrant ? topQuadrant[1] + '명 · ' + (topQuadrant[1] / total * 100).toFixed(1) + '%' : '—'}</div>
-    </div>
     <div class="stat-card">
       <div class="stat-label">가장 약한 영역</div>
       <div class="stat-value" style="font-size:18px;line-height:1.2;padding-top:6px">${weakestSection.split(' (')[0]}</div>
@@ -909,17 +918,6 @@ function renderStats() {
 
 function renderCharts() {
   if (!analysisData) return;
-
-  // 4분면
-  const qc = analysisData.quadrantCount || {};
-  drawDoughnut('chart-quadrant', Object.keys(qc), Object.values(qc), [
-    '#d4a85a', '#9bb38e', '#e8c275', '#e57373'
-  ]);
-
-  // 16유형 (가로 막대)
-  const tc = analysisData.typeCount || {};
-  const tEntries = Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 10);
-  drawBar('chart-types', tEntries.map(e => e[0]), tEntries.map(e => e[1]), 'horizontal');
 
   // 8축 평균 (레이더)
   const sec = analysisData.sectionAvgs || {};
