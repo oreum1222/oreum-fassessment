@@ -5216,6 +5216,11 @@ function v2Next(){
   else { v2EndPhase(); }
 }
 
+function rptSave(){
+  // 인쇄 대화상자에서 '대상: PDF로 저장'을 고르면 파일로 보관됨(모바일은 공유→저장)
+  try{ window.print(); }
+  catch(e){ alert('저장 화면을 열 수 없어요. 브라우저 메뉴에서 인쇄 또는 PDF로 저장을 이용해 주세요.'); }
+}
 function v2Finish(){ if(v2State.ver==='summer') renderSummerResults(); else renderV2Results(); }
 function v2EndPhase(){
   if(v2State.phase==='student'){
@@ -5406,7 +5411,7 @@ function renderSummerResults(){
   h+= preview ? `<div class="rpt-seg"><button class="${!teacher?'on':''}" onclick="v2SetReportMode('parent')">학부모용 통신문</button><button class="${teacher?'on':''}" onclick="v2SetReportMode('teacher')">강사용 전체</button></div>` : '<div></div>';
   h+='<div style="display:flex;gap:8px">';
   if(!preview) h+=`<button class="rpt-print" onclick="goScreen('welcome')">처음으로</button>`;
-  h+=`<button class="rpt-print" onclick="window.print()">인쇄</button>`;
+  h+= preview ? `<button class="rpt-print" onclick="window.print()">인쇄</button>` : `<button class="rpt-print" onclick="rptSave()" title="열리는 화면에서 ‘PDF로 저장’을 고르면 파일로 보관돼요">결과 저장하기</button>`;
   if(preview) h+=`<button class="rpt-print" onclick="window.close()">창 닫기</button>`;
   h+='</div></div>';
   h+=`<header class="rpt-mast"><div><div class="rpt-eyebrow">김가경 국어 연구소 — 여름방학 학습 점검</div><h1 class="rpt-title">${teacher?'여름방학 학습 점검 · 강사용 전체':'여름방학 학습 점검 결과 통지'}</h1><div class="rpt-ver">여름방학 학습 점검 진단${teacher?' · 내부 검토용':' · 여름학기 반 운영과 관리 방식 설계용'}</div></div><div class="rpt-brand"><div class="n">김가경 국어 연구소</div><div class="en">OREUM KOREAN</div></div></header>`;
@@ -5566,7 +5571,7 @@ function renderV2Results(){
   h+= preview ? `<div class="rpt-seg"><button class="${!teacher?'on':''}" onclick="v2SetReportMode('parent')">학부모용 통신문</button><button class="${teacher?'on':''}" onclick="v2SetReportMode('teacher')">강사용 전체</button></div>` : '<div></div>';
   h+='<div style="display:flex;gap:8px">';
   if(!preview) h+=`<button class="rpt-print" onclick="goScreen('welcome')">처음으로</button>`;
-  h+=`<button class="rpt-print" onclick="window.print()">인쇄</button>`;
+  h+= preview ? `<button class="rpt-print" onclick="window.print()">인쇄</button>` : `<button class="rpt-print" onclick="rptSave()" title="열리는 화면에서 ‘PDF로 저장’을 고르면 파일로 보관돼요">결과 저장하기</button>`;
   if(preview) h+=`<button class="rpt-print" onclick="window.close()">창 닫기</button>`;
   h+='</div></div>';
   h+=`<header class="rpt-mast"><div><div class="rpt-eyebrow">김가경 국어 연구소 — 학습 성향 진단</div><h1 class="rpt-title">${teacher?'학습 성향 진단 · 강사용 전체':'학습 성향 진단 결과 통지'}</h1><div class="rpt-ver">${esc(verLabel)}${teacher?' — 내부 검토용':' — 여름학기 반 배치와 수업 설계용'}</div></div><div class="rpt-brand"><div class="n">김가경 국어 연구소</div><div class="en">OREUM KOREAN</div></div></header>`;
