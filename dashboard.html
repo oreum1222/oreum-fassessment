@@ -1257,7 +1257,7 @@ function buildParentSummaryHTML(s) {
     A: '풀고 나서 "왜 이게 답인지" 한 줄로 적기 (메타인지 훈련)',
     B: '주 1회 정해진 복습 시간 확보 + 핸드폰 차단 환경',
     C: '약점 영역(문학/독서/문법)부터 짧은 지문으로 다시 시작',
-    D: '시험과 무관한 짧은 글(에세이·칼럼) 주 1편 노출',
+    D: '시험과 무관한 짧은 글(에세이나 칼럼) 주 1편 노출',
     E: '학교 자료 단권화 + 강조점 표시 + 외부 작품 연계',
     F: '모의고사 시간 측정 풀이 + 〈보기〉 활용 + 근거 짚기',
     G: '문제당 최대 시간 설정 + 막힘 표시 후 넘기기 루틴',
@@ -1338,7 +1338,7 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
 .verdict-box .value { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 14pt; }
 .bullet-list { list-style: none; padding: 0; }
 .bullet-list li { padding: 6px 0 6px 18px; position: relative; font-size: 10pt; line-height: 1.6; }
-.bullet-list li::before { content: '·'; position: absolute; left: 6px; font-weight: 800; color: #8c6620; }
+.bullet-list li::before { content: '•'; position: absolute; left: 6px; font-weight: 800; color: #8c6620; }
 .risk-box { background: #fff5f0; border-left: 3px solid #d4533b; padding: 10px 14px; margin-bottom: 10px; }
 .risk-box .label { font-size: 9pt; color: #a53d2a; font-weight: 700; margin-bottom: 4px; }
 .risk-box .item { font-size: 10pt; color: #444; padding: 2px 0; }
@@ -1353,7 +1353,7 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
 <body>
 <button class="print-btn" onclick="window.print()">📄 인쇄</button>
 <div class="page">
-  <div class="brand">가경 국어 연구소 · 학부모 상담용 한 장 요약</div>
+  <div class="brand">가경 국어 연구소 — 학부모 상담용 한 장 요약</div>
   <div class="head">
     <div class="head-left">
       <h1>${escapeHtml(s['이름'])} 학생</h1>
@@ -1363,13 +1363,13 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
       <strong>${escapeHtml(s['학교'])} ${escapeHtml(s['학년'])}</strong>
       응시일 ${escapeHtml(dateStr)}<br>
       국어 등급 ${escapeHtml(grade)}<br>
-      학교 ${escapeHtml(naeshinScore)} · 모의고사 ${escapeHtml(suneungScore)}
+      학교 ${escapeHtml(naeshinScore)} / 모의고사 ${escapeHtml(suneungScore)}
     </div>
   </div>
 
   <div class="verdict-box">
     <div class="label">진단 유형</div>
-    <div class="value">${escapeHtml(s['4분면 유형'] || '미분류')}${s['16유형 이름'] ? ` · ${escapeHtml(s['16유형 이름'])}` : ''}</div>
+    <div class="value">${escapeHtml(s['4분면 유형'] || '미분류')}${s['16유형 이름'] ? `, ${escapeHtml(s['16유형 이름'])}` : ''}</div>
   </div>
 
   <div class="section">
@@ -1424,7 +1424,7 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
     <div class="section">
       <div class="risk-box">
         <div class="label">⚠ 주의 신호</div>
-        ${risks.map(r => `<div class="item">· ${escapeHtml(r)}</div>`).join('')}
+        ${risks.map(r => `<div class="item">• ${escapeHtml(r)}</div>`).join('')}
       </div>
     </div>
   ` : ''}
@@ -1910,10 +1910,10 @@ function showSpecialDetail(name) {
     <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
       ${legacyBanner}
       <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
-        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 · 특별판 진단</p>
+        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 — 특별판 진단</p>
         <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${s.이름 || '?'} 학생의 학교 매칭 분석</h1>
         <p style="margin:0;font-size:12.5px;color:#888;">
-          ${s.학교 || '?'} · ${s.학년 || '?'} · ${s.응답일 || ''} · 응답자: <strong style="color:#222;">${roleLabel}</strong>${s.학부모연락처 ? ' · ' + s.학부모연락처 : ''}${s.관심학교 ? ' · 관심학교: ' + s.관심학교 : ''}${s.진로계열 ? ' · 진로: ' + s.진로계열 : ''}
+          ${s.학교 || '?'} / ${s.학년 || '?'} / ${s.응답일 || ''} / 응답자: <strong style="color:#222;">${roleLabel}</strong>${s.학부모연락처 ? ' / ' + s.학부모연락처 : ''}${s.관심학교 ? ' / 관심학교: ' + s.관심학교 : ''}${s.진로계열 ? ' / 진로: ' + s.진로계열 : ''}
         </p>
       </div>
 
@@ -1925,15 +1925,15 @@ function showSpecialDetail(name) {
       <h3 style="margin:18px 0 10px;font-size:15px;color:#333;border-bottom:1px solid #ddd;padding-bottom:6px;">3개 진단 축 점수</h3>
       <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
         <tr>
-          <td style="padding:8px 0;color:#222;"><strong>자료 장악형</strong><span style="color:#888;font-size:12px;"> — 경기고·숙명여고</span></td>
+          <td style="padding:8px 0;color:#222;"><strong>자료 장악형</strong><span style="color:#888;font-size:12px;"> — 경기고, 숙명여고</span></td>
           <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s자료}</td>
         </tr>
         <tr>
-          <td style="padding:8px 0;color:#222;"><strong>사고 적용형</strong><span style="color:#888;font-size:12px;"> — 휘문고·진선여고</span></td>
+          <td style="padding:8px 0;color:#222;"><strong>사고 적용형</strong><span style="color:#888;font-size:12px;"> — 휘문고, 진선여고</span></td>
           <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s사고}</td>
         </tr>
         <tr>
-          <td style="padding:8px 0;color:#222;"><strong>조건 변별형</strong><span style="color:#888;font-size:12px;"> — 중대부고·단대부고</span></td>
+          <td style="padding:8px 0;color:#222;"><strong>조건 변별형</strong><span style="color:#888;font-size:12px;"> — 중대부고, 단대부고</span></td>
           <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s조건}</td>
         </tr>
       </table>
@@ -1942,7 +1942,7 @@ function showSpecialDetail(name) {
       ${correctionHtml}
 
       <div style="margin-top:24px;padding-top:14px;border-top:1px dashed #ddd;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 · 특별판 진단</p>
+        <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 — 특별판 진단</p>
         <button onclick="openFullResultForName('${(s.이름 || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>
       </div>
     </div>
@@ -2201,12 +2201,12 @@ function showMirrorDetail(code) {
   document.getElementById('modal-body').innerHTML = `
     <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
       <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
-        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 · 거울 진단</p>
+        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 — 거울 진단</p>
         <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${f.학생이름 || '가족'} — 학부모/학생 인식 비교</h1>
         <p style="margin:0;font-size:12.5px;color:#888;">
           가족코드 <strong style="color:#222;font-family:'JetBrains Mono',monospace;">${f.가족코드}</strong>
-          · ${f.학교 || '?'} · ${f.학년 || '?'} · ${f.응시일 || ''}
-          ${f.학부모연락처 ? ' · ' + f.학부모연락처 : ''}
+          ${f.학교 || '?'} / ${f.학년 || '?'} / ${f.응시일 || ''}
+          ${f.학부모연락처 ? ' / ' + f.학부모연락처 : ''}
         </p>
       </div>
 
@@ -2215,7 +2215,7 @@ function showMirrorDetail(code) {
         <h2 style="margin:0;font-size:18px;color:${statusLabel.color === '#b8c98d' ? '#5a7a3a' : (statusLabel.color === '#c9a84c' ? '#8c6620' : '#3a5a8c')};">${statusLabel.txt}</h2>
         <p style="margin:8px 0 0;font-size:12.5px;color:#666;">
           학생 응답: ${studentRespCount > 0 ? `${studentRespCount}문항 완료 ✓` : '아직 미응답'}
-          &nbsp;·&nbsp;
+          &nbsp;／&nbsp;
           학부모 응답: ${parentRespCount > 0 ? `${parentRespCount}문항 완료 ✓` : '아직 미응답'}
         </p>
       </div>
@@ -2223,7 +2223,7 @@ function showMirrorDetail(code) {
       ${gapHtml}
 
       <div style="margin-top:24px;padding-top:14px;border-top:1px dashed #ddd;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 · 거울 진단</p>
+        <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 — 거울 진단</p>
         ${fullResultBtnHtml}
       </div>
     </div>
