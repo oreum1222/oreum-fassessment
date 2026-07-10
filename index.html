@@ -2901,6 +2901,24 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-mini-sum{ margin-top:12px; font-size:13.5px; color:#5c6672; }
 .rpt-mini-sum b{ color:#1b1e24; }
 .rpt-mini-sum b.warn{ color:#ae3b36; }
+#v2-info .info-form{ background:var(--o-card); border:1px solid var(--o-line); border-radius:16px; padding:26px 26px 22px; }
+#v2-info .field{ margin-bottom:18px; }
+#v2-info #v2-info-error{ margin-bottom:0; }
+#v2-info .field > label{ display:block; font-size:13px; font-weight:700; color:var(--o-ink); margin-bottom:9px; }
+#v2-info .field > label small{ font-weight:400; color:var(--o-mut); }
+#v2-info input, #v2-info select{ width:100%; box-sizing:border-box; background:rgba(255,255,255,.03); border:1px solid var(--o-line); border-radius:11px; padding:12px 14px; color:var(--o-ink); font-size:15px; font-family:inherit; transition:border-color .15s; }
+#v2-info input:focus, #v2-info select:focus{ outline:none; border-color:var(--o-mint); }
+#v2-info input::placeholder{ color:var(--o-mut); }
+#v2-info .info-row{ display:flex; gap:14px; }
+#v2-info .info-row .field{ flex:1; }
+#v2-info .screen-sub{ color:var(--o-mut); }
+#v2-enroll-block{ margin-bottom:18px; }
+#v2-enroll-block .field{ margin-bottom:14px; }
+#v2-enroll-block .field:last-child{ margin-bottom:0; }
+#v2-info .v2-seg{ display:flex; flex-wrap:wrap; gap:8px; }
+#v2-info .v2-seg button{ flex:1 1 44%; min-width:120px; padding:12px; border:1px solid var(--o-line); border-radius:12px; background:rgba(255,255,255,.03); color:var(--o-ink2); font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; text-align:center; }
+#v2-info .v2-seg button:hover{ border-color:var(--o-mint); color:var(--o-ink); }
+#v2-info .v2-seg button.on{ background:linear-gradient(135deg,#14B8A6,#2DD4BF); border-color:#2DD4BF; color:#062018; }
 .rpt-risklead{ font-size:14px; color:#5c6672; line-height:1.7; margin:0 0 13px; }
 .rpt-signal{ border:1px solid #e4e8ea; border-radius:4px; padding:15px 17px; margin-bottom:11px; background:#f7ecea; }
 .rpt-signal .axl{ display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; letter-spacing:.05em; color:#ae3b36; margin-bottom:6px; }
@@ -3926,7 +3944,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   <div style="height:24px"></div>
   <div class="form-stamp special-stamp" id="v2-info-stamp">진단</div>
   <h2 class="screen-title">먼저, 정보를 알려주세요</h2>
-  <p class="screen-sub">반 배치·상담 안내에만 사용됩니다.</p>
+  <p class="screen-sub">반 배치와 상담 안내에만 사용됩니다.</p>
   <div class="info-form">
     <div class="field">
       <label>학생 이름 <span class="required">*</span></label>
@@ -3948,8 +3966,21 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
         </select>
       </div>
     </div>
+    <div id="v2-enroll-block">
+      <div class="field">
+        <label>수강 학원 <span class="required">*</span></label>
+        <div class="v2-seg" id="v2-academy-seg">
+          <button type="button" onclick="v2PickAcademy('오름')">[오름] 국어</button>
+          <button type="button" onclick="v2PickAcademy('한티')">한티 MEXX</button>
+        </div>
+      </div>
+      <div class="field" id="v2-class-field" style="display:none">
+        <label>수강 반 <span class="required">*</span></label>
+        <div class="v2-seg" id="v2-class-seg"></div>
+      </div>
+    </div>
     <div class="field">
-      <label>학부모 연락처 <small>(상담 안내용·선택)</small></label>
+      <label>학부모 연락처 <small>(상담 안내용, 선택)</small></label>
       <input type="tel" id="v2-info-parent-phone" placeholder="예: 010-1234-5678">
     </div>
     <div id="v2-info-error" class="info-error"></div>
@@ -4971,10 +5002,28 @@ const V2_VERSIONS = {
 // ─── state ───
 const v2State = { ver:'brief', info:{}, items:[], idx:0, responses:{}, phase:'student' };
 
+const V2_ACADEMY = {
+  '오름':{label:'[오름] 국어', classes:['(수) 현대문법','(수) 고전문법','(금) 수능 정규반','(토) 수능 정규반']},
+  '한티':{label:'한티 MEXX', classes:['(일) 고1 단과 고전영역','(일) 고2 단과 화법과언어','(월) 중3 종합','(금) 고1 종합']}
+};
+function v2PickAcademy(key){
+  v2State.academy=key; v2State.className='';
+  document.querySelectorAll('#v2-academy-seg button').forEach((b,i)=>b.classList.toggle('on', (i===0?'오름':'한티')===key));
+  document.getElementById('v2-class-seg').innerHTML=V2_ACADEMY[key].classes.map(c=>`<button type="button" onclick="v2PickClass('${c}')">${c}</button>`).join('');
+  document.getElementById('v2-class-field').style.display='';
+}
+function v2PickClass(name){
+  v2State.className=name;
+  document.querySelectorAll('#v2-class-seg button').forEach(b=>b.classList.toggle('on', b.textContent===name));
+}
 function startV2(ver){
   v2State.ver = ver; v2State.info = {}; v2State.responses = {}; v2State.idx = 0; v2State.phase = 'student';
   const cfg = V2_VERSIONS[ver];
   document.getElementById('v2-info-stamp').textContent = cfg.label;
+  v2State.academy=''; v2State.className='';
+  const enroll=document.getElementById('v2-enroll-block'); if(enroll) enroll.style.display=(ver==='brief')?'none':'';
+  document.querySelectorAll('#v2-academy-seg button, #v2-class-seg button').forEach(b=>b.classList.remove('on'));
+  const cf=document.getElementById('v2-class-field'); if(cf) cf.style.display='none';
   goScreen('v2-info');
 }
 
@@ -4984,9 +5033,10 @@ function startV2Quiz(){
   const grade = document.getElementById('v2-info-grade').value;
   const parentPhone = document.getElementById('v2-info-parent-phone').value.trim();
   const err = document.getElementById('v2-info-error');
-  if(!name || !school || !grade){ err.textContent='이름·학교·학년은 필수입니다.'; err.style.display='block'; return; }
+  if(!name || !school || !grade){ err.textContent='이름, 학교, 학년은 필수입니다.'; err.style.display='block'; return; }
+  if(v2State.ver!=='brief' && (!v2State.academy || !v2State.className)){ err.textContent='수강 학원과 반을 선택해주세요.'; err.style.display='block'; return; }
   err.style.display='none';
-  v2State.info = { name, school, grade, parentPhone };
+  v2State.info = { name, school, grade, parentPhone, academy:(v2State.academy?V2_ACADEMY[v2State.academy].label:''), className:v2State.className||'' };
   v2State.sent=false; v2State.reportMode=null;
   v2State.phase = 'student';
   v2State.items = V2_VERSIONS[v2State.ver].buildStudent(grade);
