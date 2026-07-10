@@ -2919,6 +2919,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 #v2-info .v2-seg button{ flex:1 1 44%; min-width:120px; padding:12px; border:1px solid var(--o-line); border-radius:12px; background:rgba(255,255,255,.03); color:var(--o-ink2); font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; text-align:center; }
 #v2-info .v2-seg button:hover{ border-color:var(--o-mint); color:var(--o-ink); }
 #v2-info .v2-seg button.on{ background:linear-gradient(135deg,#14B8A6,#2DD4BF); border-color:#2DD4BF; color:#062018; }
+#v2-info .v2-class-warn{ margin-top:10px; font-size:12.5px; line-height:1.6; color:var(--o-amber); }
 .rpt-risklead{ font-size:14px; color:#5c6672; line-height:1.7; margin:0 0 13px; }
 .rpt-signal{ border:1px solid #e4e8ea; border-radius:4px; padding:15px 17px; margin-bottom:11px; background:#f7ecea; }
 .rpt-signal .axl{ display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; letter-spacing:.05em; color:#ae3b36; margin-bottom:6px; }
@@ -3960,12 +3961,13 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
       </div>
       <div class="field">
         <label>학년 <span class="required">*</span></label>
-        <select id="v2-info-grade" required>
+        <select id="v2-info-grade" required onchange="v2RecheckGrade()">
           <option value="">선택</option>
+          <option value="중3">중3</option>
+          <option value="예비고1">예비고1</option>
           <option value="고1">고1</option>
           <option value="고2">고2</option>
           <option value="고3">고3</option>
-          <option value="예비고1">예비고1</option>
         </select>
       </div>
     </div>
@@ -3980,6 +3982,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
       <div class="field" id="v2-class-field" style="display:none">
         <label>수강 반 <span class="required">*</span></label>
         <div class="v2-seg" id="v2-class-seg"></div>
+        <div id="v2-class-warn" class="v2-class-warn" style="display:none"></div>
       </div>
     </div>
     <div class="field">
@@ -5015,10 +5018,21 @@ function v2PickAcademy(key){
   document.getElementById('v2-class-seg').innerHTML=V2_ACADEMY[key].classes.map(c=>`<button type="button" onclick="v2PickClass('${c}')">${c}</button>`).join('');
   document.getElementById('v2-class-field').style.display='';
 }
+function v2ClassGrade(name){ const m=(name||'').match(/중3|중2|중1|고1|고2|고3/); return m?m[0]:''; }
+function v2GradeMatch(grade, name){
+  const cg=v2ClassGrade(name); if(!cg||!grade) return true;
+  if(grade===cg) return true;
+  if(grade==='예비고1' && cg==='고1') return true;
+  return false;
+}
 function v2PickClass(name){
   v2State.className=name;
   document.querySelectorAll('#v2-class-seg button').forEach(b=>b.classList.toggle('on', b.textContent===name));
+  const grade=document.getElementById('v2-info-grade').value;
+  const w=document.getElementById('v2-class-warn');
+  if(w){ if(grade && !v2GradeMatch(grade,name)){ w.textContent=`⚠ 선택한 학년(${grade})과 이 반(${v2ClassGrade(name)})이 달라 보여요. 학년 또는 반을 다시 확인해 주세요.`; w.style.display=''; } else { w.style.display='none'; } }
 }
+function v2RecheckGrade(){ if(v2State.className) v2PickClass(v2State.className); }
 function startV2(ver){
   v2State.ver = ver; v2State.info = {}; v2State.responses = {}; v2State.idx = 0; v2State.phase = 'student';
   const cfg = V2_VERSIONS[ver];
@@ -5038,6 +5052,7 @@ function startV2Quiz(){
   const err = document.getElementById('v2-info-error');
   if(!name || !school || !grade){ err.textContent='이름, 학교, 학년은 필수입니다.'; err.style.display='block'; return; }
   if(v2State.ver!=='brief' && (!v2State.academy || !v2State.className)){ err.textContent='수강 학원과 반을 선택해주세요.'; err.style.display='block'; return; }
+  if(v2State.ver!=='brief' && v2State.className && !v2GradeMatch(grade, v2State.className)){ err.textContent=`선택한 학년(${grade})과 수강 반(${v2ClassGrade(v2State.className)})이 다릅니다. 학년 또는 반을 다시 한 번 확인해 주세요.`; err.style.display='block'; return; }
   err.style.display='none';
   v2State.info = { name, school, grade, parentPhone, academy:(v2State.academy?V2_ACADEMY[v2State.academy].label:''), className:v2State.className||'' };
   v2State.sent=false; v2State.reportMode=null;
