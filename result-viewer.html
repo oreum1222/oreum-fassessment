@@ -5016,7 +5016,7 @@ const V2_VERSIONS = {
   brief:     {label:'비재원생 진단', hasParent:true, buildStudent:(g)=> V2_BIJAE_STUDENT.slice()},
   standard:  {label:'재원생 첫 진단', hasParent:true, buildStudent:(g)=> { const sc=v2PickByIds(V2_JAE_FIRST_IDS); return [...sc.slice(0,8), V2_ATTN2, ...sc.slice(8), ...v2MiniSet(g), V2_RANK_FIRST, V2_PREF, V2_PREV, V2_BIJAE_STUDENT[18]]; }},
   precision: {label:'재원생 심층 진단', hasParent:true, buildStudent:(g)=> [...V2_BIJAE_STUDENT.slice(0,18), ...V2_JAE_EXTRA, ...v2MiniSet(g), V2_RANK_FIRST, V2_OBROK, V2_RANK_FALL, V2_BIJAE_STUDENT[18]]},
-  summer:    {label:'여름방학 학습 점검 진단', hasParent:false, buildStudent:(g)=> SUMMER_ITEMS.slice()},
+  summer:    {label:'여름방학 학습 점검 진단', hasParent:false, buildStudent:(g)=> summerOrdered()},
 };
 
 // ─── state ───
@@ -5316,6 +5316,14 @@ const SUMMER_ITEMS = [
     opts:[['뭘 해야 할지 모르겠다',''],['시간이 없다',''],['집중이 안 된다',''],['재미가 없다',''],['혼자서는 못 하겠다',''],['기타','',true]]},
 ];
 
+// 문항 배치: 카테고리 인터리브 + 정/역 쌍 분리 + 주의력 중앙 + SD 분산 (진심 응답 유도)
+const SUMMER_ORDER = ['SP1','SA_A','SPF','SUN','SVA','SG1','SA_B','SXE','SRO','SSD1','SS1','SME','SA_C','SEF','SATT','SGR','SCH','SP2','SXL','SET','SG2','SEFr','SSD2','SCA','SS2','SGRr','STO','SBW','SC1','SC2'];
+function summerOrdered(){
+  const byId={}; SUMMER_ITEMS.forEach(it=>{ byId[it.id]=it; });
+  const seq=SUMMER_ORDER.map(id=>byId[id]).filter(Boolean);
+  SUMMER_ITEMS.forEach(it=>{ if(SUMMER_ORDER.indexOf(it.id)<0) seq.push(it); }); // 누락 안전망
+  return seq;
+}
 function summerFacets(){
   const acc={}, wsum={};
   SUMMER_ITEMS.forEach(it=>{
