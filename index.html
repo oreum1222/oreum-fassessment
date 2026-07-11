@@ -3027,6 +3027,26 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 
 <!-- ═══════════════════════════════════ 1. 시작 화면 ═══════════════════════════════════ -->
 <section id="welcome" class="screen active">
+  <div id="notice-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,18,22,.55);align-items:center;justify-content:center;padding:20px">
+    <div style="max-width:420px;width:100%;background:#fff;border-radius:18px;box-shadow:0 30px 80px -18px rgba(0,0,0,.55);overflow:hidden;font-family:'Pretendard',-apple-system,sans-serif">
+      <div style="background:linear-gradient(135deg,#0f766e,#14b8a6);padding:22px 24px;color:#eafffb">
+        <div style="font-size:11px;letter-spacing:2.5px;opacity:.82">NOTICE</div>
+        <div style="font-family:'Nanum Myeongjo',serif;font-size:21px;font-weight:800;margin-top:5px">한티 MEXX 가경T 개강</div>
+      </div>
+      <div style="padding:24px">
+        <p style="font-size:15.5px;line-height:1.8;color:#1b2733;margin:0 0 4px"><b>일요일 단과 수강생</b>은 아래 두 가지에 응답하기 바랍니다.</p>
+        <div style="margin:15px 0;padding:15px 16px;background:#f1fbf8;border-radius:11px">
+          <div style="display:flex;gap:11px;align-items:center;font-size:15.5px;color:#0f5f57;margin-bottom:9px"><span style="flex:0 0 22px;height:22px;border-radius:50%;background:#14b8a6;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">1</span> 여름방학 학습 진단</div>
+          <div style="display:flex;gap:11px;align-items:center;font-size:15.5px;color:#0f5f57"><span style="flex:0 0 22px;height:22px;border-radius:50%;background:#14b8a6;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">2</span> 재원생 첫 진단</div>
+        </div>
+        <p style="font-size:13px;color:#7b858c;margin:0 0 18px">두 진단 모두 꼭 응답 부탁드립니다!</p>
+        <div style="display:flex;gap:10px">
+          <button onclick="v2CloseNotice(true)" style="flex:1;padding:12px;border:1px solid #dfe6e4;background:#fff;border-radius:11px;color:#7b858c;font-size:14px;cursor:pointer">오늘 하루 안 보기</button>
+          <button onclick="v2CloseNotice(false)" style="flex:1.3;padding:12px;border:0;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#eafffb;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div style="height:28px"></div>
   <div class="hero-row">
     <h1 class="title-serif hero-title">국어 학습 진단</h1>
@@ -3077,11 +3097,10 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 
   <div class="intro-card">
     <h3>이 진단은 무엇을 보는가</h3>
-    <p>
-      국어 점수만으로는 학생을 알 수 없습니다. 같은 3등급이라도 누군가는 <strong>작품을 못 읽는 학생</strong>이고,
-      누군가는 <strong>선지 판단이 약한 학생</strong>이며, 누군가는 <strong>시간 운영이 무너진 학생</strong>입니다.
-      이 진단은 8개 영역과 40여 개 진단축으로 그 차이를 가려냅니다.
-    </p>
+    <p>학생을 제대로 이해하려면, 원래는 수업의 현장에서 오랜 시간 함께 호흡해야 합니다. 어떤 지점에서 읽기가 멈추는지, 선지를 판단할 때 무엇을 놓치는지, 시간에 쫓기면 사고가 어떻게 흔들리는지, 그리고 배운 것을 자기 것으로 만드는 방식은 어떠한지. 이러한 차이는 몇 번의 시험 점수만으로는 쉽게 드러나지 않습니다.</p>
+    <p>이 진단은 오랜 수업 끝에야 보이던 학생의 개별적 성향과 학습 태도를 가능한 한 빠르게 파악하여, 수업이 더 정확하고 효율적으로 학생의 핵심 문제를 파고들 수 있도록 만든 진단입니다. 수많은 학생을 가르치며 관찰해 온 장면들, 성적이 오르는 학생과 제자리걸음을 하는 학생의 차이, 같은 오답 뒤에 숨어 있던 서로 다른 원인을 <strong>8개 영역과 40여 개의 진단축</strong>에 담았습니다. 말 그대로 한 강사의 오랜 강의 경험과 판단이 축적된 결과물입니다.</p>
+    <p>진단 결과를 통해 학생의 독해 능력만이 아니라 작품을 받아들이는 방식, 선지 판단의 기준, 시간 운영, 학습 태도와 습관까지 입체적으로 이해합니다. 이를 바탕으로 인원이 많은 수업에서도 학생을 하나의 점수나 등급으로 뭉뚱그리지 않고, 각 학생에게 무엇이 필요한지를 알고 가르칠 수 있습니다.</p>
+    <p>오래 지켜봐야 알 수 있었던 학생을 더 빨리 이해하고, 그 이해가 실제 수업 속에서 깊게 작용하도록 만든 진단입니다.</p>
   </div>
 
   <div class="divider-dot">◆</div>
@@ -3089,9 +3108,49 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">진단 버전을 골라주세요</h3>
 
   <div class="version-grid">
-    <!-- 1번: 거울 진단 (구 거울형) -->
-    <div class="version-card mirror" data-version="mirror">
+    <!-- 1번: 여름방학 학습 점검 진단 -->
+    <div class="version-card summer" data-version="summer">
       <div class="version-num">1</div>
+      <div class="version-info">
+        <h4>여름방학 학습 점검 진단 <span class="version-badge summer-badge">여름</span></h4>
+        <p>자기보고 + 방향 선택 30여 문항, 약 10분<br>관리 강도, 막힘 대처, 정서 신호 종합 점검</p>
+      </div>
+      <div class="version-meta"><strong>30</strong><br>questions</div>
+    </div>
+
+    <!-- 2번: 재원생 첫 진단 (권장) -->
+    <div class="version-card recommended" data-version="standard">
+      <div class="version-num">2</div>
+      <div class="version-info">
+        <h4>재원생 첫 진단</h4>
+        <p>선별 장면 + 미니 과제 + 상담 문항 · 약 13분<br>반 배치·수업 전략용 분류</p>
+      </div>
+      <div class="version-meta"><strong>36</strong><br>questions</div>
+    </div>
+
+    <!-- 3번: 비재원생 진단 -->
+    <div class="version-card" data-version="brief">
+      <div class="version-num">3</div>
+      <div class="version-info">
+        <h4>비재원생 진단</h4>
+        <p>장면 선택 20문항 · 약 5분<br>첫 상담 전 빠르게 성향 파악</p>
+      </div>
+      <div class="version-meta"><strong>20</strong><br>questions</div>
+    </div>
+
+    <!-- 4번: 재원생 심층 진단 -->
+    <div class="version-card" data-version="precision">
+      <div class="version-num">4</div>
+      <div class="version-info">
+        <h4>재원생 심층 진단</h4>
+        <p>장면 + 미니 과제 + 오답 기록 39개 · 약 14분<br>성적 정체 원인·개별 처방용</p>
+      </div>
+      <div class="version-meta"><strong>39</strong><br>questions</div>
+    </div>
+
+    <!-- 5번: 거울 진단 -->
+    <div class="version-card mirror" data-version="mirror">
+      <div class="version-num">5</div>
       <div class="version-info">
         <h4>거울 진단 <span class="version-badge">NEW</span></h4>
         <p>부모와 자녀 간 메타인지 진단<br>"내가 보는 나, 부모님이 보는 자녀"</p>
@@ -3099,47 +3158,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
       <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
 
-    <!-- 2번: 여름방학 학습 점검 진단 (summer, NEW) -->
-    <div class="version-card summer" data-version="summer">
-      <div class="version-num">2</div>
-      <div class="version-info">
-        <h4>여름방학 학습 점검 진단 <span class="version-badge summer-badge">여름</span></h4>
-        <p>자기보고 + 방향 선택 30문항, 약 10분<br>관리 강도, 막힘 대처, 정서 신호 종합 점검</p>
-      </div>
-      <div class="version-meta"><strong>30</strong><br>questions</div>
-    </div>
-
-    <!-- 3번: 비재원생 진단 (구 간편형) -->
-    <div class="version-card" data-version="brief">
-      <div class="version-num">3</div>
-      <div class="version-info">
-        <h4>비재원생 진단</h4>
-        <p>장면 선택 19문항 · 약 5분<br>첫 상담 전 빠르게 성향 파악</p>
-      </div>
-      <div class="version-meta"><strong>19</strong><br>questions</div>
-    </div>
-
-    <!-- 4번: 재원생 첫 진단 (구 표준형, 권장) -->
-    <div class="version-card recommended" data-version="standard">
-      <div class="version-num">4</div>
-      <div class="version-info">
-        <h4>재원생 첫 진단</h4>
-        <p>선별 문항 + 미니 과제 25개 · 약 9분<br>반 배치·수업 전략용 분류</p>
-      </div>
-      <div class="version-meta"><strong>25</strong><br>questions</div>
-    </div>
-
-    <!-- 5번: 재원생 심층 진단 (구 정밀형) -->
-    <div class="version-card" data-version="precision">
-      <div class="version-num">5</div>
-      <div class="version-info">
-        <h4>재원생 심층 진단</h4>
-        <p>장면 + 미니 과제 + 오답 기록 33개 · 약 12분<br>성적 정체 원인·개별 처방용</p>
-      </div>
-      <div class="version-meta"><strong>33</strong><br>questions</div>
-    </div>
-
-    <!-- 6번: 김가경 국어 연구소 특별판 — 군포 6개교 성향별 학교 추천 -->
+    <!-- 6번: 특별판 [오름] 국어 -->
     <div class="version-card special" data-version="oreum">
       <div class="version-num">6</div>
       <div class="version-info">
@@ -3149,7 +3168,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
       <div class="version-meta"><strong>30</strong><br>questions</div>
     </div>
 
-    <!-- 7번: 특별판 (한티 MEXX 한정) — 종료된 설명회용, 맨 아래 -->
+    <!-- 7번: 특별판 한티 MEXX 중3 -->
     <div class="version-card special" data-version="special">
       <div class="version-num">7</div>
       <div class="version-info">
@@ -5333,6 +5352,22 @@ function v2SendParentBackend(){
 }
 // ?parent=1 진입: 학부모 관찰 화면으로 바로
 try{ if(new URLSearchParams(location.search).get('parent')==='1'){ v2StartParentObserve(); } }catch(e){}
+// 개강 안내 팝업 (2026-07-11 ~ 2026-07-21, 결과/미리보기/학부모 진입 시 제외)
+function v2CloseNotice(dismissToday){
+  const ov=document.getElementById('notice-overlay'); if(ov) ov.style.display='none';
+  if(dismissToday){ try{ localStorage.setItem('kgkNoticeDismiss', new Date().toISOString().slice(0,10)); }catch(e){} }
+}
+function v2MaybeNotice(){
+  try{
+    const q=new URLSearchParams(location.search);
+    if(q.get('parent')||q.get('v2Name')||q.get('name')||q.get('mirrorCode')||q.get('generalName')||q.get('teacher')||q.get('report')||q.get('print')) return;
+    const now=new Date(), start=new Date(2026,6,11,0,0,0), end=new Date(2026,6,21,23,59,59);
+    if(now<start||now>end) return;
+    if(localStorage.getItem('kgkNoticeDismiss')===now.toISOString().slice(0,10)) return;
+    const ov=document.getElementById('notice-overlay'); if(ov) ov.style.display='flex';
+  }catch(e){}
+}
+try{ v2MaybeNotice(); }catch(e){}
 
 // ════════════════════════════════════════════════════════════
 //  여름방학 학습 점검 진단 (summer) — 자기보고 배터리 + Best-Worst
