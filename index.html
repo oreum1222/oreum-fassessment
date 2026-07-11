@@ -2900,6 +2900,16 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-cmp-interp{ margin-top:13px; display:flex; flex-direction:column; gap:8px; }
 .rpt-cmp-i{ font-size:13px; line-height:1.72; color:#5c6672; background:#f4f8f7; border-left:2px solid #14b8a6; border-radius:0 6px 6px 0; padding:10px 14px; }
 .rpt-cmp-i b{ color:#1b1e24; }
+.rpt-po-lead{ font-size:14px; line-height:1.9; color:#4c5560; margin:0 0 4px; }
+.rpt-po-lead b{ color:#1b1e24; }
+.rpt-po-pct{ display:inline-block; margin-top:8px; font-weight:800; color:#0f766e; }
+.rpt-po-h{ font-size:13.5px; font-weight:800; margin:18px 0 9px; letter-spacing:-.01em; }
+.rpt-po-h.ok{ color:#0f766e; }
+.rpt-po-h.gap{ color:#4a6b8a; }
+.rpt-po-i{ font-size:13.5px; line-height:1.85; color:#4c5560; padding:12px 15px; background:#f6faf9; border-radius:8px; margin-bottom:8px; border-left:2px solid #cfe6e0; }
+.rpt-po-i b{ color:#1b1e24; }
+.rpt-po-close{ font-size:13.5px; color:#5c6672; margin-top:15px; line-height:1.85; padding-top:13px; border-top:1px solid #eef3f2; }
+.rpt-po-close b{ color:#0f766e; }
 .rpt-mini-row.ok{ background:#eef7f4; border-color:#d3e8e2; }
 .rpt-mini-row.bad{ background:#f7ecea; border-color:#e6cfcc; }
 .rpt-mini-row .mk{ font-weight:800; font-size:15px; width:16px; text-align:center; }
@@ -5578,6 +5588,14 @@ function summerSendBackend(F, rel, mg, pats){
 
 // ════════════════ [3] v2 채점 · 페르소나 엔진 ════════════════
 const V2_AXNAME = {장악:'자료 장악',적용:'사고 적용',변별:'조건 변별',메타:'오답 메타인지',시간:'시간 운영',정서:'정서 회복'};
+const V2_AX_PARENT = {
+ 장악:{n:'자료·시험 범위 챙기기', d:'수업 필기·학교 프린트·시험 범위를 스스로 챙기고 정리하는 힘이에요. 시험 직전 “프린트 어디 있지?” 하며 찾아 헤매는지, 아니면 미리 정리해 두는지로 드러나요.'},
+ 적용:{n:'낯선 지문 읽어내기', d:'처음 보는 지문이나 새 유형 앞에서 배운 걸 적용해 읽어내는 힘이에요. 모의고사 같은 낯선 글에서 “뭔 소린지 모르겠다”며 굳는지, “아 이거 배운 거랑 비슷하네” 하는지로 나타나요.'},
+ 변별:{n:'선지·조건 정확히 가리기', d:'“말은 맞는데 답은 아닌” 선지를 가려내고 문제의 조건을 놓치지 않는 힘이에요. “아는 건데 실수했어”, “한 끗 차이로 틀렸어”가 잦다면 이 부분이에요.'},
+ 메타:{n:'틀린 이유 알기', d:'틀렸을 때 “왜 틀렸는지”를 스스로 짚어내는 힘이에요. 채점만 하고 덮는지, 틀린 이유를 따져 보는지로 드러나요. “왜 틀렸는지 모르겠어”가 잦다면 여기가 약한 거예요.'},
+ 시간:{n:'시험장에서 실력 뽑기', d:'제한 시간 안에서 페이스를 조절해 아는 걸 실제 점수로 뽑아내는 힘이에요. 시험만 보면 “시간만 더 있었으면”을 말한다면 이 부분이에요.'},
+ 정서:{n:'떨어져도 다시 붙들기', d:'점수가 떨어졌을 때 무너지지 않고 다시 붙드는 회복력, 그리고 시험 불안을 다루는 힘이에요. 성적이 안 나오면 한동안 국어를 피하는지, 속상해도 곧 다시 잡는지로 나타나요.'}
+};
 const V2_PERSONA = {
   성실누수:   {label:'성실 누수형', sub:'공부량은 있는데 점수로 새는 아이', line:`공부량은 충분한데, 맞고 틀린 이유를 정밀하게 분류하지 못해 점수로 이어지지 않는 유형입니다. 자료는 챙기지만 '왜 틀렸는지'에서 새고 있습니다.`},
   감각의존:   {label:'감각 의존형', sub:'맞힐 때도 있지만 재현성이 약한 아이', line:`문제를 풀 때 감각은 있으나, 맞힌 것과 틀린 것을 모두 '이해했다'로 처리해 같은 매력적 오답에 반복적으로 걸릴 가능성이 큽니다.`},
@@ -5722,12 +5740,17 @@ function renderV2Results(){
   h+=`</section>`;
   h+=`<section class="rpt-sec">${sec('강사 코멘트와 여름 방향')}<div class="rpt-comment"><p><b>${esc(info.name||'학생')}</b> 학생은 <b>${esc(P.label)}</b>입니다. ${esc(dm(P.line))}</p><div class="rpt-rx"><div class="no">1</div><div class="t">가장 약한 축(<b>${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>)부터 한 축씩 기초를 세웁니다.</div></div><div class="rpt-rx"><div class="no">2</div><div class="t">틀린 문제마다 ‘몰라서 vs 알았는데 틀림’을 한 줄로 구분해, 오답 원인 인식을 훈련합니다.</div></div></section>`;
   if(a.parentCompare && !teacher){
-    const pc=a.parentCompare, AX=V2_AXNAME;
+    const pc=a.parentCompare, AP=V2_AX_PARENT;
+    const agree=pc.rows.filter(r=>Math.abs(r.diff)<12);
     const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
-    let msg;
-    if(pc.agree>=80) msg=`자녀가 스스로를 보는 눈과 학부모님이 관찰하신 모습이 <b>대체로 잘 맞습니다</b> (인식 일치도 ${pc.agree}%). 자기 인식이 비교적 정확한 편이에요.`;
-    else { const top=(over[0]||under[0]||pc.rows[0]); const dir = top.diff>0 ? '자녀가 스스로를 학부모님 관찰보다 조금 더 <b>긍정적으로</b> 보고 있어요' : '자녀가 스스로를 학부모님 관찰보다 조금 더 <b>낮게</b> 평가하고 있어요'; msg=`자녀의 자기 인식과 학부모님의 관찰에 <b>차이가 나는 지점</b>이 있어요 (일치도 ${pc.agree}%). 특히 <b>${AX[top.ax]}</b> 축에서는 ${dir}. 여름 동안 이 부분을 함께 짚어 주시면 좋습니다.`; }
-    h+=`<section class="rpt-sec">${sec('자녀와 학부모님의 시선')}<div class="rpt-box">${msg}</div></section>`;
+    let h2=`<p class="rpt-po-lead">자녀가 <b>스스로를 보는 눈</b>과 학부모님이 곁에서 관찰하신 모습을 나란히 맞춰 봤습니다. 누가 맞고 틀리고가 아니라, <b>같은 아이를 두 시선</b>으로 본 결과예요. 두 시선이 겹치는 부분이 많을수록 자녀가 자기 자신을 정확히 알고 있다는 뜻입니다. <span class="rpt-po-pct">두 시선의 일치도 ${pc.agree}%</span></p>`;
+    if(agree.length){ h2+=`<div class="rpt-po-h ok">자녀와 학부모님이 비슷하게 보고 계신 점</div>`; agree.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} <b>이 부분은 자녀도, 학부모님도 비슷하게</b> 느끼고 계세요. 두 분의 눈이 맞아떨어지는 지점입니다.</div>`; }); }
+    if(over.length||under.length){ h2+=`<div class="rpt-po-h gap">시선이 조금 다른 점</div>`;
+      over.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 이 부분은 <b>자녀가 스스로를 조금 더 괜찮게</b> 보는데, 학부모님 눈엔 더 신경 쓰이셨을 거예요. 아이가 아직 스스로 약점을 못 느낄 수 있으니, 다그치기보다 <b>구체적인 장면</b>(“이 문제 이렇게 틀렸지?”)으로 함께 짚어 주시면 받아들이기 쉬워요.</div>`; });
+      under.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 이 부분은 <b>자녀가 스스로를 조금 더 엄격하게(낮게)</b> 보는데, 학부모님 눈엔 더 괜찮아 보이셨어요. 실제보다 자신을 깎아보는 것일 수 있으니, <b>잘하고 있는 점을 구체적으로 짚어</b> 자신감을 북돋아 주시면 좋아요.</div>`; });
+    }
+    h2+=`<p class="rpt-po-close">이 비교의 목적은 평가가 아니라 <b>대화의 실마리</b>예요. 시선이 겹치는 지점은 자녀를 이미 잘 이해하고 계신 부분이고, 갈리는 지점은 여름 동안 함께 살피면 자녀를 더 정확히 도울 수 있는 부분입니다.</p>`;
+    h+=`<section class="rpt-sec">${sec('자녀와 학부모님의 시선')}${h2}</section>`;
   }
   if(teacher){
     h+=`<div class="rpt-divider">여기부터 강사 전용 — 학부모 배부 제외</div>`;
