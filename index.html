@@ -2911,6 +2911,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-po-i b{ color:#1b1e24; }
 .rpt-po-close{ font-size:13.5px; color:#5c6672; margin-top:15px; line-height:1.85; padding-top:13px; border-top:1px solid #eef3f2; }
 .rpt-po-close b{ color:#0f766e; }
+.rpt-po-sc{ display:inline-block; margin-left:3px; font-size:11.5px; color:#8b939d; font-weight:600; white-space:nowrap; }
 .rpt-mini-row.ok{ background:#eef7f4; border-color:#d3e8e2; }
 .rpt-mini-row.bad{ background:#f7ecea; border-color:#e6cfcc; }
 .rpt-mini-row .mk{ font-weight:800; font-size:15px; width:16px; text-align:center; }
@@ -5744,11 +5745,13 @@ function renderV2Results(){
     const pc=a.parentCompare, AP=V2_AX_PARENT;
     const agree=pc.rows.filter(r=>Math.abs(r.diff)<12);
     const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
-    let h2=`<p class="rpt-po-lead">자녀가 <b>스스로를 보는 눈</b>과 학부모님이 곁에서 관찰하신 모습을 나란히 맞춰 봤습니다. 누가 맞고 틀리고가 아니라, <b>같은 아이를 두 시선</b>으로 본 결과예요. 두 시선이 겹치는 부분이 많을수록 자녀가 자기 자신을 정확히 알고 있다는 뜻입니다. <span class="rpt-po-pct">두 시선의 일치도 ${pc.agree}%</span></p>`;
-    if(agree.length){ h2+=`<div class="rpt-po-h ok">자녀와 학부모님이 비슷하게 보고 계신 점</div>`; agree.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} <b>이 부분은 자녀도, 학부모님도 비슷하게</b> 느끼고 계세요. 두 분의 눈이 맞아떨어지는 지점입니다.</div>`; }); }
+    const lw=v=>v>=67?'잘하고 있다고':(v<=33?'아쉽다고':'보통이라고');
+    const scr=(x,y)=>`<span class="rpt-po-sc">자녀 ${x} · 학부모 ${y}</span>`;
+    let h2=`<p class="rpt-po-lead">자녀가 <b>스스로를 보는 눈</b>과 학부모님이 곁에서 관찰하신 모습을 나란히 맞춰 봤습니다. <span class="rpt-po-pct">두 시선의 일치도 ${pc.agree}%</span></p>`;
+    if(agree.length){ h2+=`<div class="rpt-po-h ok">자녀와 학부모님이 비슷하게 보고 계신 점</div>`; agree.forEach(r=>{ const m=(r.stu+r.par)/2; const t=m>=67?`이 부분은 <b>자녀도 스스로 잘하고 있다</b>고 보고, 학부모님 눈에도 그렇게 보이세요 — 두 분이 맞아떨어지는 <b>강점</b>이에요.`:(m<=33?`이 부분은 <b>자녀도 스스로 아쉽다</b>고 느끼고, 학부모님도 비슷하게 보고 계세요 — 여름에 함께 채우면 좋을 지점이에요.`:`이 부분은 자녀도 학부모님도 <b>보통</b> 정도로, 비슷하게 보고 계세요.`); h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} ${t} ${scr(r.stu,r.par)}</div>`; }); }
     if(over.length||under.length){ h2+=`<div class="rpt-po-h gap">시선이 조금 다른 점</div>`;
-      over.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 이 부분은 <b>자녀가 스스로를 조금 더 괜찮게</b> 보는데, 학부모님 눈엔 더 신경 쓰이셨을 거예요. 아이가 아직 스스로 약점을 못 느낄 수 있으니, 다그치기보다 <b>구체적인 장면</b>(“이 문제 이렇게 틀렸지?”)으로 함께 짚어 주시면 받아들이기 쉬워요.</div>`; });
-      under.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 이 부분은 <b>자녀가 스스로를 조금 더 엄격하게(낮게)</b> 보는데, 학부모님 눈엔 더 괜찮아 보이셨어요. 실제보다 자신을 깎아보는 것일 수 있으니, <b>잘하고 있는 점을 구체적으로 짚어</b> 자신감을 북돋아 주시면 좋아요.</div>`; });
+      over.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 자녀는 스스로 <b>${lw(r.stu)}</b> 보는데, 학부모님 눈엔 조금 더 <b>아쉬워</b> 보이셨어요. 아이가 아직 스스로 약점을 못 느낄 수 있으니, 다그치기보다 <b>구체적인 장면</b>(“이 문제 이렇게 틀렸지?”)으로 함께 짚어 주시면 받아들이기 쉬워요. ${scr(r.stu,r.par)}</div>`; });
+      under.forEach(r=>{ h2+=`<div class="rpt-po-i"><b>${AP[r.ax].n}</b> — ${AP[r.ax].d} 자녀는 스스로 <b>${lw(r.stu)}</b> 보는데, 학부모님 눈엔 더 <b>괜찮게</b> 보이셨어요. 실제보다 자신을 깎아보는 것일 수 있으니, <b>잘하고 있는 점을 구체적으로 짚어</b> 자신감을 북돋아 주시면 좋아요. ${scr(r.stu,r.par)}</div>`; });
     }
     h2+=`<p class="rpt-po-close">이 비교의 목적은 평가가 아니라 <b>대화의 실마리</b>예요. 시선이 겹치는 지점은 자녀를 이미 잘 이해하고 계신 부분이고, 갈리는 지점은 여름 동안 함께 살피면 자녀를 더 정확히 도울 수 있는 부분입니다.</p>`;
     h+=`<section class="rpt-sec">${sec('자녀와 학부모님의 시선')}${h2}</section>`;
