@@ -450,7 +450,17 @@ body::before{
   <div id="tab-general" class="tab-pane active">
   <style>
   .sp-dir-controls{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
-  #student-directory{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:12px}
+  #student-directory{display:block}
+  .sp-date{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;background:var(--bg-paper)}
+  .sp-date-h{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
+  .sp-date-h:hover{background:var(--bg-elevated)}
+  .sp-date-t{font-family:var(--serif);font-weight:800;font-size:16px;color:var(--ink)}
+  .sp-date-n{font-size:12px;color:#6EE7D6;background:rgba(45,212,191,.14);padding:2px 9px;border-radius:20px;font-weight:700}
+  .sp-date-arw{margin-left:auto;color:var(--ink-muted);transition:.2s;font-size:12px}
+  .sp-date.open .sp-date-arw{transform:rotate(180deg)}
+  .sp-date-body{display:none;padding:2px 16px 16px}
+  .sp-date.open .sp-date-body{display:block}
+  .sp-date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:10px}
   .sp-card{background:var(--bg-paper);border:1px solid var(--line);border-radius:13px;padding:16px 18px 15px;cursor:pointer;transition:.16s}
   .sp-card:hover{border-color:#2DD4BF;transform:translateY(-2px);box-shadow:0 14px 32px -18px rgba(45,212,191,.55)}
   .sp-card.risk{border-color:rgba(224,120,110,.42)}
@@ -1452,7 +1462,7 @@ const TAB_DESC = {
   mirror: '학부모와 자녀의 인식 차이를 비교하는 거울 진단'
 };
 // ═══════════ 학생 종합 (모든 진단 통합 프로필) ═══════════
-let STUDENT_SOURCES=null, STUDENT_INDEX={};
+let STUDENT_SOURCES=null, STUDENT_INDEX={}, DATE_GROUPS={};
 async function loadStudentDirectory(){
   const key=localStorage.getItem(STORAGE_KEY); if(!key) return;
   const get=async(x)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${x}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
@@ -1469,6 +1479,12 @@ function buildStudentIndex(){
   (src.sp||[]).forEach(r=>{ if(r['이름']) ens(r['이름'],r['학교'],r['학년']).sp.push(r); });
   (src.mi||[]).forEach(r=>{ if(r['학생이름']) ens(r['학생이름'],r['학교'],r['학년']).mi.push(r); });
   STUDENT_INDEX=S;
+  const G={}; const addD=(dr,n,sc,g)=>{ const d=String(dr||'').slice(0,10); const k=skey(n,sc,g); if(!d||!S[k]||!S[k].name) return; (G[d]=G[d]||{})[k]=true; };
+  (src.gen||[]).forEach(r=>addD(r['제출일시'],r['이름'],r['학교'],r['학년']));
+  (src.v2||[]).forEach(r=>addD(r['제출시각'],r['이름'],r['학교'],r['학년']));
+  (src.sp||[]).forEach(r=>addD(r['제출시각'],r['이름'],r['학교'],r['학년']));
+  (src.mi||[]).forEach(r=>addD(r['제출시각'],r['학생이름'],r['학교'],r['학년']));
+  DATE_GROUPS=G;
 }
 function spRisks(t){
   const rk=[];
@@ -1477,28 +1493,34 @@ function spRisks(t){
   (t.sp||[]).forEach(r=>{ if(r['위험신호']&&String(r['위험신호']).trim()) rk.push(String(r['위험신호']).trim()); });
   return [...new Set(rk)];
 }
+function spCard(t){
+  const risks=spRisks(t); const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
+  const chips=[];
+  if(t.gen.length) chips.push('<span class="sp-chip g">종합</span>');
+  t.v2.forEach(r=>chips.push(`<span class="sp-chip">${V2KO[r['버전']]||r['버전']||'성향'}</span>`));
+  if(t.sp.length) chips.push('<span class="sp-chip spx">특별판</span>');
+  if(t.mi.length) chips.push('<span class="sp-chip mi">거울</span>');
+  if(t.parent.length) chips.push('<span class="sp-chip pa">학부모</span>');
+  if(risks.length) chips.push(`<span class="sp-chip risk">주의 ${risks.length}</span>`);
+  return `<div class="sp-card${risks.length?' risk':''}" onclick="openStudentProfile('${t.key.replace(/'/g,'')}')"><div class="sp-name">${t.name||'익명'}</div><div class="sp-sub">${[t.school,t.grade].filter(Boolean).join(' ')||'—'}</div><div class="sp-chips">${chips.join('')}</div></div>`;
+}
 function renderStudentDirectory(){
   const wrap=document.getElementById('student-directory'); if(!wrap) return;
   const q=(document.getElementById('sp-search')?.value||'').trim();
-  let list=Object.values(STUDENT_INDEX||{}).filter(t=>t.name);
-  if(q) list=list.filter(t=>t.name.includes(q)||(t.school||'').includes(q));
-  list.sort((a,b)=>b.v2.length+b.sp.length+b.mi.length+b.gen.length-(a.v2.length+a.sp.length+a.mi.length+a.gen.length) || a.name.localeCompare(b.name));
-  const cnt=document.getElementById('sp-count'); if(cnt) cnt.textContent=list.length;
-  const gc=document.getElementById('tab-count-general'); if(gc) gc.textContent=list.length;
-  if(!list.length){ wrap.innerHTML='<div style="padding:22px;color:var(--ink-muted);font-size:13px;text-align:center">응답이 없습니다.</div>'; return; }
-  const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
-  let h='';
-  list.forEach(t=>{
-    const risks=spRisks(t); const chips=[];
-    if(t.gen.length) chips.push('<span class="sp-chip g">종합</span>');
-    t.v2.forEach(r=>chips.push(`<span class="sp-chip">${V2KO[r['버전']]||r['버전']||'성향'}</span>`));
-    if(t.sp.length) chips.push('<span class="sp-chip spx">특별판</span>');
-    if(t.mi.length) chips.push('<span class="sp-chip mi">거울</span>');
-    if(t.parent.length) chips.push('<span class="sp-chip pa">학부모</span>');
-    if(risks.length) chips.push(`<span class="sp-chip risk">주의 ${risks.length}</span>`);
-    h+=`<div class="sp-card${risks.length?' risk':''}" onclick="openStudentProfile('${t.key.replace(/'/g,'')}')"><div class="sp-name">${t.name||'익명'}</div><div class="sp-sub">${[t.school,t.grade].filter(Boolean).join(' ')||'—'}</div><div class="sp-chips">${chips.join('')}</div></div>`;
+  const dates=Object.keys(DATE_GROUPS||{}).sort((a,b)=>b.localeCompare(a));
+  const totalStu=Object.values(STUDENT_INDEX||{}).filter(t=>t.name).length;
+  const cnt=document.getElementById('sp-count'); if(cnt) cnt.textContent=totalStu;
+  const gc=document.getElementById('tab-count-general'); if(gc) gc.textContent=totalStu;
+  let h='', shown=0;
+  dates.forEach(d=>{
+    let keys=Object.keys(DATE_GROUPS[d]).filter(k=>STUDENT_INDEX[k]&&STUDENT_INDEX[k].name);
+    if(q) keys=keys.filter(k=>STUDENT_INDEX[k].name.includes(q)||(STUDENT_INDEX[k].school||'').includes(q));
+    if(!keys.length) return;
+    keys.sort((x,y)=>STUDENT_INDEX[x].name.localeCompare(STUDENT_INDEX[y].name));
+    shown++; const open=(shown===1||q)?' open':'';
+    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${d}</span><span class="sp-date-n">${keys.length}명</span><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">${keys.map(k=>spCard(STUDENT_INDEX[k])).join('')}</div></div></div>`;
   });
-  wrap.innerHTML=h;
+  wrap.innerHTML = shown? h : '<div style="padding:22px;color:var(--ink-muted);font-size:13px;text-align:center">응답이 없습니다.</div>';
 }
 function josaEN(w){ if(!w) return '은(는)'; const c=w.charCodeAt(w.length-1); if(c<0xAC00||c>0xD7A3) return '은(는)'; return ((c-0xAC00)%28)?'은':'는'; }
 function synthDefine(t){
