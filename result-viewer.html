@@ -5703,7 +5703,7 @@ function renderV2Results(){
   if(teacher){
     h+=`<div class="rpt-divider">여기부터 강사 전용 — 학부모 배부 제외</div>`;
     h+=`<section class="rpt-sec">${sec('응답 신뢰도')}<div class="rpt-box">${a.att?'<b class="rpt-warn">주의력 체크 불일치 — 응답 신뢰도 주의</b>':'주의력 체크 통과 — 응답 신뢰 가능'}</div></section>`;
-    if(a.hasParent){ h+=`<section class="rpt-sec">${sec('학생–부모 인식 차이')}<div class="rpt-box">${a.gap?`<b class="rpt-warn">${V2_AXNAME[a.gap.ax]}</b>에서 학생이 스스로를 부모 관찰보다 높게 평가(자기 인식 과대평가 가능).`:'학생 응답과 부모 관찰이 대체로 일치.'}</div></section>`; }
+    if(a.gap){ h+=`<section class="rpt-sec">${sec('학생–부모 인식 차이','같은 세션에서 학부모가 함께 응답한 경우만')}<div class="rpt-box"><b class="rpt-warn">${V2_AXNAME[a.gap.ax]}</b>에서 학생이 스스로를 부모 관찰보다 높게 평가(자기 인식 과대평가 가능).</div></section>`; }
     const rk=v2State.responses['RK1'];
     if(Array.isArray(rk)&&rk.length){ const labels=rk.map(i=>V2_RANK_FIRST.items[i]); const pAx=labels.map(l=>V2_RANK_AX[l]); const mw=a.weakest&&pAx.includes(a.weakest);
       h+=`<section class="rpt-sec">${sec('우선순위 ↔ 실측')}<div class="rpt-box">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>실측상 가장 약한 축: <b class="rpt-warn">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>. ${mw?'자기 인식과 실제 약점이 일치.':'스스로 꼽은 우선순위와 실제 약점이 달라 방향 조정 필요.'}</div></section>`; }
