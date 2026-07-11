@@ -497,6 +497,19 @@ body::before{
   .sp-pa{padding:10px 2px;border-bottom:1px solid var(--line-soft)}
   .sp-pa-q{font-size:12.5px;color:var(--ink-muted);line-height:1.45}
   .sp-pa-a{font-size:14px;color:var(--ink);font-weight:600;margin-top:3px}
+  .sp-cmp{margin-top:8px}
+  .sp-cmp-head,.sp-cmp-row{display:grid;grid-template-columns:92px 1fr 1fr 62px;gap:11px;align-items:center}
+  .sp-cmp-head{font-size:11px;color:var(--ink-muted);font-weight:700;padding-bottom:7px}
+  .sp-cmp-head .s2{color:#2DD4BF}.sp-cmp-head .s3{color:#8fc9e0}
+  .sp-cmp-row{padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .sp-cmp-ax{font-size:13px;font-weight:700;color:var(--ink)}
+  .sp-cmp-side{display:flex;align-items:center;gap:8px}
+  .sp-cmp-bar{flex:1;height:7px;border-radius:4px;background:var(--bg-deep);overflow:hidden}
+  .sp-cmp-fill{height:100%;border-radius:4px}
+  .sp-cmp-fill.stu{background:#2DD4BF}.sp-cmp-fill.par{background:#8fc9e0}
+  .sp-cmp-val{font-size:12px;color:var(--ink-soft);width:22px;text-align:right;font-variant-numeric:tabular-nums}
+  .sp-cmp-diff{font-size:11px;font-weight:700;text-align:right}
+  .sp-cmp-diff.hi{color:#ef9f92}.sp-cmp-diff.lo{color:#7fbfb2}
   </style>
   <div class="sp-dir-controls">
     <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
@@ -1562,6 +1575,20 @@ const PARENT_Q={
  P9:{q:'아이가 국어 때문에 반복해서 듣는 지적은?',o:['"꼼꼼히 읽어라"','"근거를 찾아라"','"시간 관리해라"','"미리 시작해라"','"감으로 풀지 마라"']},
  P10:{q:'시험 기간 아이의 모습에 가깝다.',o:['계획대로 차근차근 한다','벼락치기를 한다','프린트를 못 찾아 헤맨다','시험 범위 자체를 잘 모른다','평소와 큰 차이가 없다']}
 };
+// 학부모 문항 채점 코드(P1~P10) + 6축 산출 (index.html 채점과 동일)
+const PARENT_C={
+ P1:['장악-','변별-','시간-','변별-★','메타-★'], P2:['장악+','장악-','장악-','장악-★','장악-★'],
+ P3:['적용+','적용-','적용-★','','적용-★|정서-'], P4:['장악+','','장악-★','장악-','장악-★'],
+ P5:['메타+|정서+','정서+','메타-★','정서-★','정서-'], P6:['메타+','장악+','','메타-★',''],
+ P7:['메타+|변별+','적용-','장악-','장악-','메타-★'], P8:['메타-★','장악-','메타+','메타-','변별-★'],
+ P9:['변별-','변별-|메타-','시간-','장악-','메타-★'], P10:['장악+','장악-','장악-★','장악-★','정서-']
+};
+function dashV2Flags(code){ if(!code) return []; return code.split('|').map(c=>{ c=c.trim(); if(!c) return null; c=c.replace('★',''); const d=c.includes('-')?-1:1; const ax=c.replace('+','').replace('-','').trim(); return {ax,d}; }).filter(Boolean); }
+function computeParentAxes(pj){
+  const acc={장악:[],적용:[],변별:[],메타:[],시간:[],정서:[]};
+  Object.keys(PARENT_C).forEach(id=>{ const v=pj[id]; if(typeof v!=='number') return; const code=(PARENT_C[id]||[])[v-1]; dashV2Flags(code).forEach(f=>{ if(f.ax&&acc[f.ax]) acc[f.ax].push(f.d); }); });
+  const out={}; Object.keys(acc).forEach(k=>{ const a=acc[k]; out[k]=a.length?Math.round(50+50*(a.reduce((x,y)=>x+y,0)/a.length)):null; }); return out;
+}
 function openStudentProfile(key){
   const t=STUDENT_INDEX[key]; if(!t) return;
   const e=v=>String(v==null?'':v).replace(/</g,'&lt;');
@@ -1584,8 +1611,15 @@ function openStudentProfile(key){
   h+=rows||'<div style="color:var(--ink-muted);font-size:13px">기록 없음</div>';
   if(t.parent&&t.parent.length){
     let pj={}; try{ pj=JSON.parse(t.parent[0]['응답_JSON']||'{}'); }catch(_e){}
+    // 6축 나란히 (학생 자기평가 vs 부모 관찰)
+    const sv=(t.v2||[]).filter(r=>r['버전']!=='summer').sort((a,b)=>String(b['제출시각']||'').localeCompare(String(a['제출시각']||'')))[0];
+    const pax=computeParentAxes(pj);
+    if(sv){ const CO={'자료 장악':'자료장악','사고 적용':'사고적용','조건 변별':'조건변별','오답 메타인지':'오답메타인지','시간 운영':'시간운영','정서 회복':'정서회복'}; const KK={'자료 장악':'장악','사고 적용':'적용','조건 변별':'변별','오답 메타인지':'메타','시간 운영':'시간','정서 회복':'정서'};
+      let cr=''; Object.keys(CO).forEach(nm=>{ const stu=+sv[CO[nm]]; const par=pax[KK[nm]]; if(isNaN(stu)||par==null) return; const diff=stu-par; const dc=diff>=8?'hi':(diff<=-8?'lo':''); const dt=diff>=8?`학생 +${diff}`:(diff<=-8?`부모 +${-diff}`:'≈'); const w=v=>Math.max(0,Math.min(100,v)); cr+=`<div class="sp-cmp-row"><span class="sp-cmp-ax">${nm}</span><span class="sp-cmp-side"><span class="sp-cmp-bar"><span class="sp-cmp-fill stu" style="width:${w(stu)}%"></span></span><span class="sp-cmp-val">${stu}</span></span><span class="sp-cmp-side"><span class="sp-cmp-bar"><span class="sp-cmp-fill par" style="width:${w(par)}%"></span></span><span class="sp-cmp-val">${par}</span></span><span class="sp-cmp-diff ${dc}">${dt}</span></div>`; });
+      if(cr) h+=`<div class="sp-h4" style="margin-top:22px">학생 자기응답 ↔ 학부모 관찰 <span style="font-weight:400;color:var(--ink-muted);font-size:12px">— 6축 나란히 (높을수록 강함)</span></div><div class="sp-cmp"><div class="sp-cmp-head"><span>축</span><span class="s2">학생 (자기)</span><span class="s3">부모 (관찰)</span><span style="text-align:right">차이</span></div>${cr}</div>`;
+    }
     const items=Object.keys(PARENT_Q).map(id=>{ const v=pj[id]; if(v==null) return ''; const Q=PARENT_Q[id]; const ans=(v==='unknown')?'<i style="color:var(--ink-faint)">잘 모르겠음</i>':e(Q.o[v-1]||'—'); return `<div class="sp-pa"><div class="sp-pa-q">${e(Q.q)}</div><div class="sp-pa-a">${ans}</div></div>`; }).filter(Boolean).join('');
-    if(items) h+=`<div class="sp-h4" style="margin-top:22px">학부모 관찰 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:12px">— 학부모가 자녀를 관찰해 응답</span></div>${items}`;
+    if(items) h+=`<div class="sp-h4" style="margin-top:20px">학부모 관찰 응답 (원문)</div>${items}`;
   }
   document.getElementById('modal-title').textContent=`${t.name} — 학생 종합`;
   document.getElementById('modal-body').innerHTML=h;
