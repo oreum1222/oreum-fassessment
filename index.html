@@ -5713,7 +5713,7 @@ function renderV2Results(){
     const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
     let msg;
     if(pc.agree>=80) msg=`자녀가 스스로를 보는 눈과 학부모님이 관찰하신 모습이 <b>대체로 잘 맞습니다</b> (인식 일치도 ${pc.agree}%). 자기 인식이 비교적 정확한 편이에요.`;
-    else { const top=(over[0]||under[0]||pc.rows[0]); const dir = top.diff>0 ? '자녀가 스스로를 조금 더 <b>긍정적으로</b> 보고 있어요' : '학부모님이 조금 더 <b>마음 쓰고</b> 계신 부분이에요'; msg=`자녀의 자기 인식과 학부모님의 관찰에 <b>차이가 나는 지점</b>이 있어요 (일치도 ${pc.agree}%). 특히 <b>${AX[top.ax]}</b> 축에서는 ${dir}. 여름 동안 이 부분을 함께 짚어 주시면 좋습니다.`; }
+    else { const top=(over[0]||under[0]||pc.rows[0]); const dir = top.diff>0 ? '자녀가 스스로를 학부모님 관찰보다 조금 더 <b>긍정적으로</b> 보고 있어요' : '자녀가 스스로를 학부모님 관찰보다 조금 더 <b>낮게</b> 평가하고 있어요'; msg=`자녀의 자기 인식과 학부모님의 관찰에 <b>차이가 나는 지점</b>이 있어요 (일치도 ${pc.agree}%). 특히 <b>${AX[top.ax]}</b> 축에서는 ${dir}. 여름 동안 이 부분을 함께 짚어 주시면 좋습니다.`; }
     h+=`<section class="rpt-sec">${sec('자녀와 학부모님의 시선')}<div class="rpt-box">${msg}</div></section>`;
   }
   if(teacher){
@@ -5722,7 +5722,7 @@ function renderV2Results(){
     if(a.parentCompare){ const pc=a.parentCompare, AX=V2_AXNAME;
       const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
       const tbl=pc.rows.map(r=>`<div class="rpt-cmp-row"><span class="ax">${AX[r.ax]}</span><span>학생 ${r.stu}</span><span>부모 ${r.par}</span><span class="${r.diff>=12?'hi':(r.diff<=-12?'lo':'')}">${r.diff>0?'+':''}${r.diff}</span></div>`).join('');
-      h+=`<section class="rpt-sec">${sec('학생–학부모 인식 비교','자기평가 vs 학부모 관찰 · 별도 응답 매칭')}<div class="rpt-box"><b>인식 일치도 ${pc.agree}%</b>${over.length?` · 학생 과대평가(자기↑): <b class="rpt-warn">${over.map(r=>AX[r.ax]).join(', ')}</b>`:''}${under.length?` · 부모가 더 우려(부모↑): <b>${under.map(r=>AX[r.ax]).join(', ')}</b>`:''}</div><div class="rpt-cmp"><div class="rpt-cmp-row head"><span class="ax">축</span><span>학생</span><span>부모</span><span>차이</span></div>${tbl}</div></section>`; }
+      h+=`<section class="rpt-sec">${sec('학생–학부모 인식 비교','자기평가 vs 학부모 관찰 · 별도 응답 매칭')}<div class="rpt-box"><b>인식 일치도 ${pc.agree}%</b>${over.length?` · 학생 과대평가(자기↑): <b class="rpt-warn">${over.map(r=>AX[r.ax]).join(', ')}</b>`:''}${under.length?` · 학생 과소평가(자기↓·부모가 더 높게 봄): <b>${under.map(r=>AX[r.ax]).join(', ')}</b>`:''}</div><div class="rpt-cmp"><div class="rpt-cmp-row head"><span class="ax">축</span><span>학생</span><span>부모</span><span>차이</span></div>${tbl}</div></section>`; }
     const rk=v2State.responses['RK1'];
     if(Array.isArray(rk)&&rk.length){ const labels=rk.map(i=>V2_RANK_FIRST.items[i]); const pAx=labels.map(l=>V2_RANK_AX[l]); const mw=a.weakest&&pAx.includes(a.weakest);
       h+=`<section class="rpt-sec">${sec('우선순위 ↔ 실측')}<div class="rpt-box">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>실측상 가장 약한 축: <b class="rpt-warn">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>. ${mw?'자기 인식과 실제 약점이 일치.':'스스로 꼽은 우선순위와 실제 약점이 달라 방향 조정 필요.'}</div></section>`; }
