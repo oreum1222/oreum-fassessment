@@ -494,6 +494,9 @@ body::before{
   .sp-diag a{font-size:12px;color:#2DD4BF;text-decoration:none;border:1px solid rgba(45,212,191,.42);padding:5px 11px;border-radius:20px;white-space:nowrap}
   .sp-axmini{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
   .sp-axmini span{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--bg-deep);color:var(--ink-muted)}
+  .sp-pa{padding:10px 2px;border-bottom:1px solid var(--line-soft)}
+  .sp-pa-q{font-size:12.5px;color:var(--ink-muted);line-height:1.45}
+  .sp-pa-a{font-size:14px;color:var(--ink);font-weight:600;margin-top:3px}
   </style>
   <div class="sp-dir-controls">
     <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
@@ -1547,6 +1550,18 @@ function synthDefine(t){
   if(also.length) txt += ` <span style="color:var(--ink-muted)">${also.join(' · ')}도 함께 응시했습니다.</span>`;
   return {txt, risks:spRisks(t)};
 }
+const PARENT_Q={
+ P1:{q:'아이가 국어(또는 평소) 문제를 틀렸을 때 가장 자주 하는 말은?',o:['"몰랐어"','"알았는데 실수했어"','"시간이 없었어"','"문제가 이상했어"','"왜 틀렸는지 모르겠어"']},
+ P2:{q:'아이의 국어 프린트/노트 상태에 가장 가까운 것은?',o:['잘 모아져 있고 본 흔적이 많다','모아져는 있는데 다시 본 흔적은 적다','일부는 있고 일부는 없다','시험 직전에 찾느라 바쁘다','부모가 챙겨 줘야 한다']},
+ P3:{q:'아이가 긴 글이나 안내문을 볼 때 자주 보이는 모습은?',o:['끝까지 읽고 요지를 말한다','읽긴 읽는데 다시 설명을 요구한다','중간부터 "그래서 뭐 하라는 거야?"라고 묻는다','필요한 부분만 찾으려 한다','아예 읽기 싫어한다']},
+ P4:{q:'시험 직전 아이의 모습에 가깝다.',o:['이미 정리한 것을 반복해서 본다','문제집을 많이 푼다','프린트와 필기를 급하게 찾는다','새로 외울 게 많아 허둥댄다','국어는 뭘 해야 할지 몰라 한다']},
+ P5:{q:'아이가 성적이 안 나왔을 때 회복하는 방식은?',o:['바로 틀린 이유를 확인한다','속상해하지만 다시 보려고 한다','"실수야"라고 하고 넘긴다','한동안 국어를 피한다','부모가 말해야 겨우 본다']},
+ P6:{q:'아이가 "국어 공부했다"는 날, 실제로 남는 흔적은?',o:['푼 문제와 채점/오답 이유','필기/자료 정리','읽은 지문 표시','눈에 띄는 흔적이 별로 없다','정확히 확인하기 어렵다']},
+ P7:{q:'아이가 국어로 하는 질문 중 가장 많은 유형은?',o:['"이 답 왜 아니야?"','"이 지문 무슨 말이야?"','"이거 외워야 해?"','"이거 시험에 나와?"','"뭘 해야 해?"']},
+ P8:{q:'아이가 해설을 본 뒤 자주 하는 말은?',o:['"아, 나 이거 알았는데"','"아예 몰랐네"','"왜 이게 답이지?"','별말 없이 넘긴다','"해설이 이상해"']},
+ P9:{q:'아이가 국어 때문에 반복해서 듣는 지적은?',o:['"꼼꼼히 읽어라"','"근거를 찾아라"','"시간 관리해라"','"미리 시작해라"','"감으로 풀지 마라"']},
+ P10:{q:'시험 기간 아이의 모습에 가깝다.',o:['계획대로 차근차근 한다','벼락치기를 한다','프린트를 못 찾아 헤맨다','시험 범위 자체를 잘 모른다','평소와 큰 차이가 없다']}
+};
 function openStudentProfile(key){
   const t=STUDENT_INDEX[key]; if(!t) return;
   const e=v=>String(v==null?'':v).replace(/</g,'&lt;');
@@ -1567,6 +1582,11 @@ function openStudentProfile(key){
   t.gen.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">종합 진단(8축)</div><div class="st">${[e(r['4분면 유형']),e(r['16유형 이름'])].filter(Boolean).join(', ')||'—'}</div></div><a href="result-viewer.html?generalName=${enc}" target="_blank">결과지</a></div>`; });
   t.parent.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">학부모 관찰</div><div class="st">학부모가 자녀를 관찰해 응답 (${e(r['제출시각']).slice(0,10)})</div></div><span style="font-size:12px;color:var(--ink-faint)">시트 참조</span></div>`; });
   h+=rows||'<div style="color:var(--ink-muted);font-size:13px">기록 없음</div>';
+  if(t.parent&&t.parent.length){
+    let pj={}; try{ pj=JSON.parse(t.parent[0]['응답_JSON']||'{}'); }catch(_e){}
+    const items=Object.keys(PARENT_Q).map(id=>{ const v=pj[id]; if(v==null) return ''; const Q=PARENT_Q[id]; const ans=(v==='unknown')?'<i style="color:var(--ink-faint)">잘 모르겠음</i>':e(Q.o[v-1]||'—'); return `<div class="sp-pa"><div class="sp-pa-q">${e(Q.q)}</div><div class="sp-pa-a">${ans}</div></div>`; }).filter(Boolean).join('');
+    if(items) h+=`<div class="sp-h4" style="margin-top:22px">학부모 관찰 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:12px">— 학부모가 자녀를 관찰해 응답</span></div>${items}`;
+  }
   document.getElementById('modal-title').textContent=`${t.name} — 학생 종합`;
   document.getElementById('modal-body').innerHTML=h;
   document.getElementById('modal-overlay').classList.add('active');
