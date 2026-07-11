@@ -11,21 +11,21 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#1a1a1a;
-  --bg-paper:#232323;
-  --bg-deep:#2e2e2e;
-  --bg-elevated:#2a2a2a;
-  --ink:#f0ede4;
-  --ink-soft:#e8e6df;
-  --ink-muted:#9a9a9a;
-  --ink-faint:#6a6a6a;
-  --line:#3a3a3a;
-  --line-soft:#2e2e2e;
-  --line-strong:#4a4a4a;
-  --gold:#d4a85a;
-  --gold-deep:#b8893d;
-  --gold-soft:#e8c275;
-  --olive:#9bb38e;
+  --bg:#0c1513;
+  --bg-paper:#152020;
+  --bg-deep:#1a2624;
+  --bg-elevated:#182220;
+  --ink:#e9f1ee;
+  --ink-soft:#c4cfca;
+  --ink-muted:#8a938f;
+  --ink-faint:#5c6763;
+  --line:#26332f;
+  --line-soft:#1e2926;
+  --line-strong:#334039;
+  --gold:#2DD4BF;
+  --gold-deep:#14b8a6;
+  --gold-soft:#6EE7D6;
+  --olive:#7fb0a4;
   --crimson:#e57373;
   --serif:'Nanum Myeongjo', serif;
   --sans:'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,9 +43,9 @@ body{
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:
-    radial-gradient(ellipse at 15% 10%, rgba(212,168,90,0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 90%, rgba(212,168,90,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(155,179,142,0.03) 0%, transparent 60%);
+    radial-gradient(ellipse at 15% 10%, rgba(45,212,191,0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgba(45,212,191,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(127,176,164,0.03) 0%, transparent 60%);
 }
 .container{max-width:1280px;margin:0 auto;padding:32px 24px;position:relative;z-index:1}
 
@@ -55,7 +55,7 @@ body::before{
   border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:32px;
   flex-wrap:wrap;gap:16px;
 }
-.dash-title{font-family:var(--serif);font-weight:800;font-size:26px;letter-spacing:-.01em;color:var(--ink);text-shadow:0 2px 24px rgba(212,168,90,0.15)}
+.dash-title{font-family:var(--serif);font-weight:800;font-size:26px;letter-spacing:-.01em;color:var(--ink);text-shadow:0 2px 24px rgba(45,212,191,0.15)}
 .dash-subtitle{font-family:var(--serif);font-size:13px;color:var(--gold);font-weight:700;letter-spacing:.04em;margin-bottom:4px}
 .dash-meta{font-size:13px;color:var(--ink-muted)}
 .dash-meta a{color:var(--olive);text-decoration:none;border-bottom:1px solid var(--line)}
@@ -73,7 +73,7 @@ body::before{
 .auth-box::before{
   content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:3px;
   background:linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 50%, var(--gold) 100%);
-  box-shadow:0 0 12px rgba(212,168,90,0.5);
+  box-shadow:0 0 12px rgba(45,212,191,0.5);
 }
 .auth-box h2{font-family:var(--serif);font-weight:800;font-size:22px;margin-bottom:12px;color:var(--ink)}
 .auth-box p{color:var(--ink-soft);font-size:14px;margin-bottom:24px;line-height:1.85}
@@ -90,13 +90,13 @@ body::before{
   padding:14px 32px;cursor:pointer;border:none;
   background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%);
   color:#1a1a1a;
-  box-shadow:0 4px 16px -4px rgba(212,168,90,0.4);
+  box-shadow:0 4px 16px -4px rgba(45,212,191,0.4);
   transition:all .2s ease;
 }
 .btn:hover{
   background:linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 100%);
   transform:translateY(-1px);
-  box-shadow:0 6px 24px -4px rgba(212,168,90,0.55);
+  box-shadow:0 6px 24px -4px rgba(45,212,191,0.55);
 }
 .btn-ghost{
   background:transparent;color:var(--ink-soft);border:1px solid var(--line);
@@ -124,10 +124,10 @@ body::before{
 .stat-card::before{
   content:'';position:absolute;top:0;left:0;width:30px;height:2px;
   background:var(--gold);
-  box-shadow:0 0 8px rgba(212,168,90,0.5);
+  box-shadow:0 0 8px rgba(45,212,191,0.5);
 }
 .stat-card.risk::before{background:var(--crimson);box-shadow:0 0 8px rgba(229,115,115,0.4)}
-.stat-card.success::before{background:var(--olive);box-shadow:0 0 8px rgba(155,179,142,0.4)}
+.stat-card.success::before{background:var(--olive);box-shadow:0 0 8px rgba(127,176,164,0.4)}
 .stat-label{
   font-family:var(--serif);font-weight:700;font-size:11px;
   color:var(--gold);letter-spacing:.04em;margin-bottom:6px;text-transform:none;
@@ -205,7 +205,7 @@ body::before{
 .table-controls select option:checked,
 .table-controls select option:hover{
   background:#2a2a2a;
-  color:#d4a85a;
+  color:#2DD4BF;
 }
 .table-controls input{flex:1;min-width:160px}
 .table-controls input:focus,.table-controls select:focus{outline:none;border-color:var(--gold)}
@@ -224,7 +224,7 @@ body::before{
 .student-table th .sort-arrow{font-size:10px;opacity:.5;margin-left:4px}
 .student-table th.sorted .sort-arrow{opacity:1}
 .student-table tbody tr{border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .15s}
-.student-table tbody tr:hover{background:rgba(212,168,90,0.08)}
+.student-table tbody tr:hover{background:rgba(45,212,191,0.08)}
 .student-table tbody tr.risk{background:rgba(229,115,115,0.06)}
 .student-table tbody tr.risk:hover{background:rgba(229,115,115,0.12)}
 .student-table td{padding:10px 14px;vertical-align:middle;color:var(--ink-soft)}
@@ -233,8 +233,8 @@ body::before{
 .student-table td.risk-cell{color:var(--crimson);font-size:11px;max-width:200px}
 .student-table .pill{
   display:inline-block;padding:2px 8px;font-size:11px;
-  background:rgba(212,168,90,0.12);color:var(--gold);
-  font-family:var(--serif);font-weight:700;border:1px solid rgba(212,168,90,0.35);
+  background:rgba(45,212,191,0.12);color:var(--gold);
+  font-family:var(--serif);font-weight:700;border:1px solid rgba(45,212,191,0.35);
 }
 .empty-state{text-align:center;padding:60px 20px;color:var(--ink-muted)}
 .empty-state h3{font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:8px;color:var(--ink-soft)}
@@ -251,7 +251,7 @@ body::before{
   background:var(--bg-paper);max-width:720px;width:100%;
   border:1px solid var(--gold);
   position:relative;
-  box-shadow:0 16px 64px -16px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,168,90,0.15);
+  box-shadow:0 16px 64px -16px rgba(0,0,0,0.7), 0 0 0 1px rgba(45,212,191,0.15);
 }
 .modal-head{
   background:linear-gradient(135deg, #0e0e0e 0%, #1a1a1a 100%);
@@ -382,7 +382,7 @@ body::before{
 <div class="container">
 
 <!-- 인증 영역 (초기) -->
-<section id="auth-screen" class="auth-section">
+<section id="auth-screen" class="auth-section" style="display:none">
   <div class="auth-box">
     <h2>가경T 진단 대시보드</h2>
     <p>학생군 누적 데이터 분석 — 팀 비밀번호를 입력해주세요.</p>
@@ -398,7 +398,7 @@ body::before{
 </section>
 
 <!-- 대시보드 본체 -->
-<section id="dashboard-screen" style="display:none">
+<section id="dashboard-screen">
   <div class="dash-head">
     <div>
       <div class="dash-subtitle">가경 국어 연구소 — 오름 국어학원</div>
@@ -431,7 +431,7 @@ body::before{
   @media(max-width:860px){.rc-head{display:none}.rc-row{grid-template-columns:1fr auto;gap:6px 10px}.rc-date,.rc-row .rc-summary{grid-column:1/-1;margin-top:2px}}
   </style>
   <!-- ★ 최신 응답 (전 진단 통합, 최상단 우선 영역) -->
-  <div class="data-section" id="recent-section" style="margin-bottom:26px;border:1px solid rgba(212,168,90,.45);border-radius:12px;overflow:hidden">
+  <div class="data-section" id="recent-section" style="margin-bottom:26px;border:1px solid rgba(45,212,191,.45);border-radius:12px;overflow:hidden">
     <div class="table-controls">
       <h3 style="margin:0">최신 응답 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합, 새 응답부터</span></h3>
       <input type="text" id="recent-search" placeholder="이름/학교 검색" oninput="renderRecentTable()" style="margin-left:auto">
@@ -479,7 +479,7 @@ body::before{
   .sp-sub{font-size:12.5px;color:var(--ink-muted);margin-top:2px}
   .sp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
   .sp-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(45,212,191,.14);color:#6EE7D6;white-space:nowrap}
-  .sp-chip.g{background:rgba(155,179,142,.15);color:#a9c29c}
+  .sp-chip.g{background:rgba(127,176,164,.15);color:#a9c29c}
   .sp-chip.spx{background:rgba(91,141,239,.17);color:#7aa2f5}
   .sp-chip.mi{background:rgba(143,201,224,.15);color:#8fc9e0}
   .sp-chip.pa{background:rgba(170,120,235,.16);color:#c79bf0}
@@ -704,12 +704,9 @@ window.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_URL, CURRENT_URL);
     console.log('🔄 옛 URL 자동 갱신:', storedUrl, '→', CURRENT_URL);
   }
-  const key = localStorage.getItem(STORAGE_KEY);
-  if (key) {
-    // 저장된 키가 있으면 자동 접속 (URL은 항상 CURRENT_URL 사용)
-    localStorage.setItem(STORAGE_URL, CURRENT_URL);
-    autoAuthenticate(key);
-  }
+  // 비밀번호 입력 없이 바로 접속 (팀 전용 대시보드)
+  localStorage.setItem(STORAGE_URL, CURRENT_URL);
+  doAuthFetch(TEAM_AUTH.apiKey);
 });
 
 async function authenticate() {
@@ -839,7 +836,7 @@ async function loadRecentPanel(){
   const rows = [];
   (allStudents||[]).forEach(s=>{
     rows.push({ date:d10(s['제출일시']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'일반', col:'#a9c29c', bg:'rgba(155,179,142,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(', '),
+      kind:'일반', col:'#a9c29c', bg:'rgba(127,176,164,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(', '),
       warn:e(s['주의 신호']), url:'result-viewer.html?generalName='+encodeURIComponent(e(s['이름'])) });
   });
   const pkey = s => e(s['이름'])+'|'+e(s['학교'])+'|'+e(s['학년']);
@@ -866,7 +863,7 @@ async function loadRecentPanel(){
   });
   mi.forEach(s=>{
     rows.push({ date:d10(s['제출시각']), name:e(s['학생이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:'거울', col:'#e0bd7e', bg:'rgba(212,168,90,.15)', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
+      kind:'거울', col:'#c79bf0', bg:'rgba(45,212,191,.15)', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
       url:'result-viewer.html?mirrorCode='+encodeURIComponent(e(s['가족코드'])) });
   });
   rows.sort((a,b)=> b.date.localeCompare(a.date));
@@ -1001,8 +998,8 @@ function drawBar(canvasId, labels, data, orientation) {
       labels,
       datasets: [{
         data,
-        backgroundColor: 'rgba(212,168,90,0.7)',
-        borderColor: '#d4a85a', borderWidth: 1,
+        backgroundColor: 'rgba(45,212,191,0.7)',
+        borderColor: '#2DD4BF', borderWidth: 1,
       }]
     },
     options: {
@@ -1027,9 +1024,9 @@ function drawRadar(canvasId, labels, data) {
       datasets: [{
         label: '평균 점수',
         data,
-        backgroundColor: 'rgba(212,168,90,0.20)',
-        borderColor: '#d4a85a', borderWidth: 2,
-        pointBackgroundColor: '#e8c275', pointRadius: 4,
+        backgroundColor: 'rgba(45,212,191,0.20)',
+        borderColor: '#2DD4BF', borderWidth: 2,
+        pointBackgroundColor: '#6EE7D6', pointRadius: 4,
       }]
     },
     options: {
@@ -1221,8 +1218,8 @@ function openModal(s) {
     ` : ''}
     ${writtenHTML}
     <div style="margin-top:18px;padding:14px 0;border-top:1px dashed var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-      <button onclick="openGeneralParentSummary('${(s['이름'] || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📋 학부모 상담용 요약 (한 장)</button>
-      <button onclick="openGeneralFullResult('${(s['이름'] || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 전체 결과 인쇄</button>
+      <button onclick="openGeneralParentSummary('${(s['이름'] || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#2DD4BF;border:1px solid #2DD4BF;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📋 학부모 상담용 요약 (한 장)</button>
+      <button onclick="openGeneralFullResult('${(s['이름'] || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#2DD4BF;border:1px solid #2DD4BF;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 전체 결과 인쇄</button>
     </div>
   `;
   document.getElementById('modal-overlay').classList.add('active');
@@ -1298,7 +1295,7 @@ function buildParentSummaryHTML(s) {
   const scoreColor = (v) => {
     if (v >= 75) return '#3a6b3a';
     if (v >= 60) return '#5a7a5a';
-    if (v >= 45) return '#8c6620';
+    if (v >= 45) return '#0f766e';
     return '#a53d2a';
   };
 
@@ -1321,15 +1318,15 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
 .page { max-width: 182mm; margin: 0 auto; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; margin-bottom: 16px; }
 .head-left h1 { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 20pt; letter-spacing: -.01em; }
-.head-left .subtitle { font-family: 'Nanum Myeongjo', serif; color: #8c6620; font-size: 10pt; font-weight: 700; margin-top: 2px; }
+.head-left .subtitle { font-family: 'Nanum Myeongjo', serif; color: #0f766e; font-size: 10pt; font-weight: 700; margin-top: 2px; }
 .head-right { text-align: right; font-size: 9pt; color: #5a554c; line-height: 1.6; }
 .head-right strong { font-family: 'Nanum Myeongjo', serif; color: #1a1a1a; font-weight: 800; font-size: 11pt; display: block; }
-.brand { font-family: 'Nanum Myeongjo', serif; font-weight: 700; color: #8c6620; font-size: 8.5pt; letter-spacing: .05em; margin-bottom: 6px; }
+.brand { font-family: 'Nanum Myeongjo', serif; font-weight: 700; color: #0f766e; font-size: 8.5pt; letter-spacing: .05em; margin-bottom: 6px; }
 .section { margin-bottom: 14px; }
-.section-title { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 11pt; color: #8c6620; padding-bottom: 4px; margin-bottom: 8px; border-bottom: 1px solid #d4c896; }
+.section-title { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 11pt; color: #0f766e; padding-bottom: 4px; margin-bottom: 8px; border-bottom: 1px solid #d4c896; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .score-card { background: #faf6ec; border: 1px solid #e8dcb9; padding: 10px 14px; }
-.score-card .label { font-size: 9pt; color: #8c6620; letter-spacing: .04em; margin-bottom: 4px; }
+.score-card .label { font-size: 9pt; color: #0f766e; letter-spacing: .04em; margin-bottom: 4px; }
 .score-card .value { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 16pt; color: #1a1a1a; }
 .score-card .sub { font-size: 9pt; color: #5a554c; margin-top: 2px; }
 .axis-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
@@ -1337,22 +1334,22 @@ body { font-family: 'Pretendard', sans-serif; font-size: 11pt; line-height: 1.55
 .axis-table .name { width: 35%; font-weight: 700; }
 .axis-table .bar-cell { width: 50%; }
 .axis-table .bar-track { background: #ececec; height: 7px; width: 100%; position: relative; }
-.axis-table .bar-fill { height: 100%; background: #8c6620; }
+.axis-table .bar-fill { height: 100%; background: #0f766e; }
 .axis-table .score { width: 15%; text-align: right; font-weight: 700; font-family: 'Pretendard'; }
 .verdict-box { background: #1a1a1a; color: #fff; padding: 14px 18px; margin-bottom: 14px; }
-.verdict-box .label { font-size: 9pt; color: #c9a84c; letter-spacing: .1em; margin-bottom: 4px; }
+.verdict-box .label { font-size: 9pt; color: #2DD4BF; letter-spacing: .1em; margin-bottom: 4px; }
 .verdict-box .value { font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 14pt; }
 .bullet-list { list-style: none; padding: 0; }
 .bullet-list li { padding: 6px 0 6px 18px; position: relative; font-size: 10pt; line-height: 1.6; }
-.bullet-list li::before { content: '•'; position: absolute; left: 6px; font-weight: 800; color: #8c6620; }
+.bullet-list li::before { content: '•'; position: absolute; left: 6px; font-weight: 800; color: #0f766e; }
 .risk-box { background: #fff5f0; border-left: 3px solid #d4533b; padding: 10px 14px; margin-bottom: 10px; }
 .risk-box .label { font-size: 9pt; color: #a53d2a; font-weight: 700; margin-bottom: 4px; }
 .risk-box .item { font-size: 10pt; color: #444; padding: 2px 0; }
 .foot { margin-top: 24px; padding-top: 10px; border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; font-size: 9pt; color: #5a554c; }
-.foot-mark { font-family: 'Nanum Myeongjo', serif; font-weight: 800; color: #8c6620; letter-spacing: .05em; }
+.foot-mark { font-family: 'Nanum Myeongjo', serif; font-weight: 800; color: #0f766e; letter-spacing: .05em; }
 .foot-sign { font-family: 'Nanum Myeongjo', serif; font-weight: 700; }
-.overall-msg { background: #faf6ec; padding: 12px 16px; font-size: 10.5pt; line-height: 1.7; color: #1a1a1a; border-left: 3px solid #8c6620; }
-.print-btn { position: fixed; top: 16px; right: 16px; padding: 8px 16px; background: #1a1a1a; color: #c9a84c; border: 1px solid #c9a84c; font-size: 12px; cursor: pointer; letter-spacing: .05em; font-family: 'Pretendard'; }
+.overall-msg { background: #faf6ec; padding: 12px 16px; font-size: 10.5pt; line-height: 1.7; color: #1a1a1a; border-left: 3px solid #0f766e; }
+.print-btn { position: fixed; top: 16px; right: 16px; padding: 8px 16px; background: #1a1a1a; color: #2DD4BF; border: 1px solid #2DD4BF; font-size: 12px; cursor: pointer; letter-spacing: .05em; font-family: 'Pretendard'; }
 @media print { .print-btn { display: none; } }
 </style>
 </head>
@@ -1768,7 +1765,7 @@ function renderSpecialAxisChart(axisAvg) {
   const labels = ['자료 장악', '사고 적용', '조건 변별', '위험 신호', '생활'];
   const keys = ['자료장악', '사고적용', '조건변별', '위험신호', '생활'];
   const values = keys.map(k => axisAvg[k] || 0);
-  const colors = ['#c9a84c', '#c9a84c', '#c9a84c', '#d4533b', '#9b8e6e'];
+  const colors = ['#2DD4BF', '#2DD4BF', '#2DD4BF', '#d4533b', '#9b8e6e'];
 
   charts['special-chart-axis'] = new Chart(ctx, {
     type: 'bar',
@@ -1801,7 +1798,7 @@ function renderSpecialVerdictChart(verdictCounts) {
   if (entries.length === 0) { ctx.parentElement.innerHTML = '<p style="color:var(--ink-muted);font-size:13px;padding:20px;text-align:center">응답 없음</p>'; return; }
   const labels = entries.map(e => e[0]);
   const data = entries.map(e => e[1]);
-  const colors = ['#c9a84c', '#a89240', '#867135', '#645129', '#42321d'];
+  const colors = ['#2DD4BF', '#a89240', '#867135', '#645129', '#42321d'];
 
   charts['special-chart-verdict'] = new Chart(ctx, {
     type: 'doughnut',
@@ -1907,7 +1904,7 @@ function renderSpecialTable() {
       month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
     }) : '—';
     const role = s.응답자 === 'parent' ? '학부모' : '학생';
-    const roleColor = s.응답자 === 'parent' ? '#8fb0ff' : '#c9a84c';
+    const roleColor = s.응답자 === 'parent' ? '#8fb0ff' : '#2DD4BF';
     const riskClass = (typeof s.위험신호 === 'number' && s.위험신호 >= 65) ? 'style="color:#d4533b;font-weight:700"' : '';
 
     return `
@@ -2012,7 +2009,7 @@ function showSpecialDetail(name) {
 
   // 옛 응답 알림 배너
   const legacyBanner = !hasAnalysis ? `
-    <div style="background:#fef4e6;border:1px solid #e8d196;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#8c6620;">
+    <div style="background:#fef4e6;border:1px solid #e8d196;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0f766e;">
       ⓘ 옛 버전 응답이라 분석 JSON이 없습니다. 시트의 점수 컬럼만 표시합니다.
     </div>
   ` : '';
@@ -2021,8 +2018,8 @@ function showSpecialDetail(name) {
   document.getElementById('modal-body').innerHTML = `
     <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
       ${legacyBanner}
-      <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
-        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 — 특별판 진단</p>
+      <div style="border-bottom:2px solid #2DD4BF;padding-bottom:12px;margin-bottom:18px;">
+        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#2DD4BF;font-weight:600;">가경 국어 연구소 — 특별판 진단</p>
         <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${s.이름 || '?'} 학생의 학교 매칭 분석</h1>
         <p style="margin:0;font-size:12.5px;color:#888;">
           ${s.학교 || '?'} / ${s.학년 || '?'} / ${s.응답일 || ''} / 응답자: <strong style="color:#222;">${roleLabel}</strong>${s.학부모연락처 ? ' / ' + s.학부모연락처 : ''}${s.관심학교 ? ' / 관심학교: ' + s.관심학교 : ''}${s.진로계열 ? ' / 진로: ' + s.진로계열 : ''}
@@ -2038,15 +2035,15 @@ function showSpecialDetail(name) {
       <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>자료 장악형</strong><span style="color:#888;font-size:12px;"> — 경기고, 숙명여고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s자료}</td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#2DD4BF;">${s자료}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>사고 적용형</strong><span style="color:#888;font-size:12px;"> — 휘문고, 진선여고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s사고}</td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#2DD4BF;">${s사고}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#222;"><strong>조건 변별형</strong><span style="color:#888;font-size:12px;"> — 중대부고, 단대부고</span></td>
-          <td style="text-align:right;padding:8px 0;font-weight:700;color:#c9a84c;">${s조건}</td>
+          <td style="text-align:right;padding:8px 0;font-weight:700;color:#2DD4BF;">${s조건}</td>
         </tr>
       </table>
 
@@ -2055,7 +2052,7 @@ function showSpecialDetail(name) {
 
       <div style="margin-top:24px;padding-top:14px;border-top:1px dashed #ddd;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <p style="margin:0;font-size:11px;color:#999;">— 가경 국어 연구소 — 특별판 진단</p>
-        <button onclick="openFullResultForName('${(s.이름 || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>
+        <button onclick="openFullResultForName('${(s.이름 || '').replace(/'/g, "\\'")}')" style="padding:7px 16px;background:#1a1a1a;color:#2DD4BF;border:1px solid #2DD4BF;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>
       </div>
     </div>
   `;
@@ -2139,7 +2136,7 @@ function renderMirrorStatusChart(a) {
   destroyChart('mirror-chart-status');
   const labels = ['양쪽 완료', '학생만 응답', '학부모만 응답'];
   const data = [a.bothCount || 0, a.studentOnlyCount || 0, a.parentOnlyCount || 0];
-  const colors = ['#b8c98d', '#c9a84c', '#8fb0ff'];
+  const colors = ['#b8c98d', '#2DD4BF', '#8fb0ff'];
 
   charts['mirror-chart-status'] = new Chart(ctx, {
     type: 'doughnut',
@@ -2177,7 +2174,7 @@ function renderMirrorGapChart(gapDetails) {
       labels: Object.keys(bins),
       datasets: [{
         data: Object.values(bins),
-        backgroundColor: ['#b8c98d', '#c9a84c', '#d4a85a', '#d4533b', '#a53d2a'],
+        backgroundColor: ['#b8c98d', '#2DD4BF', '#2DD4BF', '#d4533b', '#a53d2a'],
         borderRadius: 4,
       }],
     },
@@ -2230,7 +2227,7 @@ function renderMirrorTable() {
 
     const statusLabel = {
       'both': { txt: '양쪽 완료', color: '#b8c98d' },
-      'student_only': { txt: '학생만', color: '#c9a84c' },
+      'student_only': { txt: '학생만', color: '#2DD4BF' },
       'parent_only': { txt: '학부모만', color: '#8fb0ff' },
     }[f.상태] || { txt: '—', color: '#9a9a9a' };
 
@@ -2264,7 +2261,7 @@ function showMirrorDetail(code) {
   const status = f.상태;
   const statusLabel = {
     'both': { txt: '양쪽 응답 완료', color: '#b8c98d' },
-    'student_only': { txt: '학생만 응답 (학부모 미응답)', color: '#c9a84c' },
+    'student_only': { txt: '학생만 응답 (학부모 미응답)', color: '#2DD4BF' },
     'parent_only': { txt: '학부모만 응답 (학생 미응답)', color: '#8fb0ff' },
   }[status] || { txt: '—', color: '#9a9a9a' };
 
@@ -2287,7 +2284,7 @@ function showMirrorDetail(code) {
   const canShowFullResult = (status === 'both');
 
   const fullResultBtnHtml = canShowFullResult
-    ? `<button onclick="openFullMirrorResult('${code}')" style="padding:7px 16px;background:#1a1a1a;color:#c9a84c;border:1px solid #c9a84c;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>`
+    ? `<button onclick="openFullMirrorResult('${code}')" style="padding:7px 16px;background:#1a1a1a;color:#2DD4BF;border:1px solid #2DD4BF;font-size:11.5px;cursor:pointer;letter-spacing:.05em;font-weight:600;">📄 풀 결과지 새 창에서 보기</button>`
     : `<span style="font-size:11px;color:#999;font-style:italic;">양쪽 응답이 모두 들어와야 풀 결과지 발급 가능</span>`;
 
   const gapHtml = gap ? `
@@ -2295,7 +2292,7 @@ function showMirrorDetail(code) {
     <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
       <tr>
         <td style="padding:8px 0;color:#222;"><strong>평균 격차 (5점 척도)</strong></td>
-        <td style="text-align:right;padding:8px 0;font-weight:700;color:${gap.평균갭 >= 1.5 ? '#a53d2a' : (gap.평균갭 >= 1 ? '#c9a84c' : '#5a7a3a')};">${gap.평균갭}</td>
+        <td style="text-align:right;padding:8px 0;font-weight:700;color:${gap.평균갭 >= 1.5 ? '#a53d2a' : (gap.평균갭 >= 1 ? '#2DD4BF' : '#5a7a3a')};">${gap.평균갭}</td>
       </tr>
       <tr>
         <td style="padding:8px 0;color:#666;font-size:12.5px;">비교 가능 문항 수</td>
@@ -2312,8 +2309,8 @@ function showMirrorDetail(code) {
   document.getElementById('modal-title').textContent = `${f.학생이름 || '가족'} — 거울 진단 (요약)`;
   document.getElementById('modal-body').innerHTML = `
     <div style="background:#fff;color:#222;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI',sans-serif;line-height:1.55;">
-      <div style="border-bottom:2px solid #c9a84c;padding-bottom:12px;margin-bottom:18px;">
-        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#c9a84c;font-weight:600;">가경 국어 연구소 — 거울 진단</p>
+      <div style="border-bottom:2px solid #2DD4BF;padding-bottom:12px;margin-bottom:18px;">
+        <p style="margin:0;font-size:11px;letter-spacing:.12em;color:#2DD4BF;font-weight:600;">가경 국어 연구소 — 거울 진단</p>
         <h1 style="margin:6px 0 4px;font-size:22px;color:#222;">${f.학생이름 || '가족'} — 학부모/학생 인식 비교</h1>
         <p style="margin:0;font-size:12.5px;color:#888;">
           가족코드 <strong style="color:#222;font-family:'JetBrains Mono',monospace;">${f.가족코드}</strong>
@@ -2324,7 +2321,7 @@ function showMirrorDetail(code) {
 
       <div style="background:#faf6ec;border:1px solid #e8dcb9;padding:16px 20px;margin-bottom:18px;">
         <p style="margin:0 0 6px;font-size:11px;letter-spacing:.1em;color:#a08a3a;">응답 상태</p>
-        <h2 style="margin:0;font-size:18px;color:${statusLabel.color === '#b8c98d' ? '#5a7a3a' : (statusLabel.color === '#c9a84c' ? '#8c6620' : '#3a5a8c')};">${statusLabel.txt}</h2>
+        <h2 style="margin:0;font-size:18px;color:${statusLabel.color === '#b8c98d' ? '#5a7a3a' : (statusLabel.color === '#2DD4BF' ? '#0f766e' : '#3a5a8c')};">${statusLabel.txt}</h2>
         <p style="margin:8px 0 0;font-size:12.5px;color:#666;">
           학생 응답: ${studentRespCount > 0 ? `${studentRespCount}문항 완료 ✓` : '아직 미응답'}
           &nbsp;／&nbsp;
