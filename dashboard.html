@@ -843,7 +843,7 @@ async function loadRecentPanel(){
   const get = async (a)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${a}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
   const [v2, sp, mi] = await Promise.all([get('v2List'), get('specialList'), get('mirrorList')]);
   const setC=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent=n; };
-  setC('tab-count-v2', v2.length); setC('tab-count-special', sp.length); setC('tab-count-mirror', mi.length);
+  setC('tab-count-v2', v2.filter(x=>String(x['버전'])!=='학부모관찰').length); setC('tab-count-special', sp.length); setC('tab-count-mirror', mi.length);
   const e = v => String(v==null?'':v);
   const d10 = v => e(v).slice(0,10);
   const rows = [];
@@ -852,11 +852,22 @@ async function loadRecentPanel(){
       kind:'일반', col:'#a9c29c', bg:'rgba(155,179,142,.14)', summary:[e(s['4분면 유형']),e(s['16유형 이름'])].filter(Boolean).join(', '),
       warn:e(s['주의 신호']), url:'result-viewer.html?generalName='+encodeURIComponent(e(s['이름'])) });
   });
+  const pkey = s => e(s['이름'])+'|'+e(s['학교'])+'|'+e(s['학년']);
+  const parentObs = {}; v2.forEach(s=>{ if(e(s['버전'])==='학부모관찰') parentObs[pkey(s)]=s; });
+  const parentUsed = {};
   v2.forEach(s=>{
+    if(e(s['버전'])==='학부모관찰') return; // 학부모 관찰은 학생으로 표시하지 않음(매칭만)
     const w=[]; if(Number(s['고위험수'])>0)w.push('고위험 '+s['고위험수']); if(Number(s['착각수'])>0)w.push('착각 '+s['착각수']);
+    const hasP=!!parentObs[pkey(s)]; if(hasP) parentUsed[pkey(s)]=true;
     rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
-      kind:(V2_VER_KO[e(s['버전'])]||e(s['버전'])||'성향'), col:'#3fe0cd', bg:'rgba(45,212,191,.13)', summary:e(s['페르소나']),
+      kind:(V2_VER_KO[e(s['버전'])]||e(s['버전'])||'성향'), col:'#3fe0cd', bg:'rgba(45,212,191,.13)',
+      summary:e(s['페르소나'])+(hasP?'  〔학부모관찰 ✓〕':''),
       warn:w.join(', '), url:'result-viewer.html?v2Name='+encodeURIComponent(e(s['이름'])) });
+  });
+  // 학생 진단이 아직 없는 학부모 관찰은 별도 대기 행으로 표시
+  Object.keys(parentObs).forEach(k=>{ if(parentUsed[k]) return; const s=parentObs[k];
+    rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:'학부모관찰', col:'#c79bf0', bg:'rgba(170,120,235,.15)', summary:'학부모 관찰 (학생 진단 대기)', warn:'', url:'' });
   });
   sp.forEach(s=>{
     rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
@@ -905,7 +916,7 @@ function renderRecentTable(){
   let h='<div class="rc-head"><div>제출일</div><div>이름</div><div>진단</div><div>요약</div><div>주의 신호</div><div></div><div style="text-align:right">결과지</div></div>';
   show.forEach(r=>{
     const isV2=/v2Name=/.test(r.url); const nm=encodeURIComponent(r.name);
-    const acts = isV2 ? `<a class="rc-btn" href="result-viewer.html?v2Name=${nm}&report=teacher" target="_blank">강사용 확인</a><a class="rc-btn ghost" href="result-viewer.html?v2Name=${nm}&report=parent&print=1" target="_blank">통신문 인쇄</a>` : `<a class="rc-btn plain" href="${r.url}" target="_blank">결과지</a>`;
+    const acts = isV2 ? `<a class="rc-btn" href="result-viewer.html?v2Name=${nm}&report=teacher" target="_blank">강사용 확인</a><a class="rc-btn ghost" href="result-viewer.html?v2Name=${nm}&report=parent&print=1" target="_blank">통신문 인쇄</a>` : (r.url ? `<a class="rc-btn plain" href="${r.url}" target="_blank">결과지</a>` : '<span class="rc-sub" style="opacity:.6">—</span>');
     h+=`<div class="rc-row"><div class="rc-date">${r.date}</div><div><div class="rc-name">${r.name}</div><div class="rc-sub">${[r.school,r.grade].filter(Boolean).join(' ')}</div></div><div class="rc-chip" style="background:${r.bg};color:${r.col}">${r.kind}</div><div class="rc-summary">${r.summary||'—'}</div><div class="rc-warn">${warnPill(r.warn)}</div><div></div><div class="rc-actions">${acts}</div></div>`;
   });
   if(rows.length>show.length) h+=`<div style="padding:13px 18px;color:var(--ink-faint);font-size:12px;text-align:center;border-top:1px solid var(--line)">최근 ${show.length}건, 전체 ${rows.length}건 — 진단별 상세는 아래 탭</div>`;
@@ -1539,7 +1550,9 @@ function renderV2Dashboard() {
 function renderV2Table() {
   const q = (document.getElementById('v2-search').value || '').trim();
   const vf = (document.getElementById('v2-ver-filter') || {}).value || '';
-  let rows = (v2List || []).slice();
+  const _pk = r => (r['이름']||'')+'|'+(r['학교']||'')+'|'+(r['학년']||'');
+  const _pset = {}; (v2List||[]).forEach(r=>{ if(r['버전']==='학부모관찰') _pset[_pk(r)]=1; });
+  let rows = (v2List || []).filter(r => r['버전'] !== '학부모관찰');
   rows.sort((a,b) => (Date.parse(b['제출시각'])||0) - (Date.parse(a['제출시각'])||0));
   if (vf) rows = rows.filter(r => r['버전'] === vf);
   if (q) rows = rows.filter(r => (r['이름']||'').includes(q) || (r['학교']||'').includes(q));
@@ -1565,7 +1578,7 @@ function renderV2Table() {
       + `<td><strong>${r['이름']||''}</strong></td>`
       + `<td>${r['학교']||''} ${r['학년']||''}</td>`
       + `<td><span class="v2-verpill${ver==='summer'?' summer':''}">${verLabel}</span></td>`
-      + `<td>${r['페르소나']||''}</td>`
+      + `<td>${r['페르소나']||''}${_pset[_pk(r)]?' <span class="v2-flag" style="background:rgba(170,120,235,.18);color:#c79bf0">부모관찰</span>':''}</td>`
       + `<td>${sig}</td>`
       + `<td style="color:var(--olive);white-space:nowrap">열기 →</td></tr>`;
   });

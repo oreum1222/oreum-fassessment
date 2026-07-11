@@ -3164,6 +3164,9 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     응답은 익명 처리되며 가경T 학습 설계에만 사용됩니다.<br>
     <a href="axis-guide.html" target="_blank" style="color:var(--olive);text-decoration:none;border-bottom:1px solid var(--line)">진단축이 무엇인지 궁금하다면 →</a>
   </p>
+  <p style="text-align:center;margin-top:12px;font-size:13px">
+    <a href="?parent=1" style="color:var(--o-mint,#2DD4BF);text-decoration:none;border-bottom:1px solid var(--line)">학부모님이신가요? 자녀 관찰 진단 참여하기 →</a>
+  </p>
 </section>
 
 <!-- ═══════════════════════════════════ 2. 학생 정보 ═══════════════════════════════════ -->
@@ -4037,6 +4040,61 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     <div class="btn-row" style="margin-top:26px;justify-content:center">
       <button class="btn btn-ghost" onclick="v2FinishStudentOnly()">건너뛰고 결과 보기</button>
       <button class="btn btn-primary special" onclick="v2StartParent()">부모님 응답하기 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 학부모 관찰(별도) 정보 입력 ═══════════════════════════════════ -->
+<section id="v2-parent-info" class="screen">
+  <div class="brand-mark"><span>김가경 국어 연구소</span></div>
+  <div style="height:24px"></div>
+  <div class="form-stamp special-stamp">학부모 관찰 진단</div>
+  <h2 class="screen-title">자녀를 관찰한 대로 답해 주세요</h2>
+  <p class="screen-sub">학생 진단과 <b>별도로</b> 응답합니다. 자녀의 <b>이름·학교·학년</b>으로 결과와 자동 매칭됩니다.</p>
+  <div class="info-form">
+    <div class="field">
+      <label>자녀 이름 <span class="required">*</span></label>
+      <input type="text" id="v2p-name" placeholder="예: 홍길동" required>
+    </div>
+    <div class="info-row">
+      <div class="field">
+        <label>학교 <span class="required">*</span></label>
+        <input type="text" id="v2p-school" placeholder="예: 산본고등학교" required>
+      </div>
+      <div class="field">
+        <label>학년 <span class="required">*</span></label>
+        <select id="v2p-grade" required>
+          <option value="">선택</option>
+          <option value="중3">중3</option>
+          <option value="예비고1">예비고1</option>
+          <option value="고1">고1</option>
+          <option value="고2">고2</option>
+          <option value="고3">고3</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>학부모 연락처 <small>(상담 안내용, 선택)</small></label>
+      <input type="tel" id="v2p-phone" placeholder="예: 010-1234-5678">
+    </div>
+    <div id="v2p-error" class="info-error" style="display:none"></div>
+  </div>
+  <div class="btn-row" style="margin-top:28px">
+    <button class="btn btn-ghost" onclick="goScreen('welcome')">← 처음으로</button>
+    <button class="btn btn-primary special" onclick="v2SubmitParentInfo()">관찰 진단 시작 →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 학부모 관찰 완료 ═══════════════════════════════════ -->
+<section id="v2-parent-thanks" class="screen">
+  <div class="brand-mark"><span>김가경 국어 연구소</span></div>
+  <div style="height:40px"></div>
+  <div class="v2-bridge-card">
+    <h2>응답이 완료됐어요</h2>
+    <p>학부모님의 관찰 응답이 저장되었습니다.<br>자녀의 <b>이름·학교·학년</b>으로 진단 결과와 자동 매칭됩니다.</p>
+    <p class="hint">감사합니다. 상담 때 함께 참고하겠습니다.</p>
+    <div class="btn-row" style="margin-top:26px;justify-content:center">
+      <button class="btn btn-primary special" onclick="goScreen('welcome')">처음 화면으로</button>
     </div>
   </div>
 </section>
@@ -5235,16 +5293,46 @@ function rptSave(){
 }
 function v2Finish(){ if(v2State.ver==='summer') renderSummerResults(); else renderV2Results(); }
 function v2EndPhase(){
-  if(v2State.phase==='student'){
-    if(V2_VERSIONS[v2State.ver].hasParent){ goScreen('v2-parent-bridge'); }
-    else { v2Finish(); }
-  } else { v2Finish(); }
+  // 학생 진단은 항상 학생 결과로 종료(부모 파트로 이어지지 않음 → 학생이 부모인 척 방지)
+  if(v2State.phase==='parent'){ v2SendParentBackend(); goScreen('v2-parent-thanks'); }
+  else { v2Finish(); }
 }
 function v2StartParent(){
   v2State.phase='parent'; v2State.items=V2_PARENT.slice(); v2State.idx=0;
   goScreen('v2-quiz'); renderV2();
 }
 function v2FinishStudentOnly(){ v2Finish(); }
+
+// ─── 학부모 관찰(별도 진입) ───
+function v2StartParentObserve(){
+  v2State.ver='brief'; v2State.phase='parent'; v2State.info={}; v2State.responses={}; v2State.items=[]; v2State.idx=0; v2State.sent=false; v2State.reportMode=null;
+  ['v2p-name','v2p-school','v2p-grade','v2p-phone'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const er=document.getElementById('v2p-error'); if(er) er.style.display='none';
+  goScreen('v2-parent-info');
+}
+function v2SubmitParentInfo(){
+  const name=(document.getElementById('v2p-name').value||'').trim();
+  const school=(document.getElementById('v2p-school').value||'').trim();
+  const grade=document.getElementById('v2p-grade').value;
+  const phone=(document.getElementById('v2p-phone').value||'').trim();
+  const err=document.getElementById('v2p-error');
+  if(!name||!school||!grade){ err.textContent='자녀 이름, 학교, 학년은 필수입니다.'; err.style.display='block'; return; }
+  err.style.display='none';
+  v2State.info={ name, school, grade, parentPhone:phone };
+  v2State.phase='parent'; v2State.items=V2_PARENT.slice(); v2State.idx=0; v2State.sent=false;
+  document.getElementById('v2-q-mode').textContent='학부모 관찰';
+  goScreen('v2-quiz'); renderV2();
+}
+function v2SendParentBackend(){
+  if(v2State.previewMode) return;
+  if(typeof CONFIG==='undefined' || !CONFIG.sheetUrl) return;
+  try{
+    const payload={ action:'v2ParentSave', info:v2State.info, responses:v2State.responses, apiKey:CONFIG.apiKey||'' };
+    fetch(CONFIG.sheetUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),mode:'no-cors'});
+  }catch(e){ console.warn('[v2 parent] 전송 실패:', e); }
+}
+// ?parent=1 진입: 학부모 관찰 화면으로 바로
+try{ if(new URLSearchParams(location.search).get('parent')==='1'){ v2StartParentObserve(); } }catch(e){}
 
 // ════════════════════════════════════════════════════════════
 //  여름방학 학습 점검 진단 (summer) — 자기보고 배터리 + Best-Worst
