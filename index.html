@@ -3111,7 +3111,6 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   <style>
   .vsel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:860px){.vsel{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.vsel,.vsel.special{grid-template-columns:1fr;gap:12px}.vtile{min-height:0;padding:18px 18px 16px}.vt-num{font-size:28px}.vt-title{font-size:19px}.vt-desc{font-size:13.5px}.vsel-sec{margin:28px 0 14px}}
   .vtile{position:relative;background:linear-gradient(180deg,#182220 0%,#141d1b 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 24px 22px;cursor:pointer;transition:.18s;min-height:176px;display:flex;flex-direction:column;word-break:keep-all;overflow-wrap:break-word}
   .vtile:hover{border-color:#2DD4BF;transform:translateY(-3px);box-shadow:0 18px 40px -20px rgba(45,212,191,.55)}
   .vtile.reco{border-color:rgba(45,212,191,.55)}
@@ -3137,6 +3136,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   .vsel.special .vtile{min-height:132px;padding:20px}
   .vsel.special .vt-num{font-size:28px}
   .vsel.special .vt-title{font-size:19px}
+  @media(max-width:560px){.vsel,.vsel.special{grid-template-columns:1fr;gap:12px}.vtile,.vsel.special .vtile{min-height:0;padding:18px 18px 16px}.vt-num{font-size:28px}.vt-title{font-size:19px}.vt-desc{font-size:13.5px}.vsel-sec{margin:28px 0 14px}}
   </style>
   <div class="vsel">
     <div class="vtile" data-version="summer"><div class="vt-top"><span class="vt-num">1</span><span class="vt-q"><b>30</b> 문항</span></div><div class="vt-title">여름방학 학습 점검 <span class="vt-badge new">여름</span></div><div class="vt-desc">관리 강도·막힘 대처·정서 신호 종합 점검 · 약 10분</div></div>
