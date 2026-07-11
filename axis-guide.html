@@ -10,21 +10,21 @@
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
 <style>
 :root{
-  --bg:#1a1a1a;
-  --bg-paper:#232323;
-  --bg-deep:#2e2e2e;
-  --bg-elevated:#2a2a2a;
-  --ink:#f0ede4;
-  --ink-soft:#e8e6df;
-  --ink-muted:#9a9a9a;
-  --ink-faint:#6a6a6a;
-  --line:#3a3a3a;
-  --line-soft:#2e2e2e;
-  --line-strong:#4a4a4a;
-  --gold:#d4a85a;
-  --gold-deep:#b8893d;
-  --gold-soft:#e8c275;
-  --olive:#9bb38e;
+  --bg:#0c1513;
+  --bg-paper:#152020;
+  --bg-deep:#1a2624;
+  --bg-elevated:#182220;
+  --ink:#e9f1ee;
+  --ink-soft:#c4cfca;
+  --ink-muted:#8a938f;
+  --ink-faint:#5c6763;
+  --line:#26332f;
+  --line-soft:#1e2926;
+  --line-strong:#334039;
+  --gold:#2DD4BF;
+  --gold-deep:#14b8a6;
+  --gold-soft:#6EE7D6;
+  --olive:#7fb0a4;
   --crimson:#e57373;
   --serif:'Nanum Myeongjo', serif;
   --sans:'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,9 +43,9 @@ body{
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:
-    radial-gradient(ellipse at 15% 10%, rgba(212,168,90,0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 90%, rgba(212,168,90,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(155,179,142,0.03) 0%, transparent 60%);
+    radial-gradient(ellipse at 15% 10%, rgba(45,212,191,0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgba(45,212,191,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(127,176,164,0.03) 0%, transparent 60%);
 }
 .container{max-width:880px;margin:0 auto;padding:48px 24px;position:relative;z-index:1}
 
@@ -74,7 +74,7 @@ body::before{
   font-family:var(--serif);font-weight:800;font-size:42px;
   letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;
   color:var(--ink);
-  text-shadow:0 2px 24px rgba(212,168,90,0.15);
+  text-shadow:0 2px 24px rgba(45,212,191,0.15);
 }
 .hero-sub{font-family:var(--serif);font-size:17px;color:var(--olive);font-weight:400;margin-bottom:8px}
 .hero-meta{font-size:13px;color:var(--ink-muted);letter-spacing:.05em}
@@ -90,7 +90,7 @@ body::before{
 .lead-block::before{
   content:'';position:absolute;top:0;left:0;width:60px;height:3px;
   background:linear-gradient(90deg, var(--gold) 0%, var(--gold-deep) 100%);
-  box-shadow:0 0 12px rgba(212,168,90,0.5);
+  box-shadow:0 0 12px rgba(45,212,191,0.5);
 }
 .lead-block p{
   font-family:var(--serif);font-size:15px;line-height:1.95;color:var(--ink-soft);
@@ -114,9 +114,9 @@ body::before{
 }
 .toc-item:hover{
   border-color:var(--gold);
-  background:rgba(212,168,90,0.10);
+  background:rgba(45,212,191,0.10);
   transform:translateX(2px);
-  box-shadow:0 4px 16px -6px rgba(212,168,90,0.25);
+  box-shadow:0 4px 16px -6px rgba(45,212,191,0.25);
 }
 .toc-num{
   font-family:var(--serif);font-weight:700;
@@ -160,7 +160,7 @@ body::before{
 }
 .axis-card:hover{
   border-color:var(--gold);
-  box-shadow:0 8px 28px -10px rgba(212,168,90,0.30), 0 0 0 1px rgba(212,168,90,0.1);
+  box-shadow:0 8px 28px -10px rgba(45,212,191,0.30), 0 0 0 1px rgba(45,212,191,0.1);
   transform:translateY(-2px);
 }
 .axis-card.reverse{border-left:3px solid var(--crimson)}
@@ -177,8 +177,8 @@ body::before{
 .axis-tag{display:none;
   font-family:var(--serif);font-size:10px;font-weight:700;
   letter-spacing:.03em;
-  background:rgba(212,168,90,0.15);color:var(--gold-deep);
-  padding:2px 8px;border:1px solid rgba(212,168,90,0.40);
+  background:rgba(45,212,191,0.15);color:var(--gold-deep);
+  padding:2px 8px;border:1px solid rgba(45,212,191,0.40);
 }
 .axis-tag.reverse{background:rgba(229,115,115,0.10);color:var(--crimson);border-color:rgba(229,115,115,0.30)}
 .axis-qids{
@@ -193,7 +193,7 @@ body::before{
 .axis-meaning strong{color:var(--gold-soft);font-weight:700;font-family:var(--serif)}
 
 .axis-prescription{
-  background:rgba(155,179,142,0.08);
+  background:rgba(127,176,164,0.08);
   padding:12px 16px;
   font-size:13px;line-height:1.8;color:var(--ink-soft);
   border-left:2px solid var(--olive);
@@ -234,12 +234,12 @@ body::before{
   body{background:#fff;font-size:10pt}
   body::before{display:none}
   .container{max-width:100%;padding:20px}
-  .axis-card{break-inside:avoid;page-break-inside:avoid;border:1px solid #d8cfb8 !important}
+  .axis-card{break-inside:avoid;page-break-inside:avoid;border:1px solid #cfe6e0 !important}
   .category{break-after:auto}
-  .category-header,.lead-block::before,.axis-card::before{border-color:#8c6620 !important}
-  .axis-card.reverse{border-left:3px solid #8b3a3a !important}
-  .axis-prescription{background:#f5f1e6 !important;border-left:2px solid #556b4d !important}
-  .hero-num,.toc-num,.category-num,.brand-mark,.footer-mark{color:#8c6620 !important}
+  .category-header,.lead-block::before,.axis-card::before{border-color:#0f766e !important}
+  .axis-card.reverse{border-left:3px solid #a3402c !important}
+  .axis-prescription{background:#eef7f4 !important;border-left:2px solid #0f766e !important}
+  .hero-num,.toc-num,.category-num,.brand-mark,.footer-mark{color:#0f766e !important}
 }
 </style>
 </head>
