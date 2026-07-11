@@ -2895,6 +2895,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-cmp-row{ display:grid; grid-template-columns:1.5fr 1fr 1fr .7fr; gap:8px; font-size:12.5px; padding:8px 13px; border:1px solid #e4e8ea; border-radius:4px; align-items:center; }
 .rpt-cmp-row.head{ background:#f4f8f7; font-weight:700; color:#8b939d; font-size:11.5px; }
 .rpt-cmp-row .ax{ font-weight:700; color:#1b1e24; }
+.rpt-cmp-row .ax .axsub{ display:block; font-weight:400; font-size:11px; color:#8b939d; margin-top:2px; line-height:1.35; }
 .rpt-cmp-row .hi{ color:#c0392b; font-weight:800; }
 .rpt-cmp-row .lo{ color:#0f766e; font-weight:800; }
 .rpt-cmp-interp{ margin-top:13px; display:flex; flex-direction:column; gap:8px; }
@@ -5757,7 +5758,7 @@ function renderV2Results(){
     h+=`<section class="rpt-sec">${sec('응답 신뢰도')}<div class="rpt-box">${a.att?'<b class="rpt-warn">주의력 체크 불일치 — 응답 신뢰도 주의</b>':'주의력 체크 통과 — 응답 신뢰 가능'}</div></section>`;
     if(a.parentCompare){ const pc=a.parentCompare, AX=V2_AXNAME;
       const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
-      const tbl=pc.rows.map(r=>`<div class="rpt-cmp-row"><span class="ax">${AX[r.ax]}</span><span>학생 ${r.stu}</span><span>부모 ${r.par}</span><span class="${r.diff>=12?'hi':(r.diff<=-12?'lo':'')}">${r.diff>0?'+':''}${r.diff}</span></div>`).join('');
+      const tbl=pc.rows.map(r=>`<div class="rpt-cmp-row"><span class="ax">${AX[r.ax]}<span class="axsub">${(V2_AX_PARENT[r.ax]||{}).n||''}</span></span><span>학생 ${r.stu}</span><span>부모 ${r.par}</span><span class="${r.diff>=12?'hi':(r.diff<=-12?'lo':'')}">${r.diff>0?'+':''}${r.diff}</span></div>`).join('');
       h+=`<section class="rpt-sec">${sec('학생–학부모 인식 비교','자기평가 vs 학부모 관찰 · 별도 응답 매칭')}<div class="rpt-box"><b>인식 일치도 ${pc.agree}%</b>${over.length?` · 학생 과대평가(자기↑): <b class="rpt-warn">${over.map(r=>AX[r.ax]).join(', ')}</b>`:''}${under.length?` · 학생 과소평가(자기↓·부모가 더 높게 봄): <b>${under.map(r=>AX[r.ax]).join(', ')}</b>`:''}</div><div class="rpt-cmp"><div class="rpt-cmp-row head"><span class="ax">축</span><span>학생</span><span>부모</span><span>차이</span></div>${tbl}</div>${v2CmpInterp(pc,V2_AXNAME)}</section>`; }
     const rk=v2State.responses['RK1'];
     if(Array.isArray(rk)&&rk.length){ const labels=rk.map(i=>V2_RANK_FIRST.items[i]); const pAx=labels.map(l=>V2_RANK_AX[l]); const mw=a.weakest&&pAx.includes(a.weakest);
