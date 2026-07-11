@@ -432,7 +432,7 @@ body::before{
   <!-- 탭 네비게이션 -->
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
-      종합 진단 <span class="tab-count" id="tab-count-general">0</span>
+      학생 종합 <span class="tab-count" id="tab-count-general">0</span>
     </button>
     <button class="tab-btn" data-tab="v2" onclick="switchTab('v2')">
       학습 성향 진단 <span class="tab-count" id="tab-count-v2">0</span>
@@ -448,75 +448,43 @@ body::before{
 
   <!-- ════════ 일반 진단 탭 ════════ -->
   <div id="tab-general" class="tab-pane active">
-
-  <!-- 핵심 통계 카드 -->
-  <div class="stat-grid" id="stat-grid"></div>
-
-  <!-- 차트 -->
-  <div class="chart-grid">
-    <div class="chart-card">
-      <h3>8개 영역 평균 <small>전체 학생 평균 점수</small></h3>
-      <div class="chart-canvas-wrap"><canvas id="chart-sections"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>학교별 학생 수 <small>응시 학교 분포</small></h3>
-      <div class="chart-canvas-wrap"><canvas id="chart-schools"></canvas></div>
-    </div>
+  <style>
+  .sp-dir-controls{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  #student-directory{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:12px}
+  .sp-card{background:var(--bg-paper);border:1px solid var(--line);border-radius:13px;padding:16px 18px 15px;cursor:pointer;transition:.16s}
+  .sp-card:hover{border-color:#2DD4BF;transform:translateY(-2px);box-shadow:0 14px 32px -18px rgba(45,212,191,.55)}
+  .sp-card.risk{border-color:rgba(224,120,110,.42)}
+  .sp-name{font-family:var(--serif);font-weight:800;font-size:17px;color:var(--ink)}
+  .sp-sub{font-size:12.5px;color:var(--ink-muted);margin-top:2px}
+  .sp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+  .sp-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(45,212,191,.14);color:#6EE7D6;white-space:nowrap}
+  .sp-chip.g{background:rgba(155,179,142,.15);color:#a9c29c}
+  .sp-chip.spx{background:rgba(91,141,239,.17);color:#7aa2f5}
+  .sp-chip.mi{background:rgba(143,201,224,.15);color:#8fc9e0}
+  .sp-chip.pa{background:rgba(170,120,235,.16);color:#c79bf0}
+  .sp-chip.risk{background:rgba(224,120,110,.17);color:#ef9f92}
+  .sp-def{font-size:14.5px;line-height:1.85;color:var(--ink-soft);background:var(--bg-elevated);border-left:3px solid #14b8a6;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:18px}
+  .sp-def b{color:#6EE7D6}
+  .sp-risk{font-size:13px;color:#ef9f92;background:rgba(224,120,110,.11);border-radius:8px;padding:11px 14px;margin-bottom:18px}
+  .sp-h4{font-family:var(--serif);font-weight:800;font-size:14px;color:var(--ink-soft);margin:0 0 11px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  .sp-diag{border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .sp-diag .t{font-family:var(--serif);font-weight:800;color:var(--ink);font-size:14px}
+  .sp-diag .st{font-size:12.5px;color:var(--ink-muted);margin-top:3px}
+  .sp-diag a{font-size:12px;color:#2DD4BF;text-decoration:none;border:1px solid rgba(45,212,191,.42);padding:5px 11px;border-radius:20px;white-space:nowrap}
+  .sp-axmini{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+  .sp-axmini span{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--bg-deep);color:var(--ink-muted)}
+  </style>
+  <div class="sp-dir-controls">
+    <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
+    <div class="count-info">총 <strong id="sp-count">0</strong>명 · 이름을 누르면 그 학생의 모든 진단을 종합합니다</div>
   </div>
+  <div id="student-directory"><div style="padding:22px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
 
-  <!-- 학교별 응답자 (전 진단 통합) -->
-  <div class="data-section" style="margin-bottom:26px;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+  <div class="data-section" style="margin-top:28px;border:1px solid var(--line);border-radius:12px;overflow:hidden">
     <div class="table-controls"><h3 style="margin:0">학교별 응답자 <span style="font-weight:400;color:var(--ink-muted);font-size:13px">— 모든 진단 통합, 주의는 빨강</span></h3></div>
     <div id="school-roster"><div style="padding:16px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
   </div>
-
-  <!-- 위험 신호 -->
-  <div class="chart-card" style="margin-bottom:32px">
-    <h3>위험 신호 빈도 <small>학생군 전체</small></h3>
-    <div class="risk-grid" id="risk-grid"></div>
-  </div>
-
-  <!-- 학생 명단 -->
-  <div class="student-table-wrap">
-    <div class="table-controls">
-      <input type="search" id="search-input" placeholder="이름/학교 검색">
-      <select id="filter-quadrant">
-        <option value="">전체 4분면</option>
-        <option value="완성 전략가">완성 전략가</option>
-        <option value="성실 암기형">성실 암기형</option>
-        <option value="감각 직관형">감각 직관형</option>
-        <option value="기초 결손형">기초 결손형</option>
-      </select>
-      <select id="filter-risk">
-        <option value="">전체</option>
-        <option value="risk">위험군만</option>
-        <option value="safe">정상군만</option>
-      </select>
-      <div class="count-info">총 <strong id="filtered-count">0</strong>명</div>
-    </div>
-    <table class="student-table">
-      <thead>
-        <tr>
-          <th data-sort="제출일시">제출일시 <span class="sort-arrow">↕</span></th>
-          <th data-sort="이름">이름 <span class="sort-arrow">↕</span></th>
-          <th data-sort="학교">학교 <span class="sort-arrow">↕</span></th>
-          <th data-sort="학년">학년 <span class="sort-arrow">↕</span></th>
-          <th data-sort="4분면 유형">4분면 <span class="sort-arrow">↕</span></th>
-          <th data-sort="16유형 이름">16유형 <span class="sort-arrow">↕</span></th>
-          <th data-sort="내신 대응력">내신 <span class="sort-arrow">↕</span></th>
-          <th data-sort="수능 대응력">수능 <span class="sort-arrow">↕</span></th>
-          <th data-sort="주의 신호">주의 신호 <span class="sort-arrow">↕</span></th>
-        </tr>
-      </thead>
-      <tbody id="student-tbody"></tbody>
-    </table>
-    <div class="empty-state" id="empty-state" style="display:none">
-      <h3>해당 조건의 학생이 없습니다</h3>
-      <p>검색과 필터를 조정해보세요.</p>
-    </div>
-  </div>
-
-  </div><!-- /tab-general -->
+    </div><!-- /tab-general -->
 
   <!-- ════════ v2 진단 탭 (비재원생/재원생) ════════ -->
   <div id="tab-v2" class="tab-pane">
@@ -832,6 +800,7 @@ function renderAll() {
   applyFilters();
   attachListeners();
   loadRecentPanel();
+  loadStudentDirectory();
   const td = document.getElementById('tab-desc'); if (td) td.textContent = TAB_DESC.general;
 }
 
@@ -924,6 +893,7 @@ function renderRecentTable(){
 }
 
 function renderStats() {
+  if(!document.getElementById('stat-grid'))return;
   if (!analysisData) return;
   const total = analysisData.totalStudents || 0;
   const risk = analysisData.riskCount || 0;
@@ -958,6 +928,7 @@ function renderStats() {
 }
 
 function renderCharts() {
+  if(!document.getElementById('chart-sections'))return;
   if (!analysisData) return;
 
   // 8축 평균 (레이더)
@@ -1057,6 +1028,7 @@ function drawRadar(canvasId, labels, data) {
 }
 
 function renderRiskGrid() {
+  if(!document.getElementById('risk-grid'))return;
   if (!analysisData) return;
   const rsc = analysisData.riskSignalCount || {};
   const sorted = Object.entries(rsc).sort((a, b) => b[1] - a[1]);
@@ -1074,6 +1046,7 @@ function renderRiskGrid() {
 
 // ─── 학생 테이블 ───
 function applyFilters() {
+  if(!document.getElementById('student-tbody'))return;
   const search = (document.getElementById('search-input').value || '').toLowerCase().trim();
   const fq = document.getElementById('filter-quadrant').value;
   const fr = document.getElementById('filter-risk').value;
@@ -1136,6 +1109,7 @@ function applyFilters() {
 }
 
 function attachListeners() {
+  if(!document.getElementById('search-input'))return;
   document.getElementById('search-input').addEventListener('input', applyFilters);
   document.getElementById('filter-quadrant').addEventListener('change', applyFilters);
   document.getElementById('filter-risk').addEventListener('change', applyFilters);
@@ -1472,11 +1446,99 @@ let mirrorAnalysisData = null;
 let mirrorChartsRendered = false;
 
 const TAB_DESC = {
-  general: '8개 영역과 내신/수능 대응력을 보는 종합 진단 (8축 80문항)',
+  general: '학생 이름을 누르면 그 학생이 응시한 모든 진단을 종합해 한눈에 보여줍니다.',
   v2: '장면형 문항으로 학습 성향과 필요한 관리 방식을 보는 진단 (비재원생, 재원생, 여름 점검)',
   special: '특별판 — 한티 MEXX 설명회용 / 오름 관내 학교 추천',
   mirror: '학부모와 자녀의 인식 차이를 비교하는 거울 진단'
 };
+// ═══════════ 학생 종합 (모든 진단 통합 프로필) ═══════════
+let STUDENT_SOURCES=null, STUDENT_INDEX={};
+async function loadStudentDirectory(){
+  const key=localStorage.getItem(STORAGE_KEY); if(!key) return;
+  const get=async(x)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${x}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
+  const [gen,v2,sp,mi]=await Promise.all([get('list'),get('v2List'),get('specialList'),get('mirrorList')]);
+  STUDENT_SOURCES={gen,v2,sp,mi};
+  buildStudentIndex(); renderStudentDirectory();
+}
+function skey(n,sc,g){ return String(n||'').trim()+'|'+String(sc||'').trim()+'|'+String(g||'').trim(); }
+function buildStudentIndex(){
+  const S={}; const src=STUDENT_SOURCES||{};
+  const ens=(n,sc,g)=>{ const k=skey(n,sc,g); if(!S[k]) S[k]={key:k,name:String(n||'').trim(),school:String(sc||'').trim(),grade:String(g||'').trim(),gen:[],v2:[],sp:[],mi:[],parent:[]}; return S[k]; };
+  (src.gen||[]).forEach(r=>{ if(r['이름']) ens(r['이름'],r['학교'],r['학년']).gen.push(r); });
+  (src.v2||[]).forEach(r=>{ if(!r['이름'])return; const t=ens(r['이름'],r['학교'],r['학년']); if(r['버전']==='학부모관찰') t.parent.push(r); else t.v2.push(r); });
+  (src.sp||[]).forEach(r=>{ if(r['이름']) ens(r['이름'],r['학교'],r['학년']).sp.push(r); });
+  (src.mi||[]).forEach(r=>{ if(r['학생이름']) ens(r['학생이름'],r['학교'],r['학년']).mi.push(r); });
+  STUDENT_INDEX=S;
+}
+function spRisks(t){
+  const rk=[];
+  (t.gen||[]).forEach(r=>{ if(r['주의 신호']&&String(r['주의 신호']).trim()) rk.push(String(r['주의 신호']).trim()); });
+  (t.v2||[]).forEach(r=>{ if(+r['고위험수']>0) rk.push('고위험 '+r['고위험수']); });
+  (t.sp||[]).forEach(r=>{ if(r['위험신호']&&String(r['위험신호']).trim()) rk.push(String(r['위험신호']).trim()); });
+  return [...new Set(rk)];
+}
+function renderStudentDirectory(){
+  const wrap=document.getElementById('student-directory'); if(!wrap) return;
+  const q=(document.getElementById('sp-search')?.value||'').trim();
+  let list=Object.values(STUDENT_INDEX||{}).filter(t=>t.name);
+  if(q) list=list.filter(t=>t.name.includes(q)||(t.school||'').includes(q));
+  list.sort((a,b)=>b.v2.length+b.sp.length+b.mi.length+b.gen.length-(a.v2.length+a.sp.length+a.mi.length+a.gen.length) || a.name.localeCompare(b.name));
+  const cnt=document.getElementById('sp-count'); if(cnt) cnt.textContent=list.length;
+  const gc=document.getElementById('tab-count-general'); if(gc) gc.textContent=list.length;
+  if(!list.length){ wrap.innerHTML='<div style="padding:22px;color:var(--ink-muted);font-size:13px;text-align:center">응답이 없습니다.</div>'; return; }
+  const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
+  let h='';
+  list.forEach(t=>{
+    const risks=spRisks(t); const chips=[];
+    if(t.gen.length) chips.push('<span class="sp-chip g">종합</span>');
+    t.v2.forEach(r=>chips.push(`<span class="sp-chip">${V2KO[r['버전']]||r['버전']||'성향'}</span>`));
+    if(t.sp.length) chips.push('<span class="sp-chip spx">특별판</span>');
+    if(t.mi.length) chips.push('<span class="sp-chip mi">거울</span>');
+    if(t.parent.length) chips.push('<span class="sp-chip pa">학부모</span>');
+    if(risks.length) chips.push(`<span class="sp-chip risk">주의 ${risks.length}</span>`);
+    h+=`<div class="sp-card${risks.length?' risk':''}" onclick="openStudentProfile('${t.key.replace(/'/g,'')}')"><div class="sp-name">${t.name||'익명'}</div><div class="sp-sub">${[t.school,t.grade].filter(Boolean).join(' ')||'—'}</div><div class="sp-chips">${chips.join('')}</div></div>`;
+  });
+  wrap.innerHTML=h;
+}
+function synthDefine(t){
+  const bits=[]; const V2RANK={'재원생 심층':3,'재원생 첫':2,'비재원생':1};
+  const v2m=(t.v2||[]).filter(r=>r['버전']!=='summer').sort((a,b)=>(V2RANK[b['버전']]||0)-(V2RANK[a['버전']]||0))[0];
+  if(v2m&&v2m['페르소나']) bits.push(`학습 성향은 <b>${v2m['페르소나']}</b>`);
+  if(v2m){ const ax={'자료 장악':+v2m['자료장악'],'사고 적용':+v2m['사고적용'],'조건 변별':+v2m['조건변별'],'오답 메타인지':+v2m['오답메타인지'],'시간 운영':+v2m['시간운영'],'정서 회복':+v2m['정서회복']};
+    const ent=Object.entries(ax).filter(([k,v])=>!isNaN(v)); if(ent.length>=2){ ent.sort((x,y)=>y[1]-x[1]); bits.push(`강점 <b>${ent[0][0]}</b> · 약점 <b>${ent[ent.length-1][0]}</b>`); } }
+  const sp=(t.sp||[]).find(r=>r['판정']); if(sp) bits.push(`특별판 판정 <b>${sp['판정']}</b>`);
+  if((t.v2||[]).some(r=>r['버전']==='summer')) bits.push('여름 학습 점검 응시');
+  if((t.mi||[]).length) bits.push('거울 진단(부모–자녀 인식 비교) 참여');
+  if((t.parent||[]).length) bits.push('<b>학부모 관찰 응답 있음</b>');
+  const g=(t.gen||[])[0]; if(g&&g['4분면 유형']&&!v2m) bits.push(`종합 진단 <b>${g['4분면 유형']}</b>`);
+  const txt = bits.length? (t.name+'은(는) '+bits.join(', ')+'입니다.') : '아직 성향을 정의하기엔 데이터가 부족합니다. 진단을 더 응시하면 종합됩니다.';
+  return {txt, risks:spRisks(t)};
+}
+function openStudentProfile(key){
+  const t=STUDENT_INDEX[key]; if(!t) return;
+  const e=v=>String(v==null?'':v).replace(/</g,'&lt;');
+  const enc=encodeURIComponent(t.name);
+  const d=synthDefine(t);
+  let h=`<div class="sp-def">${d.txt}</div>`;
+  if(d.risks.length) h+=`<div class="sp-risk"><b>주의 신호</b> · ${d.risks.map(e).join(' / ')}</div>`;
+  h+=`<div class="sp-h4">응시한 진단</div>`;
+  const V2KO={'비재원생':'비재원생 진단','재원생 첫':'재원생 첫 진단','재원생 심층':'재원생 심층 진단','summer':'여름 학습 점검'};
+  let rows='';
+  t.v2.forEach(r=>{
+    const summer=r['버전']==='summer';
+    const ax=summer?'':`<div class="sp-axmini">${[['자료장악','장악'],['사고적용','적용'],['조건변별','변별'],['오답메타인지','메타'],['시간운영','시간'],['정서회복','정서']].map(([k,l])=>typeof r[k]==='number'?`<span>${l} ${r[k]}</span>`:'').join('')}</div>`;
+    rows+=`<div class="sp-diag"><div><div class="t">${V2KO[r['버전']]||r['버전']}</div><div class="st">${summer?'응시 완료':(e(r['페르소나'])||'—')}${(+r['고위험수']>0)?` · 고위험 ${r['고위험수']}`:''}</div>${ax}</div><a href="result-viewer.html?v2Name=${enc}&report=teacher" target="_blank">강사용 확인</a></div>`;
+  });
+  t.sp.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">특별판 진단</div><div class="st">${e(r['판정'])||'—'}${r['위험신호']?' · '+e(r['위험신호']):''}</div></div><a href="result-viewer.html?name=${enc}" target="_blank">결과지</a></div>`; });
+  t.mi.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">거울 진단</div><div class="st">${e(r['역할'])==='parent'?'학부모 응답':'학생 응답'} · 가족코드 ${e(r['가족코드'])}</div></div><a href="result-viewer.html?mirrorCode=${encodeURIComponent(r['가족코드'])}" target="_blank">결과지</a></div>`; });
+  t.gen.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">종합 진단(8축)</div><div class="st">${[e(r['4분면 유형']),e(r['16유형 이름'])].filter(Boolean).join(', ')||'—'}</div></div><a href="result-viewer.html?generalName=${enc}" target="_blank">결과지</a></div>`; });
+  t.parent.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">학부모 관찰</div><div class="st">학부모가 자녀를 관찰해 응답 (${e(r['제출시각']).slice(0,10)})</div></div><span style="font-size:12px;color:var(--ink-faint)">시트 참조</span></div>`; });
+  h+=rows||'<div style="color:var(--ink-muted);font-size:13px">기록 없음</div>';
+  document.getElementById('modal-title').textContent=`${t.name} — 학생 종합`;
+  document.getElementById('modal-body').innerHTML=h;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
@@ -1494,6 +1556,7 @@ function switchTab(tab) {
   if (tab === 'v2' && !v2Rendered) {
     loadV2Data();
   }
+  if (tab === 'general') { loadStudentDirectory(); }
 }
 
 // ═══════════ v2 진단 (비재원생/재원생) ═══════════
