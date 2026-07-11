@@ -1500,18 +1500,21 @@ function renderStudentDirectory(){
   });
   wrap.innerHTML=h;
 }
+function josaEN(w){ if(!w) return '은(는)'; const c=w.charCodeAt(w.length-1); if(c<0xAC00||c>0xD7A3) return '은(는)'; return ((c-0xAC00)%28)?'은':'는'; }
 function synthDefine(t){
-  const bits=[]; const V2RANK={'재원생 심층':3,'재원생 첫':2,'비재원생':1};
+  const V2RANK={'재원생 심층':3,'재원생 첫':2,'비재원생':1};
   const v2m=(t.v2||[]).filter(r=>r['버전']!=='summer').sort((a,b)=>(V2RANK[b['버전']]||0)-(V2RANK[a['버전']]||0))[0];
-  if(v2m&&v2m['페르소나']) bits.push(`학습 성향은 <b>${v2m['페르소나']}</b>`);
+  const core=[], also=[];
+  if(v2m&&v2m['페르소나']) core.push(`학습 성향 <b>${v2m['페르소나']}</b>`);
   if(v2m){ const ax={'자료 장악':+v2m['자료장악'],'사고 적용':+v2m['사고적용'],'조건 변별':+v2m['조건변별'],'오답 메타인지':+v2m['오답메타인지'],'시간 운영':+v2m['시간운영'],'정서 회복':+v2m['정서회복']};
-    const ent=Object.entries(ax).filter(([k,v])=>!isNaN(v)); if(ent.length>=2){ ent.sort((x,y)=>y[1]-x[1]); bits.push(`강점 <b>${ent[0][0]}</b> · 약점 <b>${ent[ent.length-1][0]}</b>`); } }
-  const sp=(t.sp||[]).find(r=>r['판정']); if(sp) bits.push(`특별판 판정 <b>${sp['판정']}</b>`);
-  if((t.v2||[]).some(r=>r['버전']==='summer')) bits.push('여름 학습 점검 응시');
-  if((t.mi||[]).length) bits.push('거울 진단(부모–자녀 인식 비교) 참여');
-  if((t.parent||[]).length) bits.push('<b>학부모 관찰 응답 있음</b>');
-  const g=(t.gen||[])[0]; if(g&&g['4분면 유형']&&!v2m) bits.push(`종합 진단 <b>${g['4분면 유형']}</b>`);
-  const txt = bits.length? (t.name+'은(는) '+bits.join(', ')+'입니다.') : '아직 성향을 정의하기엔 데이터가 부족합니다. 진단을 더 응시하면 종합됩니다.';
+    const ent=Object.entries(ax).filter(([k,v])=>!isNaN(v)); if(ent.length>=2){ ent.sort((x,y)=>y[1]-x[1]); core.push(`강점 <b>${ent[0][0]}</b>, 약점 <b>${ent[ent.length-1][0]}</b>`); } }
+  const sp=(t.sp||[]).find(r=>r['판정']); if(sp) core.push(`특별판 판정 <b>${sp['판정']}</b>`);
+  const g=(t.gen||[])[0]; if(g&&g['4분면 유형']&&!v2m) core.push(`종합 진단 <b>${g['4분면 유형']}</b>`);
+  if((t.v2||[]).some(r=>r['버전']==='summer')) also.push('여름 학습 점검');
+  if((t.mi||[]).length) also.push('거울 진단');
+  if((t.parent||[]).length) also.push('학부모 관찰');
+  let txt = core.length ? `${t.name}${josaEN(t.name)} ${core.join(', ')} 유형입니다.` : `${t.name}${josaEN(t.name)} 아직 성향을 정의하기엔 데이터가 부족합니다. 진단을 더 응시하면 종합됩니다.`;
+  if(also.length) txt += ` <span style="color:var(--ink-muted)">${also.join(' · ')}도 함께 응시했습니다.</span>`;
   return {txt, risks:spRisks(t)};
 }
 function openStudentProfile(key){
