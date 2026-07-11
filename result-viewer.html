@@ -2897,6 +2897,9 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 .rpt-cmp-row .ax{ font-weight:700; color:#1b1e24; }
 .rpt-cmp-row .hi{ color:#c0392b; font-weight:800; }
 .rpt-cmp-row .lo{ color:#0f766e; font-weight:800; }
+.rpt-cmp-interp{ margin-top:13px; display:flex; flex-direction:column; gap:8px; }
+.rpt-cmp-i{ font-size:13px; line-height:1.72; color:#5c6672; background:#f4f8f7; border-left:2px solid #14b8a6; border-radius:0 6px 6px 0; padding:10px 14px; }
+.rpt-cmp-i b{ color:#1b1e24; }
 .rpt-mini-row.ok{ background:#eef7f4; border-color:#d3e8e2; }
 .rpt-mini-row.bad{ background:#f7ecea; border-color:#e6cfcc; }
 .rpt-mini-row .mk{ font-weight:800; font-size:15px; width:16px; text-align:center; }
@@ -5669,6 +5672,16 @@ function rptLevelBar(label, v){
   return `<div class="rpt-lb"><div class="rpt-lb-top"><span class="rpt-lb-name">${e(label)}</span><span class="rpt-lb-lv ${lv.c}">${lv.w}</span></div><div class="rpt-lb-track"><span class="tk"></span><span class="tk"></span><span class="tk"></span><div class="rpt-lb-fill ${lv.c}" style="width:${pct}%"></div></div></div>`;
 }
 function rptEnroll(info){ if(!info||!info.className) return ''; const e=x=>String(x==null?'':x).replace(/</g,'&lt;'); return `<div class="rpt-enroll">수강 <b>${e(info.academy||'')}</b> ${e(info.className)}</div>`; }
+function v2CmpInterp(pc, AX){
+  const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
+  const it=[];
+  it.push(pc.agree>=80?'전반적으로 학생의 자기 인식과 부모 관찰이 <b>잘 맞습니다</b> — 자기 객관화가 되는 편이라 피드백 수용이 수월합니다.':(pc.agree>=60?'대체로 맞지만 아래 축에서 인식이 갈립니다 — <b>그 축이 상담 포인트</b>입니다.':'학생과 부모의 인식이 <b>크게 엇갈립니다</b> — 어느 쪽이 실제에 가까운지 학생의 실제 문항 응답으로 확인이 필요합니다.'));
+  over.forEach(r=>it.push(`<b>${AX[r.ax]}</b> — 학생은 스스로 괜찮다고 보지만(${r.stu}) 부모 관찰은 낮습니다(${r.par}). 본인이 약점을 <b>인지하지 못하는 맹점</b>일 수 있어, 이 축의 오답·근거를 직접 짚어 “실제로는 이렇다”를 자각시키는 접근이 효과적입니다.`));
+  under.forEach(r=>it.push(`<b>${AX[r.ax]}</b> — 학생은 스스로 부족하다 보지만(${r.stu}) 부모 관찰은 높습니다(${r.par}). <b>낮은 자기효능</b>(실제보다 자신을 깎음)이거나 부모가 낙관적으로 본 경우입니다 — 실제 실력을 확인해 <b>자신감 회복</b> vs <b>부모 기대 조정</b> 중 무엇이 필요한지 판단하세요.`));
+  const ex=pc.rows.filter(r=>Math.abs(r.diff)>=80).map(r=>AX[r.ax]);
+  if(ex.length) it.push(`※ <b>${ex.join(', ')}</b> 축은 채점에 반영된 문항 수가 적어 점수가 0/100처럼 극단으로 튀었을 수 있습니다. 절대 수치보다 <b>방향</b>(누가 더 높게 보나)과 아래 학부모 원문 응답을 함께 보세요.`);
+  return `<div class="rpt-cmp-interp">${it.map(t=>`<div class="rpt-cmp-i">${t}</div>`).join('')}</div>`;
+}
 function v2SetReportMode(m){ v2State.reportMode=m; v2Finish(); }
 function renderV2Results(){
   const info=v2State.info, a=v2Analyze(), P=V2_PERSONA[a.persona]||{label:'-',sub:'',line:''};
@@ -5722,7 +5735,7 @@ function renderV2Results(){
     if(a.parentCompare){ const pc=a.parentCompare, AX=V2_AXNAME;
       const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
       const tbl=pc.rows.map(r=>`<div class="rpt-cmp-row"><span class="ax">${AX[r.ax]}</span><span>학생 ${r.stu}</span><span>부모 ${r.par}</span><span class="${r.diff>=12?'hi':(r.diff<=-12?'lo':'')}">${r.diff>0?'+':''}${r.diff}</span></div>`).join('');
-      h+=`<section class="rpt-sec">${sec('학생–학부모 인식 비교','자기평가 vs 학부모 관찰 · 별도 응답 매칭')}<div class="rpt-box"><b>인식 일치도 ${pc.agree}%</b>${over.length?` · 학생 과대평가(자기↑): <b class="rpt-warn">${over.map(r=>AX[r.ax]).join(', ')}</b>`:''}${under.length?` · 학생 과소평가(자기↓·부모가 더 높게 봄): <b>${under.map(r=>AX[r.ax]).join(', ')}</b>`:''}</div><div class="rpt-cmp"><div class="rpt-cmp-row head"><span class="ax">축</span><span>학생</span><span>부모</span><span>차이</span></div>${tbl}</div></section>`; }
+      h+=`<section class="rpt-sec">${sec('학생–학부모 인식 비교','자기평가 vs 학부모 관찰 · 별도 응답 매칭')}<div class="rpt-box"><b>인식 일치도 ${pc.agree}%</b>${over.length?` · 학생 과대평가(자기↑): <b class="rpt-warn">${over.map(r=>AX[r.ax]).join(', ')}</b>`:''}${under.length?` · 학생 과소평가(자기↓·부모가 더 높게 봄): <b>${under.map(r=>AX[r.ax]).join(', ')}</b>`:''}</div><div class="rpt-cmp"><div class="rpt-cmp-row head"><span class="ax">축</span><span>학생</span><span>부모</span><span>차이</span></div>${tbl}</div>${v2CmpInterp(pc,V2_AXNAME)}</section>`; }
     const rk=v2State.responses['RK1'];
     if(Array.isArray(rk)&&rk.length){ const labels=rk.map(i=>V2_RANK_FIRST.items[i]); const pAx=labels.map(l=>V2_RANK_AX[l]); const mw=a.weakest&&pAx.includes(a.weakest);
       h+=`<section class="rpt-sec">${sec('우선순위 ↔ 실측')}<div class="rpt-box">학생이 꼽은 우선순위: <b>${labels.join(' › ')}</b><br>실측상 가장 약한 축: <b class="rpt-warn">${a.weakest?V2_AXNAME[a.weakest]:'—'}</b>. ${mw?'자기 인식과 실제 약점이 일치.':'스스로 꼽은 우선순위와 실제 약점이 달라 방향 조정 필요.'}</div></section>`; }
