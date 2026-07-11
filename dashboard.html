@@ -352,12 +352,23 @@ body::before{
 .tab-pane.active{display:block}
 
 .v2-week-badge{font-size:12px;font-weight:600;color:var(--olive)}
-.v2-newdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:6px;vertical-align:middle}
-.v2-verpill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--line);white-space:nowrap}
-.v2-verpill.summer{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.4);color:#7fe6d6}
-.v2-flag{font-size:12px;color:var(--ink-muted)}
-.v2-flag.warn{color:var(--crimson);font-weight:600}
-.v2-ok{font-size:12px;color:var(--ink-faint)}
+/* ── 세련된 데이터 표 (v2/특별판/거울 공통) ── */
+.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+.data-table thead th{text-align:left;padding:12px 16px;font-family:var(--serif);font-weight:700;font-size:12px;letter-spacing:.02em;color:var(--ink-muted);border-bottom:1px solid var(--line);white-space:nowrap}
+.data-table tbody td{padding:13px 16px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);vertical-align:middle;line-height:1.45}
+.data-table tbody tr{transition:background .14s}
+.data-table tbody tr:hover{background:rgba(45,212,191,.055)}
+.data-table tbody tr:last-child td{border-bottom:0}
+.data-table tbody td strong{color:var(--ink);font-weight:700}
+.v2-newdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#2DD4BF;margin-right:7px;vertical-align:middle;box-shadow:0 0 6px rgba(45,212,191,.6)}
+.v2-verpill{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink-soft);white-space:nowrap}
+.v2-verpill.summer{background:rgba(45,212,191,.13);border-color:rgba(45,212,191,.4);color:#7fe6d6}
+.v2-flag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(224,180,90,.15);color:#e0b45a;white-space:nowrap}
+.v2-flag.warn{background:rgba(224,120,110,.16);color:#ef9f92}
+.v2-ok{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(45,212,191,.1);color:#7fbfb2}
+.v2-none{color:var(--ink-faint);font-size:12px}
+.v2-open{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:#2DD4BF;border:1px solid rgba(45,212,191,.35);padding:5px 12px;border-radius:20px;transition:.14s;white-space:nowrap}
+.data-table tbody tr:hover .v2-open{background:rgba(45,212,191,.12);border-color:#2DD4BF}
 .v2-filter{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:13px}
 .v2-pbars{display:grid;gap:6px;margin-top:8px}
 .v2-pbar{display:grid;grid-template-columns:92px 1fr 26px;align-items:center;gap:8px;font-size:12px}
@@ -1658,7 +1669,7 @@ function renderV2Table() {
     const ver = r['버전'] || '';
     const verLabel = V2_VER_LABEL[ver] || ver;
     const stars = +r['고위험수'] || 0, chak = +r['착각수'] || 0;
-    let sig = '<span class="v2-ok">—</span>';
+    let sig = '<span class="v2-none">—</span>';
     if (ver === 'summer') sig = stars ? '<span class="v2-flag warn">신뢰도 주의</span>' : '<span class="v2-ok">양호</span>';
     else { const pp=[]; if(stars) pp.push(`고위험 ${stars}`); if(chak) pp.push(`착각 ${chak}`); if(pp.length) sig = `<span class="v2-flag${stars>=3?' warn':''}">${pp.join(', ')}</span>`; }
     h += `<tr style="cursor:pointer" onclick="openV2Result('${nm}')">`
@@ -1666,9 +1677,9 @@ function renderV2Table() {
       + `<td><strong>${r['이름']||''}</strong></td>`
       + `<td>${r['학교']||''} ${r['학년']||''}</td>`
       + `<td><span class="v2-verpill${ver==='summer'?' summer':''}">${verLabel}</span></td>`
-      + `<td>${r['페르소나']||''}${_pset[_pk(r)]?' <span class="v2-flag" style="background:rgba(170,120,235,.18);color:#c79bf0">부모관찰</span>':''}</td>`
+      + `<td><strong>${r['페르소나']||''}</strong>${_pset[_pk(r)]?' <span class="v2-flag" style="background:rgba(170,120,235,.18);color:#c79bf0">부모관찰</span>':''}</td>`
       + `<td>${sig}</td>`
-      + `<td style="color:var(--olive);white-space:nowrap">열기 →</td></tr>`;
+      + `<td><span class="v2-open">열기 →</span></td></tr>`;
   });
   h += `</tbody></table>`;
   wrap.innerHTML = h;
