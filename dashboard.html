@@ -461,6 +461,11 @@ body::before{
   <div id="tab-general" class="tab-pane active">
   <style>
   .sp-dir-controls{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .sp-seg{display:inline-flex;gap:4px;background:var(--bg-deep);border-radius:8px;padding:3px}
+  .sp-seg button{border:0;background:transparent;color:var(--ink-muted);font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit}
+  .sp-seg button.on{background:#14b8a6;color:#052018}
+  .sp-card.miss{cursor:default;opacity:.72;border-style:dashed}
+  .sp-card.miss:hover{transform:none;border-color:var(--line);box-shadow:none}
   #student-directory{display:block}
   .sp-date{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;background:var(--bg-paper)}
   .sp-date-h{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
@@ -520,6 +525,7 @@ body::before{
   </style>
   <div class="sp-dir-controls">
     <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
+    <div class="sp-seg"><button id="sp-seg-date" class="on" onclick="spSetView('date')">날짜별</button><button id="sp-seg-class" onclick="spSetView('class')">반별</button></div>
     <div class="count-info">총 <strong id="sp-count">0</strong>명 · 이름을 누르면 그 학생의 모든 진단을 종합합니다</div>
   </div>
   <div id="student-directory"><div style="padding:22px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
@@ -1524,6 +1530,33 @@ function spRisks(t){
   (t.sp||[]).forEach(r=>{ if(r['위험신호']&&String(r['위험신호']).trim()) rk.push(String(r['위험신호']).trim()); });
   return [...new Set(rk)];
 }
+let SP_VIEW='date';
+const CLASS_ROSTER={
+ '한티 MEXX 단과 고1':['장서아','장성주','황수민','신지우','윤상','정유진','최준혁'],
+ '한티 MEXX 단과 고2':['김수민','김채량','김현서','민주아','박재현','박준성','배주영','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
+};
+function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date'), c=document.getElementById('sp-seg-class'); if(d)d.classList.toggle('on',m==='date'); if(c)c.classList.toggle('on',m==='class'); renderStudentDirectory(); }
+function renderClassView(){
+  const wrap=document.getElementById('student-directory'); if(!wrap) return;
+  const q=(document.getElementById('sp-search')?.value||'').trim();
+  const byName={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{ if(t.name) byName[t.name]=t; });
+  const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
+  let h='',shown=0,tot=0;
+  Object.entries(CLASS_ROSTER).forEach(([cls,names])=>{
+    let list=names; if(q) list=names.filter(n=>n.includes(q)||cls.includes(q));
+    if(!list.length) return;
+    const done=names.filter(n=>byName[n]).length; tot+=names.length;
+    shown++; const open=(shown===1||q)?' open':'';
+    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">응답 ${done}/${names.length}</span><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
+    list.forEach(n=>{ const t=byName[n];
+      if(t){ h+=spCard(t); }
+      else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span></div></div>`; }
+    });
+    h+=`</div></div></div>`;
+  });
+  const cnt=document.getElementById('sp-count'); if(cnt) cnt.textContent=tot;
+  wrap.innerHTML = shown? h : '<div style="padding:22px;color:var(--ink-muted);font-size:13px;text-align:center">등록된 반 명단이 없습니다.</div>';
+}
 function spCard(t){
   const risks=spRisks(t); const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
   const chips=[];
@@ -1537,6 +1570,7 @@ function spCard(t){
 }
 function renderStudentDirectory(){
   const wrap=document.getElementById('student-directory'); if(!wrap) return;
+  if(SP_VIEW==='class'){ return renderClassView(); }
   const q=(document.getElementById('sp-search')?.value||'').trim();
   const dates=Object.keys(DATE_GROUPS||{}).sort((a,b)=>b.localeCompare(a));
   const totalStu=Object.values(STUDENT_INDEX||{}).filter(t=>t.name).length;
