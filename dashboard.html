@@ -1546,8 +1546,9 @@ function renderClassView(){
     let list=names; if(q) list=names.filter(n=>n.includes(q)||cls.includes(q));
     if(!list.length) return;
     const done=names.filter(n=>byName[n]).length; tot+=names.length;
+    const full=names.filter(n=>{const t=byName[n]; return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
     shown++; const open=(shown===1||q)?' open':'';
-    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">응답 ${done}/${names.length}</span><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
+    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
     list.forEach(n=>{ const t=byName[n];
       if(t){ h+=spCard(t); }
       else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span></div></div>`; }
