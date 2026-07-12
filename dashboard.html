@@ -497,6 +497,12 @@ body::before{
   .sp-pa{padding:10px 2px;border-bottom:1px solid var(--line-soft)}
   .sp-pa-q{font-size:12.5px;color:var(--ink-muted);line-height:1.45}
   .sp-pa-a{font-size:14px;color:var(--ink);font-weight:600;margin-top:3px}
+  .sp-interp{background:var(--bg-paper);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
+  .sp-interp p{font-size:13.5px;line-height:1.8;color:var(--ink-soft);margin:0 0 10px}
+  .sp-interp p:last-child{margin-bottom:0}
+  .sp-interp p b{color:var(--ink)}
+  .sp-interp p.hl{background:rgba(45,212,191,.09);border-left:2px solid #14b8a6;padding:10px 13px;border-radius:0 7px 7px 0}
+  .sp-interp p.hl b{color:#6EE7D6}
   .sp-cmp{margin-top:8px}
   .sp-cmp-head,.sp-cmp-row{display:grid;grid-template-columns:92px 1fr 1fr 62px;gap:11px;align-items:center}
   .sp-cmp-head{font-size:11px;color:var(--ink-muted);font-weight:700;padding-bottom:7px}
@@ -1591,6 +1597,44 @@ function computeParentAxes(pj){
   Object.keys(PARENT_C).forEach(id=>{ const v=pj[id]; if(typeof v!=='number') return; const code=(PARENT_C[id]||[])[v-1]; dashV2Flags(code).forEach(f=>{ if(f.ax&&acc[f.ax]) acc[f.ax].push(f.d); }); });
   const out={}; Object.keys(acc).forEach(k=>{ const a=acc[k]; out[k]=a.length?Math.round(50+50*(a.reduce((x,y)=>x+y,0)/a.length)):null; }); return out;
 }
+const PERSONA_DESC={
+ '성실누수':'공부량은 충분한데 맞고 틀린 이유를 정밀하게 분류하지 못해 점수로 이어지지 않습니다. 자료는 챙기지만 "왜 틀렸는지"에서 새고 있어요.',
+ '감각의존':'감각은 있으나 맞힌 것과 틀린 것을 모두 "이해했다"로 처리해, 같은 매력적 오답에 반복적으로 걸릴 위험이 큽니다.',
+ '고난도적용':'낯선 지문·고난도엔 강하지만 학교 자료·조건 같은 내신 디테일에서 점수를 흘립니다. 모의고사형 강점이 내신으로 잘 이어지지 않아요.',
+ '조건변별':'내용 이해는 되지만 발문·선지·서술형 조건에서 실수가 잦습니다. 조건 방어 훈련이 점수를 가장 빠르게 올릴 지점이에요.',
+ '자료장악':'학교 자료·필기·범위를 꼼꼼히 챙기는 성실함이 강점입니다. 범위가 넓고 암기 비중이 큰 시험에서 유리합니다.',
+ '사고적용':'낯선 지문을 두려워하지 않고 원리를 이해해 적용합니다. 외부 지문·고난도 변별이 많은 시험에서 유리합니다.',
+ '균형':'특정 축에 치우치지 않고 고르게 안정적입니다. 강점을 유지하며 약점 축을 조금씩 끌어올리면 됩니다.',
+ '기초재설계':'특정 영역 문제라기보다 국어 학습 처리 전반을 다시 설계할 시점입니다. 한 축씩 기초부터 세워야 합니다.'
+};
+const AX_RX={
+ '자료 장악':'흩어진 자료를 한 곳에 모아 단권화하고, 시험 3주 전 범위표를 직접 만들게 한다.',
+ '사고 적용':'낯선 지문을 "아는 개념으로 번역"하는 연습 + 배운 작품과 낯선 작품 비교.',
+ '조건 변별':'정답마다 지문 근거 줄을 표시하고, 발문 조건에 먼저 표시하는 습관을 들인다.',
+ '오답 메타인지':'오답에 "내가 그 답을 고른 이유"까지 한 줄로 적게 한다. 답만 맞추는 오답노트는 무의미.',
+ '시간 운영':'실전 시간·환경 노출을 늘리고, 안 풀리면 표시하고 넘어갔다 마지막에 검토.',
+ '정서 회복':'실수를 감정이 아닌 데이터로 기록하고, 쉬운 문제부터 워밍업해 성공 경험을 쌓는다.'
+};
+function synthInterpretBlock(t){
+  const e=x=>String(x==null?'':x).replace(/</g,'&lt;');
+  const V2RANK={'재원생 심층':3,'재원생 첫':2,'비재원생':1};
+  const v2m=(t.v2||[]).filter(r=>r['버전']!=='summer'&&r['페르소나']).sort((a,b)=>(V2RANK[b['버전']]||0)-(V2RANK[a['버전']]||0))[0];
+  if(!v2m) return '';
+  const AXC=[['자료 장악','자료장악'],['사고 적용','사고적용'],['조건 변별','조건변별'],['오답 메타인지','오답메타인지'],['시간 운영','시간운영'],['정서 회복','정서회복']];
+  const axes=AXC.map(([n,k])=>[n,+v2m[k]]).filter(x=>!isNaN(x[1]));
+  if(axes.length<4) return '';
+  axes.sort((a,b)=>b[1]-a[1]);
+  const S=axes.slice(0,2), W=axes.slice(-2).reverse();
+  const pd=PERSONA_DESC[v2m['페르소나']]||''; const hr=+v2m['고위험수']||0; const rx=AX_RX[W[0][0]]||'';
+  let h=`<div class="sp-h4" style="margin-top:20px">종합 해석 <span style="font-weight:400;color:var(--ink-muted);font-size:12px">— 모든 응답을 묶어 본 읽기</span></div><div class="sp-interp">`;
+  if(pd) h+=`<p><b>유형 · ${e(v2m['페르소나'])}</b> — ${pd}</p>`;
+  h+=`<p><b>강점</b> — ${S[0][0]} ${S[0][1]} · ${S[1][0]} ${S[1][1]}　|　<b>약점</b> — ${W[0][0]} ${W[0][1]} · ${W[1][0]} ${W[1][1]}</p>`;
+  h+=`<p class="hl">즉 <b>${S[0][0]}·${S[1][0]}</b>은 갖췄지만 <b>${W[0][0]}</b>에서 점수가 샙니다. 여기부터 세우면 이미 있는 강점이 점수로 이어집니다.</p>`;
+  h+=`<p><b>처방</b> — 가장 약한 <b>${W[0][0]}</b>부터: ${rx}</p>`;
+  if(hr) h+=`<p><b>주의</b> — 고위험 응답 <b>${hr}건</b>. 어떤 문항에 어떻게 답했는지는 아래 ‘강사용 확인’에서 원문으로 확인하세요.</p>`;
+  h+=`</div>`;
+  return h;
+}
 function openStudentProfile(key){
   const t=STUDENT_INDEX[key]; if(!t) return;
   const e=v=>String(v==null?'':v).replace(/</g,'&lt;');
@@ -1598,6 +1642,7 @@ function openStudentProfile(key){
   const d=synthDefine(t);
   let h=`<div class="sp-def">${d.txt}</div>`;
   if(d.risks.length) h+=`<div class="sp-risk"><b>주의 신호</b> · ${d.risks.map(e).join(' / ')}</div>`;
+  h+=synthInterpretBlock(t);
   h+=`<div class="sp-h4">응시한 진단</div>`;
   const V2KO={'비재원생':'비재원생 진단','재원생 첫':'재원생 첫 진단','재원생 심층':'재원생 심층 진단','summer':'여름 학습 점검'};
   let rows='';
