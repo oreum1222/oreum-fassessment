@@ -484,24 +484,24 @@ body::before{
   .sp-chip.mi{background:rgba(143,201,224,.15);color:#8fc9e0}
   .sp-chip.pa{background:rgba(170,120,235,.16);color:#c79bf0}
   .sp-chip.risk{background:rgba(224,120,110,.17);color:#ef9f92}
-  .sp-def{font-size:14.5px;line-height:1.85;color:var(--ink-soft);background:var(--bg-elevated);border-left:3px solid #14b8a6;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:18px}
+  .sp-def{font-size:15.5px;line-height:1.92;color:#e6efeb;background:var(--bg-elevated);border-left:3px solid #14b8a6;padding:16px 18px;border-radius:0 8px 8px 0;margin-bottom:18px}
   .sp-def b{color:#6EE7D6}
   .sp-risk{font-size:13px;color:#ef9f92;background:rgba(224,120,110,.11);border-radius:8px;padding:11px 14px;margin-bottom:18px}
   .sp-h4{font-family:var(--serif);font-weight:800;font-size:14px;color:var(--ink-soft);margin:0 0 11px;padding-bottom:7px;border-bottom:1px solid var(--line)}
   .sp-diag{border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:12px}
   .sp-diag .t{font-family:var(--serif);font-weight:800;color:var(--ink);font-size:14px}
-  .sp-diag .st{font-size:12.5px;color:var(--ink-muted);margin-top:3px}
+  .sp-diag .st{font-size:13px;color:var(--ink-soft);margin-top:4px}
   .sp-diag a{font-size:12px;color:#2DD4BF;text-decoration:none;border:1px solid rgba(45,212,191,.42);padding:5px 11px;border-radius:20px;white-space:nowrap}
   .sp-axmini{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
   .sp-axmini span{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--bg-deep);color:var(--ink-muted)}
   .sp-pa{padding:10px 2px;border-bottom:1px solid var(--line-soft)}
   .sp-pa-q{font-size:12.5px;color:var(--ink-muted);line-height:1.45}
   .sp-pa-a{font-size:14px;color:var(--ink);font-weight:600;margin-top:3px}
-  .sp-interp{background:var(--bg-paper);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
-  .sp-interp p{font-size:13.5px;line-height:1.8;color:var(--ink-soft);margin:0 0 10px}
+  .sp-interp{background:var(--bg-paper);border:1px solid var(--line);border-radius:10px;padding:17px 19px}
+  .sp-interp p{font-size:14.5px;line-height:1.9;color:#dce7e2;margin:0 0 12px}
   .sp-interp p:last-child{margin-bottom:0}
   .sp-interp p b{color:var(--ink)}
-  .sp-interp p.hl{background:rgba(45,212,191,.09);border-left:2px solid #14b8a6;padding:10px 13px;border-radius:0 7px 7px 0}
+  .sp-interp p.hl{background:rgba(45,212,191,.11);border-left:2px solid #2DD4BF;padding:12px 14px;border-radius:0 7px 7px 0;color:#e6efeb}
   .sp-interp p.hl b{color:#6EE7D6}
   .sp-cmp{margin-top:8px}
   .sp-cmp-head,.sp-cmp-row{display:grid;grid-template-columns:92px 1fr 1fr 62px;gap:11px;align-items:center}
@@ -1567,7 +1567,7 @@ function synthDefine(t){
   if((t.mi||[]).length) also.push('거울 진단');
   if((t.parent||[]).length) also.push('학부모 관찰');
   let txt = core.length ? `${t.name}${josaEN(t.name)} ${core.join(', ')} 유형입니다.` : `${t.name}${josaEN(t.name)} 아직 성향을 정의하기엔 데이터가 부족합니다. 진단을 더 응시하면 종합됩니다.`;
-  if(also.length) txt += ` <span style="color:var(--ink-muted)">${also.join(' · ')}도 함께 응시했습니다.</span>`;
+  if(also.length) txt += ` <span style="color:var(--ink-soft)">${also.join(' · ')}도 함께 응시했습니다.</span>`;
   return {txt, risks:spRisks(t)};
 }
 const PARENT_Q={
