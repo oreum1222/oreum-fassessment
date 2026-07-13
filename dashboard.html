@@ -1721,7 +1721,7 @@ function openStudentProfile(key){
   t.sp.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">특별판 진단</div><div class="st">${e(r['판정'])||'—'}${r['위험신호']?' · '+e(r['위험신호']):''}</div></div><a href="result-viewer.html?name=${enc}" target="_blank">결과지</a></div>`; });
   t.mi.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">거울 진단</div><div class="st">${e(r['역할'])==='parent'?'학부모 응답':'학생 응답'} · 가족코드 ${e(r['가족코드'])}</div></div><a href="result-viewer.html?mirrorCode=${encodeURIComponent(r['가족코드'])}" target="_blank">결과지</a></div>`; });
   t.gen.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">종합 진단(8축)</div><div class="st">${[e(r['4분면 유형']),e(r['16유형 이름'])].filter(Boolean).join(', ')||'—'}</div></div><a href="result-viewer.html?generalName=${enc}" target="_blank">결과지</a></div>`; });
-  t.parent.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">학부모 관찰</div><div class="st">학부모가 자녀를 관찰해 응답 (${e(r['제출시각']).slice(0,10)})</div></div><span style="font-size:12px;color:var(--ink-faint)">시트 참조</span></div>`; });
+  t.parent.forEach(r=>{ rows+=`<div class="sp-diag"><div><div class="t">학부모 관찰</div><div class="st">학부모가 자녀를 관찰해 응답 (${e(r['제출시각']).slice(0,10)})</div></div><span style="font-size:12px;color:#6EE7D6;font-weight:600">아래 상세 ↓</span></div>`; });
   h+=rows||'<div style="color:var(--ink-muted);font-size:13px">기록 없음</div>';
   if(t.parent&&t.parent.length){
     let pj={}; try{ pj=JSON.parse(t.parent[0]['응답_JSON']||'{}'); }catch(_e){}
