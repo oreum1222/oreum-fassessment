@@ -462,7 +462,7 @@ body::before{
   <style>
   .sp-dir-controls{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
   .sp-seg{display:inline-flex;gap:4px;background:var(--bg-deep);border-radius:8px;padding:3px}
-  .sp-seg button{border:0;background:transparent;color:var(--ink-muted);font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit}
+  .sp-seg button{border:0;background:transparent;color:var(--ink-muted);font-size:13.5px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer;font-family:inherit}
   .sp-seg button.on{background:#14b8a6;color:#052018}
   .sp-card.miss{cursor:default;opacity:.72;border-style:dashed}
   .sp-card.miss:hover{transform:none;border-color:var(--line);box-shadow:none}
@@ -542,8 +542,9 @@ body::before{
   .sp-cmp-diff.hi{color:#ef9f92}.sp-cmp-diff.lo{color:#7fbfb2}
   </style>
   <div class="sp-dir-controls">
-    <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
-    <div class="sp-seg"><button id="sp-seg-date" class="on" onclick="spSetView('date')">날짜별</button><button id="sp-seg-class" onclick="spSetView('class')">반별</button></div>
+    <span style="font-size:12.5px;color:var(--ink-muted);font-weight:600">보기</span>
+    <div class="sp-seg"><button id="sp-seg-date" class="on" onclick="spSetView('date')">날짜별</button><button id="sp-seg-class" onclick="spSetView('class')">학원·반별</button></div>
+    <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()" style="flex:1;min-width:170px;max-width:280px">
     <div class="count-info" style="font-size:12px;color:var(--ink-muted)">누적 <strong id="sp-count">0</strong>명 · 이름 클릭 → 종합 프로필</div>
   </div>
   <div id="student-directory"><div style="padding:22px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
