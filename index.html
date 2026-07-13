@@ -5571,7 +5571,7 @@ function renderSummerResults(){
     const sc1=summerMultiText('SC1'), sc2=summerChoiceText('SC2'), sc3=summerMultiText('SC3'), sc4=summerMultiText('SC4');
     if(sc1||sc2||sc3||sc4){ h+=`<section class="rpt-sec">${sec('상담 메모')}<div class="rpt-box">${sc1?`<div>여름에 채우고 싶은 것: <b>${esc(sc1)}</b></div>`:''}${sc2?`<div style="margin-top:6px">여름 공부 걸림돌: <b>${esc(sc2)}</b></div>`:''}${sc3?`<div style="margin-top:6px">1학기 점수 걸림돌: <b>${esc(sc3)}</b></div>`:''}${sc4?`<div style="margin-top:6px">1학기 공부 모습: <b>${esc(sc4)}</b></div>`:''}</div></section>`; }
   }
-  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향과 습관, 태도</b>의 프로필이며 학생 간 서열이 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 운영과 관리 방식 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
+  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향과 습관, 태도</b>의 프로필이며 학생의 능력에 대한 평가가 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 운영과 관리 방식 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
   h+='</div>';
   document.getElementById('v2-r-body').innerHTML=h;
   goScreen('v2-results');
@@ -5773,7 +5773,7 @@ function renderV2Results(){
     const pref=multiText('PREF1'), prev=choiceText('PREV1');
     if(pref||prev){ h+=`<section class="rpt-sec">${sec('상담 정보')}<div class="rpt-box">${pref?`<div>원하는 수업 방향: <b>${esc(pref)}</b></div>`:''}${prev?`<div style="margin-top:6px">이전 학원·전환 이유: <b>${esc(prev)}</b></div>`:''}</div></section>`; }
   }
-  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향과 습관, 태도</b>의 프로필이며 학생 간 서열이 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 배치와 수업 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
+  h+=`<footer class="rpt-foot"><div class="disc">본 진단은 학력(점수)이 아니라 <b>국어를 대하는 성향과 습관, 태도</b>의 프로필이며 학생의 능력에 대한 평가가 아닙니다.${teacher?' <b>본 문서는 강사 내부용이며 학부모 배부용이 아닙니다.</b>':' 여름학기 반 배치와 수업 설계의 참고 자료로 활용됩니다.'}</div><div class="sign"><div class="n">김가경 국어 연구소</div><div class="d">${dateStr} 발행</div></div></footer>`;
   h+='</div>';
   document.getElementById('v2-r-body').innerHTML=h;
   goScreen('v2-results');
