@@ -466,6 +466,17 @@ body::before{
   .sp-seg button.on{background:#14b8a6;color:#052018}
   .sp-card.miss{cursor:default;opacity:.72;border-style:dashed}
   .sp-card.miss:hover{transform:none;border-color:var(--line);box-shadow:none}
+  .sp-sms-btn{margin-left:auto;margin-right:12px;background:rgba(45,212,191,.13);border:1px solid rgba(45,212,191,.42);color:#6EE7D6;font-size:12px;font-weight:700;padding:6px 13px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .sp-sms-btn:hover{background:rgba(45,212,191,.26)}
+  .sp-sms-recip{font-size:13px;color:var(--ink-soft);background:var(--bg-elevated);border-radius:9px;padding:13px 15px;line-height:2.1;margin-bottom:14px}
+  .sp-sms-recip b{color:#6EE7D6}
+  .sp-sms-recip span{display:inline-block;background:var(--bg-deep);border-radius:6px;padding:2px 9px;margin:2px 3px;font-size:12.5px;color:var(--ink)}
+  .sp-sms-text{width:100%;min-height:120px;background:var(--bg-deep);border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:14px;line-height:1.75;padding:13px 15px;font-family:inherit;resize:vertical;box-sizing:border-box}
+  .sp-sms-note{font-size:12px;color:var(--ink-muted);margin-top:9px;line-height:1.6}
+  .sp-sms-note b{color:var(--ink-soft)}
+  .sp-sms-result{margin-top:13px;font-size:13.5px;min-height:18px;line-height:1.6}
+  .sp-sms-send{flex:1;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#052018;border:0;border-radius:9px;padding:13px;font-size:14px;font-weight:800;cursor:pointer}
+  .sp-sms-cancel{background:transparent;border:1px solid var(--line);color:var(--ink-muted);border-radius:9px;padding:13px 20px;cursor:pointer;font-size:14px}
   .sp-datebar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
   .sp-datebar button{background:var(--bg-paper);border:1px solid var(--line);color:var(--ink-soft);border-radius:8px;padding:8px 12px;cursor:pointer;font-family:inherit;font-size:13px}
   .sp-datebar button:hover{border-color:#2DD4BF;color:var(--ink)}
@@ -1550,6 +1561,34 @@ const CLASS_ROSTER={
  '한티 MEXX 단과 고2':['김수민','김채량','김현서','민주아','박재현','박준성','배주영','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
 };
 function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date'), c=document.getElementById('sp-seg-class'); if(d)d.classList.toggle('on',m==='date'); if(c)c.classList.toggle('on',m==='class'); renderStudentDirectory(); }
+function classMissing(cls){ const roster=CLASS_ROSTER[cls]||[]; const by={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{if(t.name)by[t.name]=1;}); return roster.filter(n=>!by[n]); }
+function openSmsModal(cls){
+  const miss=classMissing(cls);
+  if(!miss.length){ alert('이 반은 미응답자가 없습니다.'); return; }
+  const def=`[김가경 국어] 여름방학 학습 진단을 아직 응답하지 않았어요. 아래에서 참여 부탁드립니다.\nhttps://oreum1222.github.io/oreum-fassessment/`;
+  document.getElementById('modal-title').textContent=`${cls} — 미응답자 문자`;
+  document.getElementById('modal-body').innerHTML=`
+    <div class="sp-sms-recip">수신 <b>${miss.length}명</b> &nbsp;${miss.map(n=>`<span>${n}</span>`).join('')}</div>
+    <textarea id="sms-text" class="sp-sms-text">${def}</textarea>
+    <div class="sp-sms-note">번호는 서버의 <b>반명단</b> 시트에서 조회해 발송됩니다. 번호 없는 학생은 자동 제외돼요.</div>
+    <div id="sms-result" class="sp-sms-result"></div>
+    <div style="display:flex;gap:10px;margin-top:16px"><button class="sp-sms-send" onclick="sendClassSms('${cls}')">문자 발송</button><button class="sp-sms-cancel" onclick="closeModal()">취소</button></div>`;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+function sendClassSms(cls){
+  const miss=classMissing(cls);
+  const text=(document.getElementById('sms-text').value||'').trim();
+  if(!text){ alert('문자 내용을 입력하세요.'); return; }
+  if(!confirm(`${cls} 미응답 ${miss.length}명에게 문자를 발송할까요?`)) return;
+  const res=document.getElementById('sms-result'); res.innerHTML='<span style="color:var(--ink-muted)">발송 중…</span>';
+  const key=localStorage.getItem(STORAGE_KEY);
+  const url=`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=classSms&cls=${encodeURIComponent(cls)}&names=${encodeURIComponent(miss.join(','))}&text=${encodeURIComponent(text)}`;
+  fetch(url).then(r=>r.json()).then(d=>{
+    if(d.error){ res.innerHTML=`<span style="color:#ef9f92">발송 실패: ${d.error}</span>`; return; }
+    const solOk = d.solapi && (d.solapi.code===200);
+    res.innerHTML=`<span style="color:#6EE7D6">✓ ${d.sentCount}명 발송 요청 완료${solOk?'':' (Solapi 응답 확인 필요)'}</span>${(d.missing&&d.missing.length)?`<br><span style="color:var(--ink-muted)">번호 없음(제외): ${d.missing.join(', ')}</span>`:''}`;
+  }).catch(e=>{ res.innerHTML=`<span style="color:#ef9f92">발송 오류: ${e.message}</span>`; });
+}
 function renderClassView(){
   const wrap=document.getElementById('student-directory'); if(!wrap) return;
   const q=(document.getElementById('sp-search')?.value||'').trim();
@@ -1562,7 +1601,7 @@ function renderClassView(){
     const done=names.filter(n=>byName[n]).length; tot+=names.length;
     const full=names.filter(n=>{const t=byName[n]; return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
     shown++; const open=(shown===1||q)?' open':'';
-    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
+    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span>${(names.length-done>0)?`<button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 미응답 ${names.length-done}명 문자</button>`:''}<span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
     list.forEach(n=>{ const t=byName[n];
       if(t){ h+=spCard(t); }
       else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span></div></div>`; }
