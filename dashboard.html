@@ -1615,7 +1615,7 @@ const SMS_LINK='https://oreum1222.github.io/oreum-fassessment/';
 const SMS_DIAGS=[
   {id:'summer', label:'여름방학 학습 점검 진단', line:'여름방학 학습 진단', target:'student'},
   {id:'first',  label:'재원생 첫 진단',        line:'재원생 첫 진단',      target:'student'},
-  {id:'parent', label:'학부모 진단',           line:'학부모 관찰 진단',    target:'parent'}
+  {id:'parent', label:'학부모 진단 (재배포 후 활성화)', line:'학부모 관찰 진단', target:'parent', soon:true}
 ];
 let SMS_EDITED=false, SMS_LASTGEN='';
 function classStatus(cls){
@@ -1682,7 +1682,7 @@ function smsQuick(mode){
 function openSmsModal(cls){
   const st=classStatus(cls);
   const nSummer=st.filter(s=>!s.summer).length, nFirst=st.filter(s=>!s.first).length, nParent=st.filter(s=>!s.parent).length;
-  const dg=SMS_DIAGS.map(d=>'<label class="sms-dg"><input type="checkbox" id="smsdg-'+d.id+'" '+(d.target==='student'?'checked':'')+' onchange="smsDiagChange(\''+d.id+'\')"><span>'+d.label+'</span></label>').join('');
+  const dg=SMS_DIAGS.map(d=>'<label class="sms-dg'+(d.soon?' soon':'')+'"><input type="checkbox" id="smsdg-'+d.id+'" '+(d.soon?'disabled':(d.target==='student'?'checked':''))+' onchange="smsDiagChange(\''+d.id+'\')"><span>'+d.label+'</span></label>').join('');
   const rows=st.map(s=>'<label class="sms-recip-row"><input type="checkbox" class="sms-recip-cb" value="'+s.name+'" data-summer="'+(s.summer?1:0)+'" data-first="'+(s.first?1:0)+'" data-parent="'+(s.parent?1:0)+'" onchange="smsUpdCount()"><span class="sms-recip-name">'+s.name+'</span><span class="sms-badge '+(s.summer?'on':'off')+'">여름</span><span class="sms-badge '+(s.first?'on':'off')+'">첫</span><span class="sms-badge '+(s.parent?'on':'off')+'">부모</span></label>').join('');
   document.getElementById('modal-title').textContent=cls+' - 문자 보내기';
   document.getElementById('modal-body').innerHTML=
