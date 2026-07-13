@@ -1558,7 +1558,7 @@ function spRisks(t){
 let SP_VIEW='date', SP_DATE=null, SP_CAL_OPEN=false, SP_CAL_MONTH=null;
 const CLASS_ROSTER={
  '한티 MEXX 단과 고1':['장서아','장성주','황수민','신지우','윤상','정유진','최준혁'],
- '한티 MEXX 단과 고2':['김수민','김채량','김현서','민주아','박재현','박준성','배주영','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
+ '한티 MEXX 단과 고2':['백지호','장효민','김수민','김채량','김현서','민주아','박재현','박준성','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
 };
 function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date'), c=document.getElementById('sp-seg-class'); if(d)d.classList.toggle('on',m==='date'); if(c)c.classList.toggle('on',m==='class'); renderStudentDirectory(); }
 function classMissing(cls){ const roster=CLASS_ROSTER[cls]||[]; const by={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{if(t.name)by[t.name]=1;}); return roster.filter(n=>!by[n]); }
