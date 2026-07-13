@@ -500,6 +500,29 @@ body::before{
   .sp-sms-result{margin-top:13px;font-size:13.5px;min-height:18px;line-height:1.6}
   .sp-sms-send{flex:1;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#052018;border:0;border-radius:9px;padding:13px;font-size:14px;font-weight:800;cursor:pointer}
   .sp-sms-cancel{background:transparent;border:1px solid var(--line);color:var(--ink-muted);border-radius:9px;padding:13px 20px;cursor:pointer;font-size:14px}
+  .sms-sec{font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:9px}
+  .sms-sec em{font-style:normal;font-weight:500;color:var(--ink-muted);font-size:11.5px;margin-left:4px}
+  .sms-cnt{float:right;font-weight:700;color:#6EE7D6;font-size:11.5px}
+  .sms-dg-row{display:flex;flex-wrap:wrap;gap:8px}
+  .sms-dg{display:inline-flex;align-items:center;gap:8px;background:var(--bg-deep);border:1px solid var(--line);border-radius:9px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--ink)}
+  .sms-dg input{accent-color:#14b8a6;width:15px;height:15px}
+  .sms-dg.soon{opacity:.5;cursor:not-allowed}
+  .sms-dg em{font-style:normal;font-size:10.5px;color:var(--ink-muted)}
+  .sms-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .sms-quick button{background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.34);color:#6EE7D6;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:16px;cursor:pointer;font-family:inherit}
+  .sms-quick button:hover{background:rgba(45,212,191,.22)}
+  .sms-recip-list{max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg-deep);padding:4px}
+  .sms-recip-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;margin:0}
+  .sms-recip-row:hover{background:var(--bg-elevated)}
+  .sms-recip-cb{accent-color:#14b8a6;width:16px;height:16px;flex:0 0 auto}
+  .sms-recip-name{font-size:13.5px;color:var(--ink);min-width:56px;font-weight:600}
+  .sms-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:12px}
+  .sms-badge.on{background:rgba(45,212,191,.16);color:#6EE7D6}
+  .sms-badge.off{background:rgba(255,255,255,.05);color:var(--ink-muted)}
+  .sms-tag{margin-left:auto;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:12px}
+  .sms-tag.miss{background:rgba(239,159,146,.16);color:#ef9f92}
+  .sms-tag.part{background:rgba(212,181,74,.16);color:#e3c766}
+  .sms-tag.done{background:rgba(45,212,191,.12);color:#6EE7D6}
   .sp-datebar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
   .sp-datebar button{background:var(--bg-paper);border:1px solid var(--line);color:var(--ink-soft);border-radius:8px;padding:8px 12px;cursor:pointer;font-family:inherit;font-size:13px}
   .sp-datebar button:hover{border-color:#2DD4BF;color:var(--ink)}
@@ -1584,33 +1607,86 @@ const CLASS_ROSTER={
  '한티 MEXX 단과 고2':['백지호','장효민','김수민','김채량','김현서','민주아','박재현','박준성','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
 };
 function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date'), c=document.getElementById('sp-seg-class'); if(d)d.classList.toggle('on',m==='date'); if(c)c.classList.toggle('on',m==='class'); renderStudentDirectory(); }
-function classMissing(cls){ const roster=CLASS_ROSTER[cls]||[]; const by={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{if(t.name)by[t.name]=1;}); return roster.filter(n=>!by[n]); }
+// -- 문자 작성기 (진단별 선택 발송) --
+const SMS_LINK='https://oreum1222.github.io/oreum-fassessment/';
+const SMS_DIAGS=[
+  {id:'summer', label:'여름방학 학습 점검 진단', line:'여름방학 학습 점검 진단'},
+  {id:'first',  label:'재원생 첫 진단',        line:'재원생 첫 진단'}
+  // 추후: {id:'parent', label:'학부모 진단', line:'학부모 진단', soon:true}
+];
+let SMS_EDITED=false, SMS_LASTGEN='';
+function classStatus(cls){
+  const roster=CLASS_ROSTER[cls]||[];
+  const by={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{if(t.name)by[t.name]=t;});
+  return roster.map(n=>{
+    const v2=(by[n]&&by[n].v2)||[];
+    return { name:n, responded:!!by[n],
+      summer:v2.some(r=>r['버전']==='summer'),
+      first:v2.some(r=>r['버전']==='재원생 첫') };
+  });
+}
+function smsCompose(){
+  const picked=SMS_DIAGS.filter(d=>!d.soon && document.getElementById('smsdg-'+d.id) && document.getElementById('smsdg-'+d.id).checked);
+  let body;
+  if(!picked.length) body='아래 링크에서 진단에 참여해 주세요.';
+  else if(picked.length===1) body=picked[0].line+'을 아직 완료하지 않았어요. 아래에서 참여 부탁드립니다.';
+  else body='아직 완료하지 않은 진단이 있어요: '+picked.map(p=>p.line).join(' · ')+'. 아래에서 참여 부탁드립니다.';
+  return '[김가경 국어] '+body+'\n'+SMS_LINK;
+}
+function smsSyncText(){
+  const ta=document.getElementById('sms-text'); if(!ta) return;
+  if(SMS_EDITED && ta.value!==SMS_LASTGEN) return;
+  SMS_LASTGEN=smsCompose(); ta.value=SMS_LASTGEN; SMS_EDITED=false;
+}
+function smsSelectedNames(){ return [].slice.call(document.querySelectorAll('.sms-recip-cb:checked')).map(cb=>cb.value); }
+function smsUpdCount(){ const el=document.getElementById('sms-cnt'); if(el){ const n=smsSelectedNames().length; el.textContent=n?(n+'명 선택'):'선택 없음'; } }
+function smsQuick(mode){
+  [].slice.call(document.querySelectorAll('.sms-recip-cb')).forEach(cb=>{
+    if(mode==='all') cb.checked=true;
+    else if(mode==='none') cb.checked=false;
+    else if(mode==='summer') cb.checked=(cb.dataset.summer==='0');
+    else if(mode==='first') cb.checked=(cb.dataset.first==='0');
+  });
+  smsUpdCount();
+}
 function openSmsModal(cls){
-  const miss=classMissing(cls);
-  if(!miss.length){ alert('이 반은 미응답자가 없습니다.'); return; }
-  const def=`[김가경 국어] 여름방학 학습 진단을 아직 응답하지 않았어요. 아래에서 참여 부탁드립니다.\nhttps://oreum1222.github.io/oreum-fassessment/`;
-  document.getElementById('modal-title').textContent=`${cls} — 미응답자 문자`;
-  document.getElementById('modal-body').innerHTML=`
-    <div class="sp-sms-recip">수신 <b>${miss.length}명</b> &nbsp;${miss.map(n=>`<span>${n}</span>`).join('')}</div>
-    <textarea id="sms-text" class="sp-sms-text">${def}</textarea>
-    <div class="sp-sms-note">번호는 서버의 <b>반명단</b> 시트에서 조회해 발송됩니다. 번호 없는 학생은 자동 제외돼요.</div>
-    <div id="sms-result" class="sp-sms-result"></div>
-    <div style="display:flex;gap:10px;margin-top:16px"><button class="sp-sms-send" onclick="sendClassSms('${cls}')">문자 발송</button><button class="sp-sms-cancel" onclick="closeModal()">취소</button></div>`;
+  const st=classStatus(cls);
+  const nSummer=st.filter(s=>!s.summer).length, nFirst=st.filter(s=>!s.first).length;
+  const dg=SMS_DIAGS.map(d=>'<label class="sms-dg'+(d.soon?' soon':'')+'"><input type="checkbox" id="smsdg-'+d.id+'" '+(d.soon?'disabled':'checked')+' onchange="smsSyncText()"><span>'+d.label+(d.soon?' <em>준비 중</em>':'')+'</span></label>').join('');
+  const rows=st.map(s=>{
+    const pre=(!(s.summer&&s.first))?'checked':'';
+    const tag=!s.responded?'<span class="sms-tag miss">미응답</span>':((s.summer&&s.first)?'<span class="sms-tag done">완료</span>':'<span class="sms-tag part">부분</span>');
+    return '<label class="sms-recip-row"><input type="checkbox" class="sms-recip-cb" value="'+s.name+'" data-summer="'+(s.summer?1:0)+'" data-first="'+(s.first?1:0)+'" '+pre+' onchange="smsUpdCount()"><span class="sms-recip-name">'+s.name+'</span><span class="sms-badge '+(s.summer?'on':'off')+'">여름</span><span class="sms-badge '+(s.first?'on':'off')+'">첫</span>'+tag+'</label>';
+  }).join('');
+  document.getElementById('modal-title').textContent=cls+' - 문자 보내기';
+  document.getElementById('modal-body').innerHTML=
+    '<div class="sms-sec">진단 선택 <em>메시지에 안내할 진단</em></div>'+
+    '<div class="sms-dg-row">'+dg+'</div>'+
+    '<div class="sms-sec" style="margin-top:16px">받는 사람 <em>펼쳐서 체크</em> <span id="sms-cnt" class="sms-cnt"></span></div>'+
+    '<div class="sms-quick"><button type="button" onclick="smsQuick(\'summer\')">여름 미완료 '+nSummer+'</button><button type="button" onclick="smsQuick(\'first\')">첫 미완료 '+nFirst+'</button><button type="button" onclick="smsQuick(\'all\')">전체</button><button type="button" onclick="smsQuick(\'none\')">해제</button></div>'+
+    '<div class="sms-recip-list">'+rows+'</div>'+
+    '<div class="sms-sec" style="margin-top:16px">메시지</div>'+
+    '<textarea id="sms-text" class="sp-sms-text" oninput="SMS_EDITED=true"></textarea>'+
+    '<div class="sp-sms-note">번호는 서버 <b>반명단</b> 시트에서 조회해 발송돼요. 번호 없는 학생은 자동 제외됩니다.</div>'+
+    '<div id="sms-result" class="sp-sms-result"></div>'+
+    '<div style="display:flex;gap:10px;margin-top:14px"><button class="sp-sms-send" onclick="sendClassSms(\''+cls+'\')">문자 발송</button><button class="sp-sms-cancel" onclick="closeModal()">취소</button></div>';
+  SMS_EDITED=false; smsSyncText(); smsUpdCount();
   document.getElementById('modal-overlay').classList.add('active');
 }
 function sendClassSms(cls){
-  const miss=classMissing(cls);
+  const names=smsSelectedNames();
   const text=(document.getElementById('sms-text').value||'').trim();
+  if(!names.length){ alert('받는 사람을 한 명 이상 선택하세요.'); return; }
   if(!text){ alert('문자 내용을 입력하세요.'); return; }
-  if(!confirm(`${cls} 미응답 ${miss.length}명에게 문자를 발송할까요?`)) return;
+  if(!confirm(cls+' · '+names.length+'명에게 문자를 발송할까요?')) return;
   const res=document.getElementById('sms-result'); res.innerHTML='<span style="color:var(--ink-muted)">발송 중…</span>';
   const key=localStorage.getItem(STORAGE_KEY);
-  const url=`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=classSms&cls=${encodeURIComponent(cls)}&names=${encodeURIComponent(miss.join(','))}&text=${encodeURIComponent(text)}`;
+  const url=CURRENT_URL+'?key='+encodeURIComponent(key)+'&action=classSms&cls='+encodeURIComponent(cls)+'&names='+encodeURIComponent(names.join(','))+'&text='+encodeURIComponent(text);
   fetch(url).then(r=>r.json()).then(d=>{
-    if(d.error){ res.innerHTML=`<span style="color:#ef9f92">발송 실패: ${d.error}</span>`; return; }
-    const solOk = d.solapi && (d.solapi.code===200);
-    res.innerHTML=`<span style="color:#6EE7D6">✓ ${d.sentCount}명 발송 요청 완료${solOk?'':' (Solapi 응답 확인 필요)'}</span>${(d.missing&&d.missing.length)?`<br><span style="color:var(--ink-muted)">번호 없음(제외): ${d.missing.join(', ')}</span>`:''}`;
-  }).catch(e=>{ res.innerHTML=`<span style="color:#ef9f92">발송 오류: ${e.message}</span>`; });
+    if(d.error){ res.innerHTML='<span style="color:#ef9f92">발송 실패: '+d.error+'</span>'; return; }
+    const solOk=d.solapi&&(d.solapi.code===200);
+    res.innerHTML='<span style="color:#6EE7D6">✓ '+d.sentCount+'명 발송 요청 완료'+(solOk?'':' (Solapi 응답 확인 필요)')+'</span>'+((d.missing&&d.missing.length)?'<br><span style="color:var(--ink-muted)">번호 없음(제외): '+d.missing.join(', ')+'</span>':'');
+  }).catch(e=>{ res.innerHTML='<span style="color:#ef9f92">발송 오류: '+e.message+'</span>'; });
 }
 function renderClassView(){
   const wrap=document.getElementById('student-directory'); if(!wrap) return;
@@ -1624,7 +1700,7 @@ function renderClassView(){
     const done=names.filter(n=>byName[n]).length; tot+=names.length;
     const full=names.filter(n=>{const t=byName[n]; return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
     shown++; const open=(shown===1||q)?' open':'';
-    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span>${(names.length-done>0)?`<button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 미응답 ${names.length-done}명 문자</button>`:''}<span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
+    h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 문자 보내기${(names.length-full>0)?` · 미완료 ${names.length-full}`:''}</button><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
     list.forEach(n=>{ const t=byName[n];
       if(t){ h+=spCard(t); }
       else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span></div></div>`; }
