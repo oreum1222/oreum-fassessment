@@ -1610,7 +1610,7 @@ function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date')
 // -- 문자 작성기 (진단별 선택 발송) --
 const SMS_LINK='https://oreum1222.github.io/oreum-fassessment/';
 const SMS_DIAGS=[
-  {id:'summer', label:'여름방학 학습 점검 진단', line:'여름방학 학습 점검 진단'},
+  {id:'summer', label:'여름방학 학습 점검 진단', line:'여름방학 학습 진단'},
   {id:'first',  label:'재원생 첫 진단',        line:'재원생 첫 진단'}
   // 추후: {id:'parent', label:'학부모 진단', line:'학부모 진단', soon:true}
 ];
@@ -1627,11 +1627,10 @@ function classStatus(cls){
 }
 function smsCompose(){
   const picked=SMS_DIAGS.filter(d=>!d.soon && document.getElementById('smsdg-'+d.id) && document.getElementById('smsdg-'+d.id).checked);
-  let body;
-  if(!picked.length) body='아래 링크에서 진단에 참여해 주세요.';
-  else if(picked.length===1) body=picked[0].line+'을 아직 완료하지 않았어요. 아래에서 참여 부탁드립니다.';
-  else body='아직 완료하지 않은 진단이 있어요: '+picked.map(p=>p.line).join(' · ')+'. 아래에서 참여 부탁드립니다.';
-  return '[김가경 국어] '+body+'\n'+SMS_LINK;
+  let clause;
+  if(!picked.length) clause='아래에서 진단에 참여 부탁드립니다.';
+  else clause=picked.map(p=>p.line).join('과 ')+'을 아래에서 참여 부탁드립니다.';
+  return '[김가경 국어 연구소]\n안녕하세요. 한티 MEXX 가경T 단과 수강생에게 안내합니다. 학습 성향 진단 중 아직 완료하지 않은 진단이 있습니다. '+clause+'\n'+SMS_LINK;
 }
 function smsSyncText(){
   const ta=document.getElementById('sms-text'); if(!ta) return;
