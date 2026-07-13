@@ -464,6 +464,29 @@ body::before{
   .sp-seg{display:inline-flex;gap:4px;background:var(--bg-deep);border-radius:8px;padding:3px}
   .sp-seg button{border:0;background:transparent;color:var(--ink-muted);font-size:13.5px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer;font-family:inherit}
   .sp-seg button.on{background:#14b8a6;color:#052018}
+  #sp-search{
+    flex:1;min-width:180px;max-width:300px;
+    background:var(--bg-deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a938f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 14px center;
+    background-size:15px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--ink);
+    font-size:13.5px;font-family:inherit;
+    padding:11px 14px 11px 40px;
+    outline:none;
+    transition:border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+  }
+  #sp-search::placeholder{color:var(--ink-muted)}
+  #sp-search:hover{border-color:var(--line-strong)}
+  #sp-search:focus{
+    border-color:var(--gold);
+    background-color:var(--bg-paper);
+    box-shadow:0 0 0 3px rgba(45,212,191,.16);
+  }
+  #sp-search::-webkit-search-cancel-button{
+    -webkit-appearance:none;height:15px;width:15px;cursor:pointer;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%238a938f' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
   .sp-card.miss{cursor:default;opacity:.72;border-style:dashed}
   .sp-card.miss:hover{transform:none;border-color:var(--line);box-shadow:none}
   .sp-sms-btn{margin-left:auto;margin-right:12px;background:rgba(45,212,191,.13);border:1px solid rgba(45,212,191,.42);color:#6EE7D6;font-size:12px;font-weight:700;padding:6px 13px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
@@ -555,7 +578,7 @@ body::before{
   <div class="sp-dir-controls">
     <span style="font-size:12.5px;color:var(--ink-muted);font-weight:600">보기</span>
     <div class="sp-seg"><button id="sp-seg-date" class="on" onclick="spSetView('date')">날짜별</button><button id="sp-seg-class" onclick="spSetView('class')">학원·반별</button></div>
-    <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()" style="flex:1;min-width:170px;max-width:280px">
+    <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
     <div class="count-info" style="font-size:12px;color:var(--ink-muted)">누적 <strong id="sp-count">0</strong>명 · 이름 클릭 → 종합 프로필</div>
   </div>
   <div id="student-directory"><div style="padding:22px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
