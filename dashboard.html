@@ -1739,7 +1739,7 @@ function renderClassView(){
     h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 문자 보내기${(names.length-full>0)?` · 미완료 ${names.length-full}`:''}</button><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
     list.forEach(n=>{ const t=byName[n];
       if(t){ h+=spCard(t); }
-      else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span></div></div>`; }
+      else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span>${(typeof MYEONDAM_DONE!=='undefined'&&MYEONDAM_DONE.indexOf(n)>=0)?'<span class="sp-chip mg">대면</span>':''}</div></div>`; }
     });
     h+=`</div></div></div>`;
   });
