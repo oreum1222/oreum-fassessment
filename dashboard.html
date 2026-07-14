@@ -566,6 +566,7 @@ body::before{
   .sp-chip.spx{background:rgba(91,141,239,.17);color:#7aa2f5}
   .sp-chip.mi{background:rgba(143,201,224,.15);color:#8fc9e0}
   .sp-chip.pa{background:rgba(170,120,235,.16);color:#c79bf0}
+  .sp-chip.mg{background:rgba(139,157,240,.16);color:#b0bdf5}
   .sp-chip.risk{background:rgba(224,120,110,.17);color:#ef9f92}
   .sp-def{font-size:15.5px;line-height:1.92;color:#e6efeb;background:var(--bg-elevated);border-left:3px solid #14b8a6;padding:16px 18px;border-radius:0 8px 8px 0;margin-bottom:18px}
   .sp-def b{color:#6EE7D6}
@@ -1609,6 +1610,11 @@ const CLASS_ROSTER={
  '한티 MEXX 단과 고1':['장서아','장성주','황수민','신지우','윤상','정유진','최준혁'],
  '한티 MEXX 단과 고2':['백지호','장효민','김수민','김채량','김현서','민주아','박재현','박준성','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
 };
+// 대면 상담지 작성 학생 (오프라인 상담지 수령) — 파일명 기준
+const MYEONDAM_DONE=[
+ '장서아','장성주','황수민','신지우','윤상','정유진','최준혁',
+ '김수민','김채량','김현서','민주아','박재현','박준성','배준서','성연서','왕혜성','유태연','이정빈','진현우','차진우','한승현','황서린'
+];
 function spSetView(m){ SP_VIEW=m; const d=document.getElementById('sp-seg-date'), c=document.getElementById('sp-seg-class'); if(d)d.classList.toggle('on',m==='date'); if(c)c.classList.toggle('on',m==='class'); renderStudentDirectory(); }
 // -- 문자 작성기 (진단별 선택 발송) --
 const SMS_LINK='https://oreum1222.github.io/oreum-fassessment/';
@@ -1626,7 +1632,8 @@ function classStatus(cls){
     return { name:n, responded:!!t,
       summer:v2.some(r=>r['버전']==='summer'),
       first:v2.some(r=>r['버전']==='재원생 첫'),
-      parent:!!(t&&t.parent&&t.parent.length) };
+      parent:!!(t&&t.parent&&t.parent.length),
+      myeondam:(MYEONDAM_DONE.indexOf(n)>=0) };
   });
 }
 function smsTarget(){ const pd=SMS_DIAGS.find(d=>d.target==='parent'); const el=pd&&document.getElementById('smsdg-'+pd.id); return (el&&el.checked)?'parent':'student'; }
@@ -1683,7 +1690,7 @@ function openSmsModal(cls){
   const st=classStatus(cls);
   const nSummer=st.filter(s=>!s.summer).length, nFirst=st.filter(s=>!s.first).length, nParent=st.filter(s=>!s.parent).length;
   const dg=SMS_DIAGS.map(d=>'<label class="sms-dg'+(d.soon?' soon':'')+'"><input type="checkbox" id="smsdg-'+d.id+'" '+(d.soon?'disabled':(d.target==='student'?'checked':''))+' onchange="smsDiagChange(\''+d.id+'\')"><span>'+d.label+'</span></label>').join('');
-  const rows=st.map(s=>'<label class="sms-recip-row"><input type="checkbox" class="sms-recip-cb" value="'+s.name+'" data-summer="'+(s.summer?1:0)+'" data-first="'+(s.first?1:0)+'" data-parent="'+(s.parent?1:0)+'" onchange="smsUpdCount()"><span class="sms-recip-name">'+s.name+'</span><span class="sms-badge '+(s.summer?'on':'off')+'">여름</span><span class="sms-badge '+(s.first?'on':'off')+'">첫</span><span class="sms-badge '+(s.parent?'on':'off')+'">부모</span></label>').join('');
+  const rows=st.map(s=>'<label class="sms-recip-row"><input type="checkbox" class="sms-recip-cb" value="'+s.name+'" data-summer="'+(s.summer?1:0)+'" data-first="'+(s.first?1:0)+'" data-parent="'+(s.parent?1:0)+'" onchange="smsUpdCount()"><span class="sms-recip-name">'+s.name+'</span><span class="sms-badge '+(s.summer?'on':'off')+'">여름</span><span class="sms-badge '+(s.first?'on':'off')+'">첫</span><span class="sms-badge '+(s.parent?'on':'off')+'">부모</span><span class="sms-badge '+(s.myeondam?'on':'off')+'">대면</span></label>').join('');
   document.getElementById('modal-title').textContent=cls+' - 문자 보내기';
   document.getElementById('modal-body').innerHTML=
     '<div class="sms-sec">진단 선택 <em>학생 진단 / 학부모 진단 (대상 자동 전환)</em></div>'+
@@ -1747,6 +1754,7 @@ function spCard(t){
   if(t.sp.length) chips.push('<span class="sp-chip spx">특별판</span>');
   if(t.mi.length) chips.push('<span class="sp-chip mi">거울</span>');
   if(t.parent.length) chips.push('<span class="sp-chip pa">학부모</span>');
+  if(typeof MYEONDAM_DONE!=='undefined' && MYEONDAM_DONE.indexOf(t.name)>=0) chips.push('<span class="sp-chip mg">대면</span>');
   if(risks.length) chips.push(`<span class="sp-chip risk">주의 ${risks.length}</span>`);
   return `<div class="sp-card${risks.length?' risk':''}" onclick="openStudentProfile('${t.key.replace(/'/g,'')}')"><div class="sp-name">${t.name||'익명'}</div><div class="sp-sub">${[t.school,t.grade].filter(Boolean).join(' ')||'—'}</div><div class="sp-chips">${chips.join('')}</div></div>`;
 }
