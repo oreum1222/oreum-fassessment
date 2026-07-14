@@ -398,7 +398,7 @@ body::before{
 </section>
 
 <!-- 대시보드 본체 -->
-<section id="dashboard-screen">
+<section id="dashboard-screen" style="display:none">
   <div class="dash-head">
     <div>
       <div class="dash-subtitle">가경 국어 연구소 — 오름 국어학원</div>
@@ -808,9 +808,16 @@ window.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_URL, CURRENT_URL);
     console.log('🔄 옛 URL 자동 갱신:', storedUrl, '→', CURRENT_URL);
   }
-  // 비밀번호 입력 없이 바로 접속 (팀 전용 대시보드)
   localStorage.setItem(STORAGE_URL, CURRENT_URL);
-  doAuthFetch(TEAM_AUTH.apiKey);
+  // 비밀번호 게이트: 저장된 키 있으면 자동 접속, 없으면 비밀번호 입력 화면
+  const savedKey = localStorage.getItem(STORAGE_KEY);
+  if (savedKey) {
+    autoAuthenticate(savedKey);
+  } else {
+    document.getElementById('auth-screen').style.display = 'block';
+    document.getElementById('dashboard-screen').style.display = 'none';
+    const ak = document.getElementById('auth-key'); if (ak) setTimeout(() => ak.focus(), 50);
+  }
 });
 
 async function authenticate() {
