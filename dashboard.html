@@ -1615,7 +1615,7 @@ const SMS_LINK='https://oreum1222.github.io/oreum-fassessment/';
 const SMS_DIAGS=[
   {id:'summer', label:'여름방학 학습 점검 진단', line:'여름방학 학습 진단', target:'student'},
   {id:'first',  label:'재원생 첫 진단',        line:'재원생 첫 진단',      target:'student'},
-  {id:'parent', label:'학부모 진단 (재배포 후 활성화)', line:'학부모 관찰 진단', target:'parent', soon:true}
+  {id:'parent', label:'학부모 진단', line:'학부모 관찰 진단', target:'parent'}
 ];
 let SMS_EDITED=false, SMS_LASTGEN='';
 function classStatus(cls){
@@ -1709,7 +1709,8 @@ function sendClassSms(cls){
   if(!confirm(cls+' · '+names.length+'명 ('+(tgt==='parent'?'학부모':'학생')+' 번호)에게 문자를 발송할까요?')) return;
   const res=document.getElementById('sms-result'); res.innerHTML='<span style="color:var(--ink-muted)">발송 중…</span>';
   const key=localStorage.getItem(STORAGE_KEY);
-  const url=CURRENT_URL+'?key='+encodeURIComponent(key)+'&action=classSms&cls='+encodeURIComponent(cls)+'&names='+encodeURIComponent(names.join(','))+'&text='+encodeURIComponent(text)+'&target='+encodeURIComponent(tgt);
+  const sendCls=(tgt==='parent')?(cls+' (학부모)'):cls;
+  const url=CURRENT_URL+'?key='+encodeURIComponent(key)+'&action=classSms&cls='+encodeURIComponent(sendCls)+'&names='+encodeURIComponent(names.join(','))+'&text='+encodeURIComponent(text);
   fetch(url).then(r=>r.json()).then(d=>{
     if(d.error){ res.innerHTML='<span style="color:#ef9f92">발송 실패: '+d.error+'</span>'; return; }
     const solOk=d.solapi&&(d.solapi.code===200);
