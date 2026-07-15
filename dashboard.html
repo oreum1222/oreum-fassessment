@@ -1891,8 +1891,9 @@ function comprehensiveEligible(t){
   const v2m=(t.v2||[]).some(r=>r['버전']!=='summer'&&r['페르소나']);
   const summer=(t.v2||[]).some(r=>r['버전']==='summer');
   const parent=t.parent&&t.parent.length>0;
-  const daemyeon=(typeof MYEONDAM_DONE!=='undefined')&&MYEONDAM_DONE.indexOf(t.name)>=0;
-  return v2m&&summer&&parent&&daemyeon;
+  const daemyeon=((typeof MYEONDAM_DONE!=='undefined')&&MYEONDAM_DONE.indexOf(t.name)>=0)||((typeof MYEONDAM_NOTES!=='undefined')&&!!MYEONDAM_NOTES[t.name]);
+  // 네 개가 다 모이지 않아도, 자료가 하나라도 있으면 통신문 생성 가능
+  return v2m||summer||parent||daemyeon;
 }
 function printComprehensive(key){
   const t=STUDENT_INDEX[key]; if(!t) return;
@@ -1930,6 +1931,13 @@ function buildComprehensiveReport(t){
   }
   const note=(typeof MYEONDAM_NOTES!=='undefined')&&MYEONDAM_NOTES[t.name];
   const noteHtml=note?note.split('\n').map(ln=>{ln=ln.trim();return ln?`<div style="margin:3px 0">– ${e(ln)}</div>`:'';}).join(''):'';
+  const have=[];
+  if(v2m) have.push('재원생 첫 진단');
+  if(summer) have.push('여름방학 학습 진단');
+  if(t.parent&&t.parent.length) have.push('학부모 관찰 진단');
+  if(note) have.push('첫수업 대면 상담');
+  const CNTW={2:'두 가지',3:'세 가지',4:'네 가지'};
+  const leadSummary=have.length>=2?`<b>${have.join(', ')}</b> ${CNTW[have.length]}를 종합했습니다`:(have.length===1?`<b>${have[0]}</b> 결과를 정리했습니다`:`진행된 진단 결과를 정리했습니다`);
   const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div>`:''}</div>`;
   const summerBlock=summer?`<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단에도 응시하여, 방학 중 학습 태도와 계획을 함께 살폈습니다.</p></div>`:'';
   const sd0=AX_DESC[S[0][0]]||S[0][0], sd1=S[1]?(AX_DESC[S[1][0]]||S[1][0]):'', wd0=AX_DESC[W[0][0]]||W[0][0];
@@ -1963,11 +1971,11 @@ body{font-family:Pretendard,-apple-system,sans-serif;color:#242424;font-size:10.
 <div class="hdr"><div class="brand">[오름] 국어 가경T 학습 성향 종합 통신문</div>
 <div class="title">${e(t.name)} 학생 학습 성향 종합</div>
 <div class="meta">${e(school)} ${e(grade)}, 발행 ${today}, 김가경 국어 연구소</div></div>
-<div class="lead">안녕하세요, 학부모님. 이번 여름 <b>${e(t.name)}</b> 학생에 대해 <b>재원생 첫 진단, 여름방학 학습 진단, 학부모 관찰 진단, 첫수업 대면 상담</b> 네 가지를 종합했습니다. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
+<div class="lead">안녕하세요, 학부모님. 이번 여름 <b>${e(t.name)}</b> 학생에 대해 ${leadSummary}. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
 ${v2m?`<div class="sec"><div class="sec-t">① 학습 성향과 6개 축</div><div class="persona"><b>유형: ${e(v2m['페르소나'])}</b> — ${pd}</div>${axBars}<div class="sw"><div class="box good"><div class="h">강점</div>${S.map(x=>x[0]+' '+x[1]).join(', ')}</div><div class="box warn"><div class="h">보완</div>${W.map(x=>x[0]+' '+x[1]).join(', ')}</div></div>${rx?`<div class="rx"><b>가장 먼저 잡을 지점 — ${W[0][0]}</b><br>${rx}</div>`:''}</div>`:''}
 ${parentBlock}${daemyeonBlock}${summerBlock}
 <div class="sec"><div class="sec-t">⑤ 가경T 종합 소견</div><div class="closing">${(typeof DEEP_CLOSING!=='undefined'&&DEEP_CLOSING[t.name])?DEEP_CLOSING[t.name]:closing}</div></div>
-<div class="foot">본 통신문은 국어를 대하는 성향과 습관, 태도의 프로필이며 학생의 능력에 대한 평가가 아닙니다. 네 가지 진단(온라인 3종 + 대면 상담)을 종합해 김가경 국어 연구소가 작성했습니다.</div>
+<div class="foot">본 통신문은 국어를 대하는 성향과 습관, 태도의 프로필이며 학생의 능력에 대한 평가가 아닙니다. 진행된 진단과 상담 결과를 종합해 김가경 국어 연구소가 작성했습니다.</div>
 </div>
 <div class="noprint"><button onclick="window.print()">🖨 인쇄 / PDF 저장</button></div>
 </div></body></html>`;
@@ -1979,7 +1987,7 @@ function openStudentProfile(key){
   const enc=encodeURIComponent(t.name);
   const d=synthDefine(t);
   let h=`<div class="sp-def">${d.txt}</div>`;
-  if(comprehensiveEligible(t)) h=`<button onclick="printComprehensive('${key.replace(/'/g,'')}')" style="width:100%;background:linear-gradient(135deg,#1F3A5F,#2C4A6E);color:#fff;border:0;border-radius:10px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:14px;font-family:inherit">\ud83d\udcc4 \uc885\ud569 \ud1b5\uc2e0\ubb38 \uc778\uc1c4 (4\uc885 \uc885\ud569)</button>`+h;
+  if(comprehensiveEligible(t)) h=`<button onclick="printComprehensive('${key.replace(/'/g,'')}')" style="width:100%;background:linear-gradient(135deg,#1F3A5F,#2C4A6E);color:#fff;border:0;border-radius:10px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:14px;font-family:inherit">\ud83d\udcc4 \uc885\ud569 \ud1b5\uc2e0\ubb38 \uc778\uc1c4</button>`+h;
   if(d.risks.length) h+=`<div class="sp-risk"><b>주의 신호</b> · ${d.risks.map(e).join(' / ')}</div>`;
   h+=synthInterpretBlock(t);
   h+=`<div class="sp-h4">응시한 진단</div>`;
