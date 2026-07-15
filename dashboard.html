@@ -1914,8 +1914,9 @@ function buildComprehensiveReport(t){
   const school=v2m?(v2m['학교']||''):'', grade=v2m?(v2m['학년']||''):'';
   const today=new Date().toISOString().slice(0,10);
   const NAVY='#1F3A5F', NAVY2='#2C4A6E';
-  const bc=v=> v>=75?'#1F3A5F':(v>=55?'#2C4A6E':(v>=40?'#6b7a8f':'#a53d2a'));
-  const axBars=axes.map(([n,v])=>`<div style="display:flex;align-items:center;gap:10px;margin:8px 0"><span style="width:230px;font-size:10pt;color:#1f2d3d"><b>${n}</b><span style="display:block;font-size:8.8pt;color:#5b6b7d;line-height:1.35;margin-top:2px">${AX_DESC[n]||''}</span></span><span style="flex:1;height:11px;background:#eef1f5;border-radius:6px;overflow:hidden"><span style="display:block;height:100%;width:${Math.max(0,Math.min(100,v))}%;background:${bc(v)}"></span></span><span style="width:30px;text-align:right;font-weight:700;font-size:10pt;color:${bc(v)}">${v}</span></div>`).join('');
+  const bc=v=> v>=75?'#1F3A5F':(v>=55?'#2C4A6E':(v>=40?'#5b82ab':'#c0492f'));
+  const chip=v=> v>=40?'#e7eef7':'#fbe7e2';
+  const axBars=axes.map(([n,v])=>`<div style="display:flex;align-items:center;gap:11px;margin:9px 0"><span style="width:230px;font-size:10pt;color:#1f2d3d"><b>${n}</b><span style="display:block;font-size:8.8pt;color:#5b6b7d;line-height:1.35;margin-top:2px">${AX_DESC[n]||''}</span></span><span style="flex:1;height:12px;background:#e2e8f2;border-radius:7px;overflow:hidden"><span style="display:block;height:100%;width:${Math.max(0,Math.min(100,v))}%;background:${bc(v)}"></span></span><span style="min-width:36px;text-align:center;font-weight:800;font-size:9.5pt;color:${bc(v)};background:${chip(v)};padding:2px 8px;border-radius:11px">${v}</span></div>`).join('');
   let parentBlock='';
   if(t.parent&&t.parent.length&&v2m){
     let pj={}; try{pj=JSON.parse(t.parent[0]['응답_JSON']||'{}');}catch(_e){}
@@ -1924,11 +1925,11 @@ function buildComprehensiveReport(t){
     const KK={'자료 장악':'장악','사고 적용':'적용','조건 변별':'변별','오답 메타인지':'메타','시간 운영':'시간','정서 회복':'정서'};
     let rows='',cnt=0,gaps=[];
     axes.forEach(([n])=>{ const stu=+v2m[CO[n]]; const par=pax[KK[n]]; if(isNaN(stu)||par==null) return; cnt++; const diff=stu-par; if(Math.abs(diff)>10) gaps.push([n,diff]); const dt=Math.abs(diff)<=10?'비슷':(diff>0?'학생이 높게':'학부모가 높게'); rows+=`<tr><td style="padding:4px 8px;color:#333">${n}</td><td style="padding:4px 8px;text-align:center">${stu}</td><td style="padding:4px 8px;text-align:center">${par}</td><td style="padding:4px 8px;font-size:9.5pt;color:#666">${dt}</td></tr>`; });
-    if(cnt){ const intro=gaps.length?`자녀가 스스로 본 모습과 학부모님이 관찰하신 모습을 6개 축으로 나란히 비교했습니다. 대체로 비슷했고, 아래 축에서는 서로 보는 관점에 조금 차이가 있었습니다 — <b>${gaps.map(g=>g[0]+'('+(g[1]>0?'학생이 더 높게':'학부모님이 더 높게')+')').join(', ')}</b>.`:`자녀가 스스로 본 모습과 학부모님이 관찰하신 모습을 6개 축으로 나란히 비교했습니다. 전반적으로 두 분이 보시는 모습이 잘 맞았습니다.`; parentBlock=`<div class="sec"><div class="sec-t">② 학생과 학부모 인식 비교</div><p class="p">${intro}</p><table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:10pt"><thead><tr style="border-bottom:2px solid ${NAVY}"><th style="padding:5px 8px;text-align:left;color:${NAVY}">축</th><th style="padding:5px 8px;color:${NAVY}">학생</th><th style="padding:5px 8px;color:${NAVY}">학부모</th><th style="padding:5px 8px;text-align:left;color:${NAVY}">비교</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
+    if(cnt){ const intro=gaps.length?`자녀가 스스로 본 모습과 학부모님이 관찰하신 모습을 6개 축으로 나란히 비교했습니다. 대체로 비슷했고, 아래 축에서는 서로 보는 관점에 조금 차이가 있었습니다 — <b>${gaps.map(g=>g[0]+'('+(g[1]>0?'학생이 더 높게':'학부모님이 더 높게')+')').join(', ')}</b>.`:`자녀가 스스로 본 모습과 학부모님이 관찰하신 모습을 6개 축으로 나란히 비교했습니다. 전반적으로 두 분이 보시는 모습이 잘 맞았습니다.`; parentBlock=`<div class="sec"><div class="sec-t">② 학생과 학부모 인식 비교</div><p class="p">${intro}</p><table class="tbl"><thead><tr><th style="text-align:left">축</th><th>학생</th><th>학부모</th><th style="text-align:left">비교</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
   }
   const note=(typeof MYEONDAM_NOTES!=='undefined')&&MYEONDAM_NOTES[t.name];
   const noteHtml=note?note.split('\n').map(ln=>{ln=ln.trim();return ln?`<div style="margin:3px 0">– ${e(ln)}</div>`:'';}).join(''):'';
-  const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#f4f6f9;border:1px solid #dde3ec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#3a3a3a;line-height:1.55">${noteHtml}</div>`:''}</div>`;
+  const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div>`:''}</div>`;
   const summerBlock=summer?`<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단에도 응시하여, 방학 중 학습 태도와 계획을 함께 살폈습니다.</p></div>`:'';
   const sd0=AX_DESC[S[0][0]]||S[0][0], sd1=S[1]?(AX_DESC[S[1][0]]||S[1][0]):'', wd0=AX_DESC[W[0][0]]||W[0][0];
   const strP=sd1?`<b>${sd0}</b>과 <b>${sd1}</b>`:`<b>${sd0}</b>`;
@@ -1937,29 +1938,32 @@ function buildComprehensiveReport(t){
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
 <style>@page{size:A4;margin:15mm 15mm 12mm}*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Pretendard,-apple-system,sans-serif;color:#242424;font-size:10.5pt;line-height:1.65;background:#fff}
-.wrap{max-width:180mm;margin:0 auto;padding:4mm 0}
-.brand{font-size:9.5pt;letter-spacing:.14em;color:${NAVY};font-weight:700}
-.title{font-family:'Nanum Myeongjo',serif;font-size:20pt;font-weight:800;color:#1a1a1a;margin:3px 0 4px}
-.meta{font-size:10pt;color:#777;border-bottom:2px solid ${NAVY};padding-bottom:10px;margin-bottom:16px}
-.lead{background:#f4f6f9;border-left:3px solid ${NAVY};padding:11px 15px;font-size:10.5pt;color:#333;margin-bottom:18px;line-height:1.7}
-.sec{margin-bottom:15px}.sec-t{font-family:'Nanum Myeongjo',serif;font-size:13pt;font-weight:800;color:${NAVY};margin-bottom:7px}
+body{font-family:Pretendard,-apple-system,sans-serif;color:#242424;font-size:10.5pt;line-height:1.62;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wrap{max-width:182mm;margin:0 auto;padding:2mm 0}
+.hdr{background:linear-gradient(120deg,${NAVY} 0%,${NAVY2} 100%);color:#fff;border-radius:12px;padding:17px 22px;margin-bottom:16px}
+.brand{font-size:9pt;letter-spacing:.14em;color:#c2d4ec;font-weight:700}
+.title{font-family:'Nanum Myeongjo',serif;font-size:19pt;font-weight:800;color:#fff;margin:5px 0 4px}
+.meta{font-size:9.5pt;color:#c7d6ea}
+.lead{background:#eaf0f8;border-left:4px solid ${NAVY2};padding:12px 16px;border-radius:0 8px 8px 0;font-size:10.3pt;color:#2a3b4d;margin-bottom:16px;line-height:1.68}
+.lead b{color:${NAVY}}
+.sec{margin-bottom:14px}.sec-t{font-family:'Nanum Myeongjo',serif;font-size:12.5pt;font-weight:800;color:${NAVY};background:#e7eef7;border-left:5px solid ${NAVY2};padding:6px 13px;border-radius:0 6px 6px 0;margin-bottom:9px}
 .p{font-size:10.5pt;color:#333;line-height:1.7}
-.persona{background:#f4f6f9;border:1px solid #dde3ec;border-radius:8px;padding:12px 15px;margin-bottom:10px}.persona b{color:${NAVY}}
-.sw{display:flex;gap:14px;margin-top:9px;font-size:10pt}.sw .box{flex:1;border:1px solid #dde3ec;border-radius:8px;padding:9px 12px}.sw .h{font-weight:800;color:${NAVY};font-size:9.5pt;margin-bottom:3px}
-.rx{background:#eef2f7;border:1px dashed #aebccf;border-radius:8px;padding:10px 14px;margin-top:9px;font-size:10pt;color:#33475f}.rx b{color:${NAVY}}
-.closing{background:${NAVY};color:#fff;border-radius:10px;padding:15px 18px;line-height:1.75;font-size:10.5pt}.closing b{color:#cfe0ff}
-.foot{margin-top:18px;padding-top:11px;border-top:1px dashed #ccc;font-size:9pt;color:#999;line-height:1.6}
+.persona{background:#eef3fa;border:1px solid #cfdcec;border-radius:9px;padding:12px 15px;margin-bottom:11px;color:#2a3b4d}.persona b{color:${NAVY}}
+.sw{display:flex;gap:12px;margin-top:10px;font-size:10pt}.sw .box{flex:1;border-radius:9px;padding:10px 13px}.sw .good{background:#e9f1fb;border:1px solid #caddf3}.sw .good .h{color:${NAVY}}.sw .warn{background:#fdefe9;border:1px solid #f2cebf}.sw .warn .h{color:#a53d2a}.sw .h{font-weight:800;font-size:9.5pt;margin-bottom:3px}
+.rx{background:#fdeee9;border:1px solid #e6b8ab;border-radius:9px;padding:11px 15px;margin-top:10px;font-size:10pt;color:#5a3a33}.rx b{color:#a53d2a}
+.closing{background:linear-gradient(120deg,${NAVY} 0%,${NAVY2} 100%);color:#fff;border-radius:11px;padding:16px 20px;line-height:1.75;font-size:10.5pt}.closing b{color:#bcd6ff}
+.tbl{width:100%;border-collapse:collapse;margin-top:9px;font-size:10pt;border-radius:8px;overflow:hidden}.tbl thead th{background:${NAVY};color:#fff;padding:7px 9px;font-weight:700}.tbl tbody td{border-bottom:1px solid #e3e9f1}.tbl tbody tr:nth-child(even){background:#f4f7fb}
+.foot{margin-top:16px;padding-top:11px;border-top:1px dashed #c3ccd8;font-size:9pt;color:#8a94a0;line-height:1.6}
 .noprint{margin-top:22px;text-align:center}.noprint button{background:${NAVY};color:#fff;border:0;border-radius:8px;padding:11px 26px;font-size:11pt;font-weight:700;cursor:pointer;font-family:inherit}
 .edithint{background:#eef2f7;border:1px solid #cdd8e6;border-radius:8px;padding:8px 13px;font-size:9.5pt;color:#33475f;margin-bottom:12px}.doc[contenteditable]{outline:none}.doc[contenteditable]:focus-within{outline:none}
 @media print{.noprint,.edithint{display:none}}</style></head><body><div class="wrap">
 <div class="edithint noprint">✏️ 아무 문장이나 클릭해 직접 고친 뒤 인쇄하세요. (고친 내용은 인쇄/PDF로 저장하시면 됩니다)</div>
 <div class="doc" contenteditable="true">
-<div class="brand">[오름] 국어 가경T 학습 성향 종합 통신문</div>
+<div class="hdr"><div class="brand">[오름] 국어 가경T 학습 성향 종합 통신문</div>
 <div class="title">${e(t.name)} 학생 학습 성향 종합</div>
-<div class="meta">${e(school)} ${e(grade)}, 발행 ${today}, 김가경 국어 연구소</div>
+<div class="meta">${e(school)} ${e(grade)}, 발행 ${today}, 김가경 국어 연구소</div></div>
 <div class="lead">안녕하세요, 학부모님. 이번 여름 <b>${e(t.name)}</b> 학생에 대해 <b>재원생 첫 진단, 여름방학 학습 진단, 학부모 관찰 진단, 첫수업 대면 상담</b> 네 가지를 종합했습니다. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
-${v2m?`<div class="sec"><div class="sec-t">① 학습 성향과 6개 축</div><div class="persona"><b>유형: ${e(v2m['페르소나'])}</b> — ${pd}</div>${axBars}<div class="sw"><div class="box"><div class="h">강점</div>${S.map(x=>x[0]+' '+x[1]).join(', ')}</div><div class="box"><div class="h">보완</div>${W.map(x=>x[0]+' '+x[1]).join(', ')}</div></div>${rx?`<div class="rx"><b>가장 먼저 잡을 지점 — ${W[0][0]}</b><br>${rx}</div>`:''}</div>`:''}
+${v2m?`<div class="sec"><div class="sec-t">① 학습 성향과 6개 축</div><div class="persona"><b>유형: ${e(v2m['페르소나'])}</b> — ${pd}</div>${axBars}<div class="sw"><div class="box good"><div class="h">강점</div>${S.map(x=>x[0]+' '+x[1]).join(', ')}</div><div class="box warn"><div class="h">보완</div>${W.map(x=>x[0]+' '+x[1]).join(', ')}</div></div>${rx?`<div class="rx"><b>가장 먼저 잡을 지점 — ${W[0][0]}</b><br>${rx}</div>`:''}</div>`:''}
 ${parentBlock}${daemyeonBlock}${summerBlock}
 <div class="sec"><div class="sec-t">⑤ 가경T 종합 소견</div><div class="closing">${closing}</div></div>
 <div class="foot">본 통신문은 국어를 대하는 성향과 습관, 태도의 프로필이며 학생의 능력에 대한 평가가 아닙니다. 네 가지 진단(온라인 3종 + 대면 상담)을 종합해 김가경 국어 연구소가 작성했습니다.</div>
