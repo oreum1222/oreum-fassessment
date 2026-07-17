@@ -2000,7 +2000,22 @@ function buildComprehensiveReport(t){
   const CNTW={2:'두 가지',3:'세 가지',4:'네 가지'};
   const leadSummary=have.length>=2?`<b>${have.join(', ')}</b> ${CNTW[have.length]}를 종합했습니다`:(have.length===1?`<b>${have[0]}</b> 결과를 정리했습니다`:`진행된 진단 결과를 정리했습니다`);
   const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div>`:''}</div>`;
-  const summerBlock=summer?`<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단에도 응시하여, 방학 중 학습 태도와 계획을 함께 살폈습니다.</p></div>`:'';
+  const summerBlock=summer?(function(){
+    var sc={}, sp='';
+    try{ var sj=JSON.parse(summer['분석_JSON']||'{}'); sc=sj.score||{}; sp=sj.persona||''; }catch(_e){}
+    var hi=function(k){return typeof sc[k]==='number'&&sc[k]>=3.3;}, lo=function(k){return typeof sc[k]==='number'&&sc[k]<=2.3;};
+    var pts=[];
+    if(hi('efficacy')) pts.push('국어 학습에 대한 <b>자기효능감이 높습니다</b>. 스스로 해낼 수 있다는 믿음이 있습니다.');
+    else if(lo('efficacy')) pts.push('<b>자기효능감이 낮은 편</b>입니다. 잘 해내면서도 \'나는 국어를 못한다\'는 생각이 실력 발휘를 막을 수 있습니다.');
+    if(hi('anx_eval')) pts.push('<b>시험 불안이 높은 편</b>이라, 아는 문제도 시험장에서 흔들릴 수 있습니다.');
+    if(hi('growth')) pts.push('노력하면 는다는 <b>성장 마인드셋</b>이 뚜렷합니다.');
+    else if(lo('growth')) pts.push('아직 결과를 재능 탓으로 돌리는 경향이 남아 있어, 노력이 점수로 이어지는 경험이 필요합니다.');
+    if(lo('effort')||lo('care')) pts.push('방학 동안 실제 학습 투입량을 조금 더 늘릴 여지가 있습니다.');
+    else if(hi('effort')||hi('care')) pts.push('성실하게 학습에 임하는 태도가 좋습니다.');
+    var style=sp?('방학 학습에는 <b>'+e(sp)+'</b> 방식의 관리가 잘 맞습니다.'):'';
+    var body=(pts.length?('<ul style="margin:7px 0 0 18px;padding:0;font-size:10.3pt;color:#333;line-height:1.6">'+pts.map(function(x){return '<li style="margin:3px 0">'+x+'</li>';}).join('')+'</ul>'):'')+(style?('<p class="p" style="margin-top:7px">'+style+'</p>'):'');
+    return '<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단으로 방학 중 학습 태도와 필요한 관리 방식을 함께 살펴, 아래와 같이 소견에 반영하였습니다.</p>'+body+'</div>';
+  })():'';
   const closing=(v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`;
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${e(t.name)} 종합 통신문 — 가경T</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
