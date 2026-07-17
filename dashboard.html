@@ -2001,20 +2001,48 @@ function buildComprehensiveReport(t){
   const leadSummary=have.length>=2?`<b>${have.join(', ')}</b> ${CNTW[have.length]}를 종합했습니다`:(have.length===1?`<b>${have[0]}</b> 결과를 정리했습니다`:`진행된 진단 결과를 정리했습니다`);
   const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div>`:''}</div>`;
   const summerBlock=summer?(function(){
-    var sc={}, sp='';
-    try{ var sj=JSON.parse(summer['분석_JSON']||'{}'); sc=sj.score||{}; sp=sj.persona||''; }catch(_e){}
-    var hi=function(k){return typeof sc[k]==='number'&&sc[k]>=3.3;}, lo=function(k){return typeof sc[k]==='number'&&sc[k]<=2.3;};
-    var pts=[];
-    if(hi('efficacy')) pts.push('국어 학습에 대한 <b>자기효능감이 높습니다</b>. 스스로 해낼 수 있다는 믿음이 있습니다.');
-    else if(lo('efficacy')) pts.push('<b>자기효능감이 낮은 편</b>입니다. 잘 해내면서도 \'나는 국어를 못한다\'는 생각이 실력 발휘를 막을 수 있습니다.');
-    if(hi('anx_eval')) pts.push('<b>시험 불안이 높은 편</b>이라, 아는 문제도 시험장에서 흔들릴 수 있습니다.');
-    if(hi('growth')) pts.push('노력하면 는다는 <b>성장 마인드셋</b>이 뚜렷합니다.');
-    else if(lo('growth')) pts.push('아직 결과를 재능 탓으로 돌리는 경향이 남아 있어, 노력이 점수로 이어지는 경험이 필요합니다.');
-    if(lo('effort')||lo('care')) pts.push('방학 동안 실제 학습 투입량을 조금 더 늘릴 여지가 있습니다.');
-    else if(hi('effort')||hi('care')) pts.push('성실하게 학습에 임하는 태도가 좋습니다.');
-    var style=sp?('방학 학습에는 <b>'+e(sp)+'</b> 방식의 관리가 잘 맞습니다.'):'';
-    var body=(pts.length?('<ul style="margin:7px 0 0 18px;padding:0;font-size:10.3pt;color:#333;line-height:1.6">'+pts.map(function(x){return '<li style="margin:3px 0">'+x+'</li>';}).join('')+'</ul>'):'')+(style?('<p class="p" style="margin-top:7px">'+style+'</p>'):'');
-    return '<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단으로 방학 중 학습 태도와 필요한 관리 방식을 함께 살펴, 아래와 같이 소견에 반영하였습니다.</p>'+body+'</div>';
+    var sj={}; try{ sj=JSON.parse(summer['분석_JSON']||'{}'); }catch(_e){}
+    var sc=sj.score||{}, mg=sj.mgmt||null, pats=(sj.patterns||[]);
+    var g=function(k){return typeof sc[k]==='number'?sc[k]:null;};
+    var PAT={
+      '완벽주의 불안형':'기준이 높고 시험 불안이 커서, 충분히 아는 것도 실전에서는 제 실력만큼 나오지 않습니다.',
+      '암기 의존형':'요령과 암기에 기대는 습관이 있어, 조금만 변형되거나 낯선 지문이 나오면 흔들립니다.',
+      '자료 의존형':'막혔을 때 스스로 버티기보다 해설을 먼저 찾는 편이라, 혼자 뚫어내는 힘이 아직 덜 자랐습니다.',
+      '질문 회피형':'모르는 것을 묻지 않고 덮어 둔 채 넘어가는 경향이 있어, 약점이 조용히 쌓입니다.',
+      '시험 취약형':'평소 아는 것에 비해 유독 시험장에서 실력이 덜 나오는 유형입니다.',
+      '고정관념 저효능형':'\'해도 안 된다\'는 생각이 자리 잡아, 실력과 무관하게 시도 자체를 주저합니다.',
+      '자기주도 강점형':'스스로 점검하고 끝까지 붙드는 힘이 뚜렷해, 촘촘한 관리보다 난도를 높이고 확장 과제를 줄 때 더 크게 자랍니다.',
+      '저동기형':'아직 국어를 \'왜 해야 하는지\', 그 재미와 의미를 충분히 느끼지 못한 상태라, 무엇보다 동기의 불씨를 살리는 것이 먼저입니다.'
+    };
+    var nm2=e(t.name);
+    var typeLabel=(mg?e(mg.label):'')+(pats.length?' · '+pats.map(e).join(', '):'');
+    var mgSent=mg?(nm2+' 학생은 관리 강도 면에서 <b>'+e(mg.label)+'</b>으로 관찰됩니다. '+e(mg.note)):'';
+    var SIG={
+      efficacy:[3.3,2.3,'어려운 문제 앞에서도 \'해낼 수 있다\'는 자신감이 뚜렷합니다','잘 해내면서도 스스로를 믿지 못해 자신감이 낮은 편이라, 실제 실력이 저평가되고 있습니다'],
+      growth:[3.3,2.3,'노력하면 는다는 성장의 믿음이 강합니다','아직 \'재능\' 프레임이 남아 있어, 노력이 결과로 이어지는 경험을 쌓아 줄 필요가 있습니다'],
+      value:[3.4,2.2,'국어의 재미와 의미를 스스로 느끼고 있어, 방향만 잡아 주면 스스로 나아갑니다','국어를 왜 해야 하는지 재미와 의미를 아직 잘 느끼지 못합니다'],
+      anx_eval:[3.3,-1,'시험 불안이 높은 편이라, 아는 것도 시험장에서 덜 나옵니다',''],
+      anx_learn:[3.3,-1,'새 단원이나 낯선 내용 앞에서 유독 긴장이 큽니다',''],
+      meta:[3.3,2.2,'틀린 것을 스스로 되짚어 보는 습관이 잡혀 있습니다','틀린 이유를 스스로 짚어 보는 습관이 아직 약해, 실수가 다음으로 이어지지 못합니다'],
+      effort:[3.3,2.2,'어려워도 끝까지 붙드는 끈기가 있습니다','어려운 문제를 오래 붙들지 못하고 놓는 편이라, 버티는 훈련이 필요합니다'],
+      care:[3.3,2.2,'발문과 조건을 꼼꼼히 확인하는 성실함이 있습니다','발문과 조건을 놓쳐 아는 문제도 실수하곤 합니다'],
+      understand:[3.3,2.3,'개념을 \'왜\'까지 파고드는 편입니다','원리보다 결과 위주로 넘어가는 편이라, 낯선 문제에서 응용이 약합니다'],
+      testop:[3.3,2.2,'시험 시간과 검토 운영이 안정적입니다','시간 운영과 검토에서 아는 점수까지 흘리는 편입니다']
+    };
+    var sigs=[];
+    Object.keys(SIG).forEach(function(k){ var v=g(k); if(v==null)return; var d=SIG[k]; var dev=Math.abs(v-2.5);
+      if(v>=d[0]) sigs.push({dev:dev,txt:d[2]}); else if(d[1]>0&&v<=d[1]) sigs.push({dev:dev,txt:d[3]}); });
+    sigs.sort(function(a,b){return b.dev-a.dev;});
+    var sigTxt=sigs.slice(0,3).map(function(x){return x.txt;}).join('. '); if(sigTxt) sigTxt+='.';
+    var autos=[['auto_A','막히면 힌트를 붙잡고 스스로 뚫어 보려 합니다'],['auto_B','막히면 해설부터 찾는 편입니다'],['auto_C','막히면 덮고 넘어가는 편입니다']].map(function(x){return {t:x[1],v:g(x[0])};}).filter(function(x){return x.v!=null;});
+    autos.sort(function(a,b){return b.v-a.v;});
+    var stuck=autos.length?(nm2+' 학생은 문제가 '+autos[0].t+'.'):'';
+    var patSent=pats.filter(function(pp){return PAT[pp];}).map(function(pp){return '특히 <b>'+e(pp)+'</b>의 모습이 함께 나타납니다. '+PAT[pp];}).join(' ');
+    var body='';
+    if(mgSent) body+='<p class="p" style="margin-top:8px">'+mgSent+'</p>';
+    if(sigTxt||stuck) body+='<p class="p" style="margin-top:6px">구체적으로, '+[sigTxt,stuck].filter(Boolean).join(' ')+'</p>';
+    if(patSent) body+='<p class="p" style="margin-top:6px">'+patSent+'</p>';
+    return '<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div><p class="p">여름방학 학습 진단으로 '+nm2+' 학생이 <b>어떤 유형의 학습자</b>인지, 방학에 어떤 관리가 맞는지를 함께 살펴 소견에 반영하였습니다.</p>'+body+'</div>';
   })():'';
   const closing=(v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`;
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${e(t.name)} 종합 통신문 — 가경T</title>
