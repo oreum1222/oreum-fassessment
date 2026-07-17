@@ -1932,8 +1932,17 @@ function genDeepClosing(t, axes, S, W, persona, note){
   var g=noteGrades(note), naesin=g.naesin, mogo=g.mogo, best=g.best, worst=g.worst;
   var gap=(naesin!=null&&mogo!=null&&Math.abs(naesin-mogo)>=2), topStrong=(topSk&&topSk[1]>=70);
   var good=(mogo!=null&&mogo<=2)||(naesin!=null&&naesin<=1);
-  var gStr=(function(){var a=[]; if(mogo!=null)a.push('모의고사 국어 '+mogo+'등급'); if(naesin!=null)a.push('내신 국어 '+naesin+'등급'); return a.join(', ');})();
-  var tier=(mogo===1)?'최상위권':(mogo===2?'상위권':(naesin===1?'최상위권':'좋은'));
+  var MOGO_PCT={1:4,2:11,3:23,4:40,5:60}, NAESIN_PCT={1:10,2:34,3:66,4:90,5:100};
+  var mogoTier=function(gg){return gg===1?'최상위권':gg===2?'상위권':gg===3?'중상위권':'중위권';};
+  var gradeSentence=(function(){
+    if(mogo!=null&&naesin!=null){ var mp=MOGO_PCT[mogo], np=NAESIN_PCT[naesin];
+      if(np-mp>=20) return '<b>모의고사 국어 '+mogo+'등급</b>으로 '+mogoTier(mogo)+'의 실력을 보이지만, <b>내신 국어 '+naesin+'등급</b>으로 내신에서는 그만큼 점수가 나오지 않고 있습니다';
+      if(mp-np>=20) return '<b>내신 국어 '+naesin+'등급</b>은 안정적이지만, <b>모의고사 국어 '+mogo+'등급</b>으로 낯선 지문이 쏟아지는 모의고사에서 점수가 빠집니다';
+      return '내신과 모의고사에서 <b>국어 '+naesin+'등급, '+mogo+'등급</b>의'+(mogo<=2?' 상위권':'')+' 성적을 유지하고 있습니다'; }
+    if(mogo!=null) return '<b>모의고사 국어 '+mogo+'등급</b>으로 '+mogoTier(mogo)+'의 성적을 유지하고 있습니다';
+    if(naesin!=null) return '<b>내신 국어 '+naesin+'등급</b>의 성적을 유지하고 있습니다';
+    return '';
+  })();
   function band(v){return v>=85?'매우 높음':v>=70?'높음':v>=45?'보통':v>=25?'낮음':'매우 낮음';}
   var attBase='';
   if(emoV>=70&&timeV>=70) attBase='시간 운영('+timeV+'점)과 정서 회복('+emoV+'점)이 모두 높아, 시험을 끝까지 안정적으로 치러내는 토대는 이미 갖추었습니다.';
@@ -1946,12 +1955,12 @@ function genDeepClosing(t, axes, S, W, persona, note){
   var p1,p2,p3;
   if(good&&!gap&&skAvg<45&&!topStrong){
     /* 과소평가: 성적 좋은데 진단 낮음 */
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 <b>'+gStr+'</b>의 '+tier+' 성적을 유지하고 있습니다. 그런데 이번 진단에서는 '+w0[0]+' '+w0[1]+'점, 그중 가장 나은 '+topSk[0]+'조차 '+topSk[1]+'점으로, 실력의 바탕이 되는 축들이 <b>실제 성적보다 훨씬 낮게</b> 나왔습니다.</p>';
+    p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 그런데 이번 진단에서는 '+w0[0]+' '+w0[1]+'점, 그중 가장 나은 '+topSk[0]+'조차 '+topSk[1]+'점으로, 실력의 바탕이 되는 축들이 <b>실제 성적보다 훨씬 낮게</b> 나왔습니다.</p>';
     p2='<p style="margin:0 0 10px">성적과 진단이 이렇게 크게 어긋날 때, 이는 국어를 못한다는 뜻이 아니라 <b>학생이 자신의 실력을 실제보다 박하게 평가하고 있다</b>는 신호일 가능성이 큽니다. 잘 해내고 있으면서도 "이게 맞나" 확신하지 못하거나, 스스로에게 요구하는 기준이 높은 학생에게서 자주 나타나는 모습입니다. '+(attBase?'특히 '+attBase+' 시험을 치르는 실행에는 문제가 없는데 스스로에 대한 평가만 낮은 것입니다. ':'')+'다만 지금은 상당 부분을 감각으로 해결하고 있어, 지문이 어려워지거나 긴장되는 시험에서는 그 감각이 흔들리며 <b>점수가 방어되지 않는 경우</b>가 생길 수 있습니다. <b>(진단은 학생이 스스로 응답한 결과라 실제 실행 수준과 차이가 있을 수 있어, 이 부분은 다음 상담에서 함께 확인하겠습니다.)</b></p>';
     p3='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 실력을 새로 쌓는 것이 아니라, <b>이미 가진 실력을 "왜 이 답인지" 스스로 설명하며 확신으로 바꾸는 것</b>입니다. '+rxChain+'을 통해 감각을 근거로 옮기면, 자신에 대한 확신이 붙는 순간 지금의 좋은 성적이 컨디션에 흔들리지 않는 실력으로 굳어집니다.</p>';
   } else if(mogo===1&&!gap&&(skAvg>=45||topStrong)){
     /* 최상위 유지/정교화 */
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 <b>'+gStr+'</b>의 최상위권입니다. 진단에서도 '+topSk[0]+' '+topSk[1]+'점 등 실력 축들이 고르게 자리를 잡고 있어, 성적과 진단이 서로 잘 맞습니다.</p>';
+    p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 진단에서도 '+topSk[0]+' '+topSk[1]+'점 등 실력 축들이 고르게 자리를 잡고 있어, 성적과 진단이 서로 잘 맞습니다.</p>';
     p2='<p style="margin:0 0 10px">다만 '+w0[0]+' '+w0[1]+'점처럼 상대적으로 낮게 나온 축은, 실제로 그 능력이 없다기보다 이미 자연스럽게 하고 있어 스스로 의식하지 못하는 부분에 가깝습니다. 최상위권일수록 자기 기준이 높아 진단을 낮게 매기는 경향도 있습니다. '+attBase+'</p>';
     p3='<p style="margin:0">지금 '+nm+' 학생은 정체 상태가 아니라, <b>최상위권을 흔들림 없이 유지하고 더 정교하게 다듬는 단계</b>입니다. '+rxChain+'까지 의식적으로 언어로 붙잡아 두면, 컨디션이나 지문 난도에 상관없이 1등급을 안정적으로 지켜 냅니다.</p>';
   } else if(topSk&&topSk[1]>=70){
