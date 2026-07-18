@@ -1960,52 +1960,51 @@ function genDeepClosing(t, axes, S, W, persona, note, summer){
   var rxAx=[w0[0]]; if(w1&&w1[0]!==w0[0]) rxAx.push(w1[0]);
   rxAx.sort(function(a,b){return PRI[a]-PRI[b];});
   var rxChain=rxAx.map(function(a){return RX[a];}).join(' → ');
-  var p1,p2,p3;
-  if(good&&!gap&&skAvg<45&&!topStrong){
-    var mogoOver=(mogo!=null&&naesin!=null&&(NAESIN_PCT[naesin]-MOGO_PCT[mogo])>=20);
-    if(mogoOver){
-      /* 감각형 격차: 모의고사는 좋으나 내신·진단이 못 따라옴 */
-      p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 그런데 이번 진단에서도 '+w0[0]+' '+w0[1]+'점, 그중 가장 나은 '+topSk[0]+'조차 '+topSk[1]+'점으로, 실력의 바탕이 되는 축들이 낮게 나왔습니다.</p>';
-      p2='<p style="margin:0 0 10px">내신이 모의고사만큼 나오지 않는 것과 진단 축이 낮게 나온 것은, 사실 <b>같은 원인</b>을 가리킵니다. 모의고사에서 보이는 빠른 이해와 순발력은 분명한 강점이지만, 읽어낸 것을 "왜 이 답인지" 근거로 다지고 조건에 맞춰 확정하는 실력('+w0[0]+' 등)이 아직 받쳐 주지 못합니다. 그래서 순발력만으로는 풀리지 않는 <b>내신의 정밀함 앞에서, 또 이번 진단에서 점수가 함께 빠지는 것</b>입니다. '+(attBase?attBase+' ':'')+'<b>(진단은 학생이 스스로 응답한 결과라 실제 실행 수준과 차이가 있을 수 있어, 다음 상담에서 함께 확인하겠습니다.)</b></p>';
-      p3='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 문제 수를 늘리는 것이 아니라, 이미 가진 순발력 위에 '+rxChain+'을 얹어 <b>감각을 근거로 설명할 수 있는 실력으로 바꾸는 것</b>입니다. 그 실력이 자리 잡는 순간, 모의고사에서 보이던 힘이 내신 점수로도 그대로 이어집니다.</p>';
-    } else {
-      /* 진짜 과소평가: 모의고사·내신 모두 상위인데 진단만 낮음 */
-      p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 그런데 이번 진단에서는 '+w0[0]+' '+w0[1]+'점, 그중 가장 나은 '+topSk[0]+'조차 '+topSk[1]+'점으로, 실력의 바탕이 되는 축들이 <b>실제 성적보다 훨씬 낮게</b> 나왔습니다.</p>';
-      p2='<p style="margin:0 0 10px">성적과 진단이 이렇게 크게 어긋날 때, 이는 국어를 못한다는 뜻이 아니라 <b>학생이 자신의 실력을 실제보다 박하게 평가하고 있다</b>는 신호일 가능성이 큽니다. 잘 해내고 있으면서도 "이게 맞나" 확신하지 못하거나, 스스로에게 요구하는 기준이 높은 학생에게서 자주 나타나는 모습입니다. '+(attBase?'특히 '+attBase+' 시험을 치르는 실행에는 문제가 없는데 스스로에 대한 평가만 낮은 것입니다. ':'')+'다만 지금은 상당 부분을 감각으로 해결하고 있어, 지문이 어려워지거나 긴장되는 시험에서는 그 감각이 흔들리며 <b>점수가 방어되지 않는 경우</b>가 생길 수 있습니다. <b>(진단은 학생이 스스로 응답한 결과라 실제 실행 수준과 차이가 있을 수 있어, 이 부분은 다음 상담에서 함께 확인하겠습니다.)</b></p>';
-      p3='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 실력을 새로 쌓는 것이 아니라, <b>이미 가진 실력을 "왜 이 답인지" 스스로 설명하며 확신으로 바꾸는 것</b>입니다. '+rxChain+'을 통해 감각을 근거로 옮기면, 자신에 대한 확신이 붙는 순간 지금의 좋은 성적이 컨디션에 흔들리지 않는 실력으로 굳어집니다.</p>';
-    }
-  } else if(mogo===1&&!gap&&(skAvg>=45||topStrong)){
-    /* 최상위 유지/정교화 */
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 진단에서도 '+topSk[0]+' '+topSk[1]+'점 등 실력 축들이 고르게 자리를 잡고 있어, 성적과 진단이 서로 잘 맞습니다.</p>';
-    p2='<p style="margin:0 0 10px">다만 '+w0[0]+' '+w0[1]+'점처럼 상대적으로 낮게 나온 축은, 실제로 그 능력이 없다기보다 이미 자연스럽게 하고 있어 스스로 의식하지 못하는 부분에 가깝습니다. 최상위권일수록 자기 기준이 높아 진단을 낮게 매기는 경향도 있습니다. '+attBase+'</p>';
-    p3='<p style="margin:0">지금 '+nm+' 학생은 정체 상태가 아니라, <b>최상위권을 흔들림 없이 유지하고 더 정교하게 다듬는 단계</b>입니다. '+rxChain+'까지 의식적으로 언어로 붙잡아 두면, 컨디션이나 지문 난도에 상관없이 1등급을 안정적으로 지켜 냅니다.</p>';
-  } else if(summer && skAvg>=55 && w0[1]>=40 && ((sGrowth!=null&&sGrowth>=3.5)||(sEff!=null&&sEff>=3.3)) && ((sEffort!=null&&sEffort<=2.3)||(sMeta!=null&&sMeta<=2.3)||(sCare!=null&&sCare<=2.3))){
-    /* 안정화형: 실력·태도는 좋은데 노력·복기가 부족해 성적이 불안정 */
-    var potBits=[]; if(sGrowth!=null&&sGrowth>=3.5)potBits.push('\'노력하면 는다\'는 성장 마인드셋이 또래 중 가장 높게'); if(sEff!=null&&sEff>=3.3)potBits.push('어려워도 해낼 수 있다는 자기효능감도 높게');
-    var lackBits=[]; if(sEffort!=null&&sEffort<=2.3)lackBits.push('실제 학습에 들이는 노력의 양'); if(sMeta!=null&&sMeta<=2.3)lackBits.push('틀린 것을 스스로 꼼꼼히 되짚는 습관'); if(sCare!=null&&sCare<=2.3)lackBits.push('발문과 조건을 꼼꼼히 확인하는 성실함');
-    var strTop=[topSk[0]+' '+topSk[1]+'점']; if(skSorted[1]&&skSorted[1][1]>=55)strTop.push(skSorted[1][0]+' '+skSorted[1][1]+'점');
-    p1='<p style="margin:0 0 10px">'+nm+' 학생의 국어 성적이 아직 안정적으로 자리 잡지 못한 것은 실력이 부족해서가 아니라, <b>가진 잠재력과 태도에 비해 국어에 들인 시간과 손이 아직 그만큼 따라가지 못했기 때문</b>입니다. 이번 진단에서 <b>'+strTop.join(', ')+'</b>으로 실력의 바탕이 되는 축들이 어느 하나 처지지 않고 고르게 중상위에 있고,'+(attBase?' '+attBase:' 시험을 안정적으로 치러내는 토대도 갖추었습니다.')+'</p>';
-    p2='<p style="margin:0 0 10px">특히 여름 진단에서 '+(potBits.length?potBits.join(', ')+' 나온 점은 큰 자산입니다. ':'')+'그런데 같은 진단에서 <b>'+(lackBits.length?lackBits.join(', '):'실제 노력과 복기')+'이 낮게</b> 나왔습니다. \'할 수 있다\'는 마음과 좋은 이해력은 이미 갖췄는데, 그것을 매일의 공부량과 정밀한 복기로 옮기는 과정이 아직 자리 잡지 않은 것입니다.</p>';
-    p3='<p style="margin:0">반대로 이는 <b>성적을 빠르게 안정시킬 수 있다</b>는 뜻이기도 합니다. 지금 '+nm+' 학생에게 필요한 것은 새로 실력을 쌓는 것이 아니라, 이미 가진 이해력과 의지를 <b>꾸준한 실행으로 옮기는 것</b>입니다. 이번 방학에는 '+((smg&&smg.label==='밀착 관리형')?'혼자 공부량을 조절하기보다 분량과 마감을 촘촘히 정해 끌어 주는 관리 아래에서 ':'')+'매일의 학습량을 확보하고, 틀린 이유를 한 줄로 남겨 다음 시험에 반영하며 '+rxChain+'을 꾸준히 쌓아야 합니다. 실행이 쌓이는 순간, 잘 볼 때의 성적이 \'어쩌다\'가 아니라 \'늘\'이 됩니다.</p>';
-  } else if(topSk&&topSk[1]>=70){
-    if(topSk[0]==='사고 적용' && mogo!=null && mogo>=3){
-      /* 사고 적용은 높은데 모의고사가 낮음 = 이해 느낌과 실제 점수의 괴리 */
-      p1='<p style="margin:0 0 10px">'+nm+' 학생은 진단에서 <b>사고 적용 '+topSk[1]+'점</b>으로, 낯선 지문을 스스로 잘 읽어낸다고 느끼고 있습니다. 그런데 <b>모의고사 국어 '+mogo+'등급</b>으로, 그 느낌만큼 점수가 따라오지는 않고 있습니다.</p>';
-      p2='<p style="margin:0 0 10px">진단은 학생이 스스로 응답한 결과라, 이 차이는 대개 둘 중 하나입니다. 지문을 \'이해했다\'고 느끼지만 실제로는 감으로 읽어 정확히 파악하지 못했거나, 읽어낸 것을 발문과 선지의 조건에 맞춰 정답으로 확정하고 틀린 이유를 되짚는 힘(조건 변별과 오답 메타인지)이 받쳐 주지 못하는 것입니다. 어느 쪽이든, <b>\'잘 읽는다\'는 느낌을 실제 정답률로 검증하는 과정</b>이 필요합니다.</p>';
-      p3='<p style="margin:0">그래서 지금 '+nm+' 학생에게 필요한 것은 사고력을 새로 기르는 것이 아니라, 맞힌 문제도 \'왜 이 답인지\'를 근거로 설명하게 해 <b>느낌과 실제의 간극을 좁히는 것</b>입니다. '+rxChain+'을 함께 훈련하면, 이해가 비로소 정답으로 이어지며 사고력이 점수로 드러나기 시작합니다.</p>';
-    } else {
-    /* 뚜렷한 실력 강점 = 지렛대 */
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 <b>'+topSk[0]+' '+topSk[1]+'점</b>으로, '+STRENGTH[topSk[0]]+'이 이미 뚜렷한 강점입니다.'+(attBase?' '+attBase:'')+' 그런데 '+w0[0]+' '+w0[1]+'점'+((w1&&w1[1]<45)?', '+w1[0]+' '+w1[1]+'점':'')+'으로, '+NEED[w0[0]]+'이 아직 받쳐 주지 못합니다.</p>';
-    p2='<p style="margin:0 0 10px">'+SPOS[topSk[0]]+'은 이미 좋지만, '+WCONS[w0[0]]+' <b>점수가 방어되지 않습니다.</b> 즉 몰라서 잃는 점수보다, 아는데도 끝까지 지켜 내지 못해 놓치는 점수가 더 큽니다.'+(gap?' 내신 국어 '+naesin+'등급과 모의고사 국어 '+mogo+'등급 사이의 편차가 바로 이 지점에서 생깁니다.':((mogo!=null&&mogo>=2)?' 모의고사 국어 '+mogo+'등급을 한 단계 더 끌어올릴 문이 바로 이 지점에 있습니다.':''))+'</p>';
-    p3='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 문제 수를 늘리는 것이 아니라, 이미 가진 '+STRENGTH[topSk[0]]+'을 실제 점수로 이어 줄 '+rxChain+'입니다. 이 힘이 받쳐 주는 순간, '+topSk[0]+'에서 보이던 실력이 시험 점수로 그대로 나타나기 시작합니다.</p>';
-    }
+  var CJ=axv['자료 장악'], CS=axv['사고 적용'], CG=axv['조건 변별'], CM=axv['오답 메타인지'];
+  var found=(timeV>=70&&emoV>=70)?'both':(emoV>=70?'emo':(timeV>=70?'time':'none'));
+  var STR2={'사고 적용':'낯선 지문을 읽어내는 사고 적용','자료 장악':'자료와 범위를 챙기는 자료 장악'};
+  var LEV={'사고 적용':'낯선 지문을 읽어내는 힘','자료 장악':'자료를 챙기는 힘'};
+  var contentTop=[['사고 적용',CS],['자료 장악',CJ]].filter(function(x){return x[1]>=55;}).sort(function(a,b){return b[1]-a[1];});
+  var verify=[['조건 변별',CG],['오답 메타인지',CM]].sort(function(a,b){return a[1]-b[1];});
+  var verifyLow=verify.filter(function(x){return x[1]<45;});
+  var sagoHigh=CS>=65, mismatch=(sagoHigh&&mogo!=null&&mogo>=3);
+  var underrate=(good&&!gap&&skAvg<45&&!sagoHigh);
+  var fClause=(found==='both')?('<b>시험을 끝까지 침착하게 치러내는 토대는 이미 갖추었습니다.</b> 시간 운영 '+timeV+'점과 정서 회복 '+emoV+'점으로, 시간에 쫓기지도 한 문제에 흔들려 무너지지도 않습니다. '):(found==='emo'?('정서 회복 '+emoV+'점으로, 시험에서 쉽게 흔들리지 않는 단단함은 갖추었습니다. '):(found==='time'?('시간 운영 '+timeV+'점으로, 시간에 쫓기지 않고 끝까지 치러내는 힘은 갖추었습니다. '):''));
+  var gradeStmt=gradeSentence?('성적을 보면 '+gradeSentence+'.'):'';
+  var p1,p2,p3,p4;
+  if(contentTop.length){
+    var csTxt=contentTop.map(function(x){return STR2[x[0]]+' '+x[1]+'점';}).join(', ');
+    p1='<p style="margin:0 0 10px">'+nm+' 학생은 '+fClause+csTxt+'으로 '+(contentTop[0][1]>=70?'낯선 지문을 다루는 힘도 높게':'실력의 바탕도 무난하게')+' 나왔습니다. '+(found==='both'?'무너질 이유가 없어 보이는 조건인데, ':'')+gradeStmt+'</p>';
   } else {
-    /* 기초 형성 단계 */
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 아직 어느 실력 축도 뚜렷하게 올라오지 않은 상태입니다(가장 높은 '+topSk[0]+'도 '+topSk[1]+'점).'+(best!=null?' 성적도 국어 '+best+'등급으로, 진단과 성적이 같은 방향을 가리킵니다.':' 아직 성적 정보가 없어 진단만으로는 조심스럽지만,')+' 이는 국어 학습을 본격적으로 시작하기 전 단계라는 뜻입니다.</p>';
-    p2='<p style="margin:0 0 10px">'+(attBase?'다행히 '+attBase+' 무너지지 않고 공부를 이어 갈 바탕은 있습니다. ':'')+'지금 필요한 것은 실력을 꺼내는 문제 이전에, 국어를 읽어내는 기본 도구를 하나씩 세우는 것입니다.'+(best==null?' <b>(진단은 자기 응답 기반이라 실제와 다를 수 있어, 첫 상담에서 성적과 함께 확인하겠습니다.)</b>':'')+'</p>';
-    p3='<p style="margin:0">지금 '+nm+' 학생에게 국어가 어렵게 느껴질 수 있지만, 오히려 지금이 '+rxChain+'을 순서대로 세워 <b>국어를 국어의 방식으로 읽어내는 기본기를 처음부터 탄탄히 쌓아 갈 시기</b>입니다. 한 축씩 자리를 잡으면, 여러 축이 함께 올라가기 시작합니다.</p>';
+    var gt=gradeSentence?(good?(' 그런데 '+gradeStmt+' 진단이 실제 성적보다 오히려 낮게 나오고 있습니다.'):(' '+gradeStmt+' 진단과 성적이 같은 방향을 가리킵니다.')):'';
+    p1='<p style="margin:0 0 10px">'+nm+' 학생은 '+fClause+'아직 실력의 바탕이 되는 축들이 뚜렷하게 올라오지 않았습니다(가장 높은 '+topSk[0]+'도 '+topSk[1]+'점).'+gt+'</p>';
   }
-  return p1+p2+p3;
+  if(contentTop.length&&verifyLow.length){
+    p2='<p style="margin:0 0 10px">이 '+(gap?'격차':'차이')+'의 원인은 ‘읽는 힘’이 아니라 그 뒤에 있습니다. 조건 변별 '+CG+'점, 오답 메타인지 '+CM+'점으로, 읽어낸 것을 발문과 선지의 조건에 맞춰 정답으로 확정하고 틀린 이유를 되짚는 힘이 아직 약합니다. '+(mismatch?'사고 적용이 '+CS+'점으로 나온 것도 실제 정답률(모의고사 국어 '+mogo+'등급)과는 차이가 있어, ‘잘 읽는다’는 느낌을 실제 정답률로 검증하는 과정이 필요합니다. ':'')+'<b>몰라서 잃는 점수보다, 잘 읽고도 정답으로 지켜 내지 못해 놓치는 점수가 더 큽니다.</b></p>';
+  } else if(underrate){
+    p2='<p style="margin:0 0 10px">성적은 좋은데 진단이 전반적으로 낮게 나온 것은 국어를 못한다는 뜻이 아니라, <b>스스로의 실력을 실제보다 박하게 평가하고 있다</b>는 신호일 수 있습니다. 잘 해내면서도 확신을 갖지 못하는 것입니다. <b>(진단은 자기 응답 기반이라, 다음 상담에서 실제 실행 수준을 함께 확인하겠습니다.)</b></p>';
+  } else if(!contentTop.length){
+    p2='<p style="margin:0 0 10px">아직은 어느 한 축을 지렛대로 삼기보다, 국어를 읽어내는 기본 도구를 한 축씩 세워야 하는 단계입니다. 가장 낮은 '+verify[0][0]+'('+verify[0][1]+'점)부터 시작해 순서대로 올리면 여러 축이 함께 따라옵니다.</p>';
+  } else {
+    p2='<p style="margin:0 0 10px">실력 축들이 대체로 고르게 자리를 잡아 가고 있으나, '+w0[0]+' '+w0[1]+'점이 상대적으로 낮아 '+NEED[w0[0]]+'을 한 단계 더 다지면 성적이 안정됩니다.</p>';
+  }
+  var sPos=[], sNeg=[];
+  if(sEff!=null&&sEff>=3.3) sPos.push('해낼 수 있다는 자신감이 뚜렷한'); else if(sEff!=null&&sEff<=2.3) sNeg.push('스스로를 믿지 못해 자신감이 낮은');
+  if(typeof ssc.value==='number'&&ssc.value>=3.4) sPos.push('국어 자체에 대한 흥미가 높은'); else if(typeof ssc.value==='number'&&ssc.value<=2.2) sNeg.push('국어의 재미를 아직 잘 느끼지 못하는');
+  if(sGrowth!=null&&sGrowth>=3.5) sPos.push('노력하면 는다는 믿음이 강한');
+  if(sEffort!=null&&sEffort<=2.3) sNeg.push('실제 학습에 들이는 노력이 아직 부족한');
+  var toP=function(a){return a.slice(0,2).map(function(x){return x+' 점';}).join('과 ');};
+  var sSent='';
+  if(sPos.length&&sNeg.length) sSent=toP(sPos)+'이 강점인데, 정작 '+sNeg[0]+' 점이 아쉽습니다.';
+  else if(sPos.length) sSent=toP(sPos)+'이 강점입니다.';
+  else if(sNeg.length) sSent=toP(sNeg)+'이 눈에 띕니다.';
+  var p3;
+  if(sSent){
+    p3='<p style="margin:0 0 10px">여름 진단을 보면 '+sSent+((sEff!=null&&sEff<=2.3&&good)?' 좋은 성적을 내면서도 스스로를 낮게 평가하고 있는 것입니다.':'')+(smg?' 관리 면에서는 <b>'+e(smg.label)+'</b>이 잘 맞아, 방향을 잡아 주면 빠르게 반응할 학생입니다.':'')+'</p>';
+  } else p3='';
+  var closeTail=mismatch?'잘 읽고도 못 지키던 점수가 모의고사에서도 내신처럼 나타나기 시작합니다':(gap?'잘 볼 때의 성적이 늘 그 자리에서 나오기 시작합니다':(contentTop.length?'지금의 정체가 생각보다 빠르게 풀리기 시작합니다':'여러 축이 함께 올라가기 시작합니다'));
+  p4='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 '+(contentTop.length?('새로 실력을 기르는 것이 아니라, 이미 가진 '+LEV[contentTop[0][0]]+' 위에 '+rxChain+'을 얹어 이해를 실제 점수로 잇는 것'):('국어를 읽어내는 기본기를 '+rxChain+'의 순서로 한 축씩 세우는 것'))+'입니다. 이 '+(verifyLow.length?'뒷단계가':'약점 축이')+' 채워지는 순간, '+closeTail+'.</p>';
+  return [p1,p2,p3,p4].filter(Boolean).join('');
 }
 function buildComprehensiveReport(t){
   const e=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
