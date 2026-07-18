@@ -1969,17 +1969,22 @@ function genDeepClosing(t, axes, S, W, persona, note, summer){
   var verifyLow=verify.filter(function(x){return x[1]<45;});
   var sagoHigh=CS>=65, mismatch=(sagoHigh&&mogo!=null&&mogo>=3);
   var underrate=(good&&!gap&&skAvg<45&&!sagoHigh);
+  var solid=(good&&!verifyLow.length&&!mismatch&&skAvg>=50&&contentTop.length>0);
+  var weak=''; try{ var wm=(note||'').match(/취약[:：]\s*([^\n.]+)/); if(wm) weak=wm[1].trim().replace(/[,\s]+$/,''); }catch(_e){}
   var fClause=(found==='both')?('<b>시험을 끝까지 침착하게 치러내는 토대는 이미 갖추었습니다.</b> 시간 운영 '+timeV+'점과 정서 회복 '+emoV+'점으로, 시간에 쫓기지도 한 문제에 흔들려 무너지지도 않습니다. '):(found==='emo'?('정서 회복 '+emoV+'점으로, 시험에서 쉽게 흔들리지 않는 단단함은 갖추었습니다. '):(found==='time'?('시간 운영 '+timeV+'점으로, 시간에 쫓기지 않고 끝까지 치러내는 힘은 갖추었습니다. '):''));
   var gradeStmt=gradeSentence?('성적을 보면 '+gradeSentence+'.'):'';
   var p1,p2,p3,p4;
   if(contentTop.length){
     var csTxt=contentTop.map(function(x){return STR2[x[0]]+' '+x[1]+'점';}).join(', ');
-    p1='<p style="margin:0 0 10px">'+nm+' 학생은 '+fClause+csTxt+'으로 '+(contentTop[0][1]>=70?'낯선 지문을 다루는 힘도 높게':'실력의 바탕도 무난하게')+' 나왔습니다. '+(found==='both'?'무너질 이유가 없어 보이는 조건인데, ':'')+gradeStmt+'</p>';
+    var pivot=solid?(gradeStmt+' 진단과 성적이 서로 잘 맞습니다.'):((found==='both'?'무너질 이유가 없어 보이는 조건인데, ':'')+gradeStmt);
+    p1='<p style="margin:0 0 10px">'+nm+' 학생은 '+fClause+csTxt+'으로 '+(contentTop[0][1]>=70?'낯선 지문을 다루는 힘도 높게':'실력의 바탕도 무난하게')+' 나왔습니다. '+pivot+'</p>';
   } else {
     var gt=gradeSentence?(good?(' 그런데 '+gradeStmt+' 진단이 실제 성적보다 오히려 낮게 나오고 있습니다.'):(' '+gradeStmt+' 진단과 성적이 같은 방향을 가리킵니다.')):'';
     p1='<p style="margin:0 0 10px">'+nm+' 학생은 '+fClause+'아직 실력의 바탕이 되는 축들이 뚜렷하게 올라오지 않았습니다(가장 높은 '+topSk[0]+'도 '+topSk[1]+'점).'+gt+'</p>';
   }
-  if(contentTop.length&&verifyLow.length){
+  if(solid){
+    p2='<p style="margin:0 0 10px">실력과 성적이 함께 자리를 잡아, 지금은 약점을 메우기보다 <b>상위권을 더 단단히 굳히는 단계</b>입니다. 상대적으로 낮은 '+w0[0]+' '+w0[1]+'점을 조금 더 다지'+(weak?'고, 상담에서 확인된 취약 영역('+weak+')을 집중적으로 메우면':'면')+' 됩니다.</p>';
+  } else if(contentTop.length&&verifyLow.length){
     p2='<p style="margin:0 0 10px">이 '+(gap?'격차':'차이')+'의 원인은 ‘읽는 힘’이 아니라 그 뒤에 있습니다. 조건 변별 '+CG+'점, 오답 메타인지 '+CM+'점으로, 읽어낸 것을 발문과 선지의 조건에 맞춰 정답으로 확정하고 틀린 이유를 되짚는 힘이 아직 약합니다. '+(mismatch?'사고 적용이 '+CS+'점으로 나온 것도 실제 정답률(모의고사 국어 '+mogo+'등급)과는 차이가 있어, ‘잘 읽는다’는 느낌을 실제 정답률로 검증하는 과정이 필요합니다. ':'')+'<b>몰라서 잃는 점수보다, 잘 읽고도 정답으로 지켜 내지 못해 놓치는 점수가 더 큽니다.</b></p>';
   } else if(underrate){
     p2='<p style="margin:0 0 10px">성적은 좋은데 진단이 전반적으로 낮게 나온 것은 국어를 못한다는 뜻이 아니라, <b>스스로의 실력을 실제보다 박하게 평가하고 있다</b>는 신호일 수 있습니다. 잘 해내면서도 확신을 갖지 못하는 것입니다. <b>(진단은 자기 응답 기반이라, 다음 상담에서 실제 실행 수준을 함께 확인하겠습니다.)</b></p>';
@@ -1998,12 +2003,16 @@ function genDeepClosing(t, axes, S, W, persona, note, summer){
   if(sPos.length&&sNeg.length) sSent=toP(sPos)+'이 강점인데, 정작 '+sNeg[0]+' 점이 아쉽습니다.';
   else if(sPos.length) sSent=toP(sPos)+'이 강점입니다.';
   else if(sNeg.length) sSent=toP(sNeg)+'이 눈에 띕니다.';
-  var p3;
   if(sSent){
     p3='<p style="margin:0 0 10px">여름 진단을 보면 '+sSent+((sEff!=null&&sEff<=2.3&&good)?' 좋은 성적을 내면서도 스스로를 낮게 평가하고 있는 것입니다.':'')+(smg?' 관리 면에서는 <b>'+e(smg.label)+'</b>이 잘 맞아, 방향을 잡아 주면 빠르게 반응할 학생입니다.':'')+'</p>';
   } else p3='';
-  var closeTail=mismatch?'잘 읽고도 못 지키던 점수가 모의고사에서도 내신처럼 나타나기 시작합니다':(gap?'잘 볼 때의 성적이 늘 그 자리에서 나오기 시작합니다':(contentTop.length?'지금의 정체가 생각보다 빠르게 풀리기 시작합니다':'여러 축이 함께 올라가기 시작합니다'));
-  p4='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 '+(contentTop.length?('새로 실력을 기르는 것이 아니라, 이미 가진 '+LEV[contentTop[0][0]]+' 위에 '+rxChain+'을 얹어 이해를 실제 점수로 잇는 것'):('국어를 읽어내는 기본기를 '+rxChain+'의 순서로 한 축씩 세우는 것'))+'입니다. 이 '+(verifyLow.length?'뒷단계가':'약점 축이')+' 채워지는 순간, '+closeTail+'.</p>';
+  if(solid){
+    p4='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 새로 실력을 쌓는 것이 아니라, 이미 잘하고 있는 것을 더 정교하게 다듬어 <b>흔들리지 않는 상위권으로 굳히는 것</b>입니다. '+(weak?'상담에서 확인된 '+weak+'부터 메우면':NEED[w0[0]]+'을 조금 더 다지면')+', 컨디션이나 지문 난도에 상관없이 지금의 성적을 안정적으로 지켜 냅니다.</p>';
+  } else {
+    var closeTail=mismatch?'잘 읽고도 못 지키던 점수가 모의고사에서도 내신처럼 나타나기 시작합니다':(gap?'잘 볼 때의 성적이 늘 그 자리에서 나오기 시작합니다':(contentTop.length?'잘 읽고도 지키지 못하던 점수가 지켜지기 시작합니다':'한 축씩 자리를 잡으며 여러 축이 함께 올라가기 시작합니다'));
+    var finalLine=underrate?' 이 확신이 붙는 순간, 지금의 실력이 성적으로 온전히 드러나기 시작합니다.':(' 이 '+(verifyLow.length?'뒷단계가':'약점 축이')+' 채워지는 순간, '+closeTail+'.');
+    p4='<p style="margin:0">지금 '+nm+' 학생에게 필요한 것은 '+(contentTop.length?('새로 실력을 기르는 것이 아니라, 이미 가진 '+LEV[contentTop[0][0]]+' 위에 '+rxChain+'을 얹어 이해를 실제 점수로 잇는 것'):('국어를 읽어내는 기본기를 '+rxChain+'의 순서로 한 축씩 세우는 것'))+'입니다.'+(weak?' 상담에서 확인된 '+weak+'도 함께 메우면 좋습니다.':'')+finalLine+'</p>';
+  }
   return [p1,p2,p3,p4].filter(Boolean).join('');
 }
 function buildComprehensiveReport(t){
