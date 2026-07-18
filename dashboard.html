@@ -1744,7 +1744,7 @@ function renderClassView(){
   const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
   let h='',shown=0,tot=0;
   Object.entries(CLASS_ROSTER).forEach(([cls,names])=>{
-    let list=names; if(q) list=names.filter(n=>n.includes(q)||cls.includes(q));
+    let list=names.slice().sort((a,b)=>a.localeCompare(b,'ko-KR')); if(q) list=list.filter(n=>n.includes(q)||cls.includes(q));
     if(!list.length) return;
     const done=names.filter(n=>byName[n]).length; tot+=names.length;
     const full=names.filter(n=>{const t=byName[n]; return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
