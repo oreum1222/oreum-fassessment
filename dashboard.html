@@ -1589,10 +1589,12 @@ async function loadStudentDirectory(){
   STUDENT_SOURCES={gen,v2,sp,mi};
   buildStudentIndex(); renderStudentDirectory();
 }
-function skey(n,sc,g){ return String(n||'').trim()+'|'+String(sc||'').trim()+'|'+String(g||'').trim(); }
+const NAME_ALIAS={'박재현A':'박재현'};
+function normName(n){ n=String(n||'').trim(); return NAME_ALIAS[n]||n; }
+function skey(n,sc,g){ return normName(n)+'|'+String(sc||'').trim()+'|'+String(g||'').trim(); }
 function buildStudentIndex(){
   const S={}; const src=STUDENT_SOURCES||{};
-  const ens=(n,sc,g)=>{ const k=skey(n,sc,g); if(!S[k]) S[k]={key:k,name:String(n||'').trim(),school:String(sc||'').trim(),grade:String(g||'').trim(),gen:[],v2:[],sp:[],mi:[],parent:[]}; return S[k]; };
+  const ens=(n,sc,g)=>{ const k=skey(n,sc,g); if(!S[k]) S[k]={key:k,name:normName(n),school:String(sc||'').trim(),grade:String(g||'').trim(),gen:[],v2:[],sp:[],mi:[],parent:[]}; return S[k]; };
   (src.gen||[]).forEach(r=>{ if(r['이름']) ens(r['이름'],r['학교'],r['학년']).gen.push(r); });
   (src.v2||[]).forEach(r=>{ if(!r['이름'])return; const t=ens(r['이름'],r['학교'],r['학년']); if(r['버전']==='학부모관찰') t.parent.push(r); else t.v2.push(r); });
   (src.sp||[]).forEach(r=>{ if(r['이름']) ens(r['이름'],r['학교'],r['학년']).sp.push(r); });
