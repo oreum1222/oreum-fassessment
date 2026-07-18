@@ -2113,7 +2113,7 @@ body{font-family:Pretendard,-apple-system,sans-serif;color:#242424;font-size:10.
 <div class="lead">안녕하세요, 학부모님. 이번 여름 <b>${e(t.name)}</b> 학생에 대해 ${leadSummary}. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
 ${v2m?`<div class="sec"><div class="sec-t">① 학습 성향과 6개 축</div><div class="persona"><b>유형: ${e(v2m['페르소나'])}</b> — ${pd}</div>${axBars}<div class="sw"><div class="box good"><div class="h">강점</div>${S.map(x=>x[0]+' '+x[1]).join(', ')}</div><div class="box warn"><div class="h">보완</div>${W.map(x=>x[0]+' '+x[1]).join(', ')}</div></div>${rx?`<div class="rx"><b>가장 먼저 잡을 지점 — ${W[0][0]}</b><br>${rx}</div>`:''}</div>`:''}
 ${parentBlock}${daemyeonBlock}${summerBlock}
-<div class="sec"><div class="sec-t">⑤ 가경T 종합 소견</div><div class="closing">${(typeof DEEP_CLOSING!=='undefined'&&DEEP_CLOSING[t.name])?DEEP_CLOSING[t.name]:closing}</div></div>
+<div class="sec"><div class="sec-t">⑤ 가경T 종합 소견</div><div class="closing">${closing}</div></div>
 <div class="foot">본 통신문은 국어를 대하는 성향과 습관, 태도의 프로필이며 학생의 능력에 대한 평가가 아닙니다. 진행된 진단과 상담 결과를 종합해 김가경 국어 연구소가 작성했습니다.</div>
 </div>
 <div class="noprint"><button onclick="window.print()">🖨 인쇄 / PDF 저장</button></div>
