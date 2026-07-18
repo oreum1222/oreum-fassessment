@@ -2038,46 +2038,37 @@ function buildComprehensiveReport(t){
   const daemyeonBlock=`<div class="sec"><div class="sec-t">③ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p>${noteHtml?`<div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div>`:''}</div>`;
   const summerBlock=summer?(function(){
     var sj={}; try{ sj=JSON.parse(summer['분석_JSON']||'{}'); }catch(_e){}
-    var sc=sj.score||{}, mg=sj.mgmt||null, pats=(sj.patterns||[]);
+    var sc=sj.score||{}, mg=sj.mgmt||null;
     var g=function(k){return typeof sc[k]==='number'?sc[k]:null;};
-    var PAT={
-      '완벽주의 불안형':'기준이 높고 시험 불안이 커서, 충분히 아는 것도 실전에서는 제 실력만큼 나오지 않습니다.',
-      '암기 의존형':'요령과 암기에 기대는 습관이 있어, 조금만 변형되거나 낯선 지문이 나오면 흔들립니다.',
-      '자료 의존형':'막혔을 때 스스로 버티기보다 해설을 먼저 찾는 편이라, 혼자 뚫어내는 힘이 아직 덜 자랐습니다.',
-      '질문 회피형':'모르는 것을 묻지 않고 덮어 둔 채 넘어가는 경향이 있어, 약점이 조용히 쌓입니다.',
-      '시험 취약형':'평소 아는 것에 비해 유독 시험장에서 실력이 덜 나오는 유형입니다.',
-      '고정관념 저효능형':'\'해도 안 된다\'는 생각이 자리 잡아, 실력과 무관하게 시도 자체를 주저합니다.',
-      '자기주도 강점형':'스스로 점검하고 끝까지 붙드는 힘이 뚜렷해, 촘촘한 관리보다 난도를 높이고 확장 과제를 줄 때 더 크게 자랍니다.',
-      '저동기형':'아직 국어를 \'왜 해야 하는지\', 그 재미와 의미를 충분히 느끼지 못한 상태라, 무엇보다 동기의 불씨를 살리는 것이 먼저입니다.'
-    };
     var nm2=e(t.name);
-    var typeLabel=(mg?e(mg.label):'')+(pats.length?' · '+pats.map(e).join(', '):'');
-    var mgSent=mg?(nm2+' 학생은 관리 강도 면에서 <b>'+e(mg.label)+'</b>으로 관찰됩니다. '+e(mg.note)):'';
-    var SIG={
-      efficacy:[3.3,2.3,'어려운 문제 앞에서도 \'해낼 수 있다\'는 자신감이 뚜렷합니다','잘 해내면서도 스스로를 믿지 못해 자신감이 낮은 편이라, 실제 실력이 저평가되고 있습니다'],
-      growth:[3.3,2.3,'노력하면 는다는 성장의 믿음이 강합니다','아직 \'재능\' 프레임이 남아 있어, 노력이 결과로 이어지는 경험을 쌓아 줄 필요가 있습니다'],
-      value:[3.4,2.2,'국어의 재미와 의미를 스스로 느끼고 있어, 방향만 잡아 주면 스스로 나아갑니다','국어를 왜 해야 하는지 재미와 의미를 아직 잘 느끼지 못합니다'],
-      anx_eval:[3.3,-1,'시험 불안이 높은 편이라, 아는 것도 시험장에서 덜 나옵니다',''],
-      anx_learn:[3.3,-1,'새 단원이나 낯선 내용 앞에서 유독 긴장이 큽니다',''],
-      meta:[3.3,2.2,'틀린 것을 스스로 되짚어 보는 습관이 잡혀 있습니다','틀린 이유를 스스로 짚어 보는 습관이 아직 약해, 실수가 다음으로 이어지지 못합니다'],
-      effort:[3.3,2.2,'어려워도 끝까지 붙드는 끈기가 있습니다','어려운 문제를 오래 붙들지 못하고 놓는 편이라, 버티는 훈련이 필요합니다'],
-      care:[3.3,2.2,'발문과 조건을 꼼꼼히 확인하는 성실함이 있습니다','발문과 조건을 놓쳐 아는 문제도 실수하곤 합니다'],
-      understand:[3.3,2.3,'개념을 \'왜\'까지 파고드는 편입니다','원리보다 결과 위주로 넘어가는 편이라, 낯선 문제에서 응용이 약합니다'],
-      testop:[3.3,2.2,'시험 시간과 검토 운영이 안정적입니다','시간 운영과 검토에서 아는 점수까지 흘리는 편입니다']
-    };
-    var sigs=[];
-    Object.keys(SIG).forEach(function(k){ var v=g(k); if(v==null)return; var d=SIG[k]; var dev=Math.abs(v-2.5);
-      if(v>=d[0]) sigs.push({dev:dev,txt:d[2]}); else if(d[1]>0&&v<=d[1]) sigs.push({dev:dev,txt:d[3]}); });
-    sigs.sort(function(a,b){return b.dev-a.dev;});
-    var sigTxt=sigs.slice(0,3).map(function(x){return x.txt;}).join('. '); if(sigTxt) sigTxt+='.';
-    var autos=[['auto_A','막히면 힌트를 붙잡고 스스로 뚫어 보려 합니다'],['auto_B','막히면 해설부터 찾는 편입니다'],['auto_C','막히면 덮고 넘어가는 편입니다']].map(function(x){return {t:x[1],v:g(x[0])};}).filter(function(x){return x.v!=null;});
+    var MGNOTE={'밀착 관리형':'분량과 마감을 촘촘히 정해 주고 강하게 끌어 줄 때 가장 잘 따라옵니다. 매일의 숙제량과 방학 계획 같은 구체적인 목표를 부여해 줄 때 학습 의지가 높아집니다.','자율형':'스스로 정하는 여백이 있을 때 동기가 삽니다. 목표만 함께 정하고 방법은 맡기는 방식이 잘 맞습니다.','혼합형':'큰 틀은 잡아 주되 세부는 맡기는 방식이 맞습니다. 상황에 따라 관리 강도를 조절해 주면 좋습니다.'};
+    var mgSent=mg?(nm2+' 학생은 관리 강도 면에서 <b>'+e(mg.label)+'</b>으로 관찰됩니다. '+(MGNOTE[mg.label]||e(mg.note))):'';
+    var SIG=[
+      ['efficacy',2.3,3.3,'neg','스스로를 믿지 못해 자신감이 낮아 실제 실력을 저평가하고 있는','pos','어려워도 해낼 수 있다는 자신감이 뚜렷한'],
+      ['anx_eval',-1,3.3,'','','neg','시험 불안이 높아 아는 것도 시험장에서 흔들리기 쉬운'],
+      ['value',2.2,3.4,'neg','국어의 재미와 의미를 아직 잘 느끼지 못하는','pos','국어 자체에 대한 흥미가 높은'],
+      ['growth',2.3,3.5,'neg','노력의 효과를 아직 신뢰하지 못하는','pos','노력하면 는다는 성장의 믿음이 강한'],
+      ['effort',2.3,-1,'neg','실제 학습에 들이는 노력이 부족한','',''],
+      ['meta',2.3,-1,'neg','틀린 것을 스스로 되짚는 습관이 약한','',''],
+      ['care',2.3,-1,'neg','발문과 조건을 꼼꼼히 확인하는 성실함이 부족한','','']
+    ];
+    var picks=[];
+    SIG.forEach(function(row){ var v=g(row[0]); if(v==null)return; var lo=row[1], hi=row[2];
+      if(lo>0 && v<=lo && row[4]) picks.push({v:row[3], c:row[4]});
+      else if(hi>0 && v>=hi && row[6]) picks.push({v:row[5], c:row[6]}); });
+    picks=picks.slice(0,2);
+    var sigSent='';
+    if(picks.length===1) sigSent='무엇보다 '+picks[0].c+' 점이 두드러집니다.';
+    else if(picks.length>=2){ var a=picks[0], b=picks[1]; var pos=(a.v==='pos')?a:((b.v==='pos')?b:null), neg=(a.v==='neg')?a:((b.v==='neg')?b:null);
+      if(pos&&neg) sigSent=pos.c+' 편이지만, 정작 '+neg.c+' 점이 눈에 띕니다.';
+      else if(a.v==='neg') sigSent=a.c+' 데다, '+b.c+' 점이 함께 보입니다.';
+      else sigSent=a.c+' 데다, '+b.c+' 점이 강점입니다.'; }
+    var autos=[['auto_A','문제가 막히면 힌트를 붙잡고 스스로 뚫어 보려 합니다'],['auto_B','문제가 막히면 해설을 먼저 찾는 편입니다'],['auto_C','문제가 막히면 덮고 넘어가는 편입니다']].map(function(x){return {t:x[1],v:g(x[0])};}).filter(function(x){return x.v!=null;});
     autos.sort(function(a,b){return b.v-a.v;});
-    var stuck=autos.length?(nm2+' 학생은 문제가 '+autos[0].t+'.'):'';
-    var patSent=pats.filter(function(pp){return PAT[pp];}).map(function(pp){return '특히 <b>'+e(pp)+'</b>의 모습이 함께 나타납니다. '+PAT[pp];}).join(' ');
+    var stuck=(autos.length>=2 && (autos[0].v-autos[1].v)>=1.0)? (nm2+' 학생은 '+autos[0].t+'.') : '';
     var body='';
     if(mgSent) body+='<p class="p" style="margin-top:8px">'+mgSent+'</p>';
-    if(sigTxt||stuck) body+='<p class="p" style="margin-top:6px">구체적으로, '+[sigTxt,stuck].filter(Boolean).join(' ')+'</p>';
-    if(patSent) body+='<p class="p" style="margin-top:6px">'+patSent+'</p>';
+    if(sigSent||stuck) body+='<p class="p" style="margin-top:6px">'+[sigSent,stuck].filter(Boolean).join(' ')+'</p>';
     return '<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div>'+body+'</div>';
   })():'';
   const closing=(v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note,summer):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`;
