@@ -1916,7 +1916,7 @@ function noteGrades(note){
   var all=[]; if(naesin!=null)all.push(naesin); if(mogo!=null)all.push(mogo);
   return {naesin:naesin, mogo:mogo, best:all.length?Math.min.apply(null,all):null, worst:all.length?Math.max.apply(null,all):null};
 }
-function genDeepClosing(t, axes, S, W, persona, note){
+function genDeepClosing(t, axes, S, W, persona, note, summer){
   var e=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});};
   var nm=e(t.name);
   var axv={}; axes.forEach(function(pp){axv[pp[0]]=pp[1];});
@@ -1926,6 +1926,8 @@ function genDeepClosing(t, axes, S, W, persona, note){
   var topSk=skSorted[0], w0=skSorted[skSorted.length-1], w1=skSorted[skSorted.length-2];
   var skAvg=sk.length?Math.round(sk.reduce(function(a,x){return a+x[1];},0)/sk.length):0;
   var timeV=axv['시간 운영'], emoV=axv['정서 회복'];
+  var ssc={}, smg=null; try{ if(summer){ var ssj=JSON.parse(summer['분석_JSON']||'{}'); ssc=ssj.score||{}; smg=ssj.mgmt||null; } }catch(_e){}
+  var sEffort=(typeof ssc.effort==='number'?ssc.effort:null), sMeta=(typeof ssc.meta==='number'?ssc.meta:null), sCare=(typeof ssc.care==='number'?ssc.care:null), sGrowth=(typeof ssc.growth==='number'?ssc.growth:null), sEff=(typeof ssc.efficacy==='number'?ssc.efficacy:null);
   var STRENGTH={'자료 장악':'학교 자료와 범위를 성실히 챙기는 힘','사고 적용':'낯선 지문을 읽어내는 사고력','조건 변별':'조건을 정확히 가려내는 힘','오답 메타인지':'틀린 이유를 스스로 짚어내는 힘'};
   var NEED={'자료 장악':'무엇을 근거로 읽고 무엇을 챙길지 잡는 힘','사고 적용':'낯선 지문에 아는 개념을 적용하는 힘','조건 변별':'발문과 선지의 조건을 가려내는 힘','오답 메타인지':'틀린 이유를 스스로 짚어내는 힘'};
   var RX={'자료 장악':'무엇을 근거로 읽고 무엇을 챙길지 자료를 장악하는 법','사고 적용':'낯선 지문에 아는 개념을 적용하는 법','조건 변별':'발문과 선지의 조건을 정확히 가려내는 법','오답 메타인지':'틀린 이유를 한 줄로 남겨 다음 실력으로 바꾸는 법'};
@@ -1973,6 +1975,14 @@ function genDeepClosing(t, axes, S, W, persona, note){
     p1='<p style="margin:0 0 10px">'+nm+' 학생은 성적표상으로는 '+gradeSentence+'. 진단에서도 '+topSk[0]+' '+topSk[1]+'점 등 실력 축들이 고르게 자리를 잡고 있어, 성적과 진단이 서로 잘 맞습니다.</p>';
     p2='<p style="margin:0 0 10px">다만 '+w0[0]+' '+w0[1]+'점처럼 상대적으로 낮게 나온 축은, 실제로 그 능력이 없다기보다 이미 자연스럽게 하고 있어 스스로 의식하지 못하는 부분에 가깝습니다. 최상위권일수록 자기 기준이 높아 진단을 낮게 매기는 경향도 있습니다. '+attBase+'</p>';
     p3='<p style="margin:0">지금 '+nm+' 학생은 정체 상태가 아니라, <b>최상위권을 흔들림 없이 유지하고 더 정교하게 다듬는 단계</b>입니다. '+rxChain+'까지 의식적으로 언어로 붙잡아 두면, 컨디션이나 지문 난도에 상관없이 1등급을 안정적으로 지켜 냅니다.</p>';
+  } else if(summer && skAvg>=55 && w0[1]>=40 && ((sGrowth!=null&&sGrowth>=3.5)||(sEff!=null&&sEff>=3.3)) && ((sEffort!=null&&sEffort<=2.3)||(sMeta!=null&&sMeta<=2.3)||(sCare!=null&&sCare<=2.3))){
+    /* 안정화형: 실력·태도는 좋은데 노력·복기가 부족해 성적이 불안정 */
+    var potBits=[]; if(sGrowth!=null&&sGrowth>=3.5)potBits.push('\'노력하면 는다\'는 성장 마인드셋이 또래 중 가장 높게'); if(sEff!=null&&sEff>=3.3)potBits.push('어려워도 해낼 수 있다는 자기효능감도 높게');
+    var lackBits=[]; if(sEffort!=null&&sEffort<=2.3)lackBits.push('실제 학습에 들이는 노력의 양'); if(sMeta!=null&&sMeta<=2.3)lackBits.push('틀린 것을 스스로 꼼꼼히 되짚는 습관'); if(sCare!=null&&sCare<=2.3)lackBits.push('발문과 조건을 꼼꼼히 확인하는 성실함');
+    var strTop=[topSk[0]+' '+topSk[1]+'점']; if(skSorted[1]&&skSorted[1][1]>=55)strTop.push(skSorted[1][0]+' '+skSorted[1][1]+'점');
+    p1='<p style="margin:0 0 10px">'+nm+' 학생의 국어 성적이 아직 안정적으로 자리 잡지 못한 것은 실력이 부족해서가 아니라, <b>가진 잠재력과 태도에 비해 국어에 들인 시간과 손이 아직 그만큼 따라가지 못했기 때문</b>입니다. 이번 진단에서 <b>'+strTop.join(', ')+'</b>으로 실력의 바탕이 되는 축들이 어느 하나 처지지 않고 고르게 중상위에 있고,'+(attBase?' '+attBase:' 시험을 안정적으로 치러내는 토대도 갖추었습니다.')+'</p>';
+    p2='<p style="margin:0 0 10px">특히 여름 진단에서 '+(potBits.length?potBits.join(', ')+' 나온 점은 큰 자산입니다. ':'')+'그런데 같은 진단에서 <b>'+(lackBits.length?lackBits.join(', '):'실제 노력과 복기')+'이 낮게</b> 나왔습니다. \'할 수 있다\'는 마음과 좋은 이해력은 이미 갖췄는데, 그것을 매일의 공부량과 정밀한 복기로 옮기는 과정이 아직 자리 잡지 않은 것입니다.</p>';
+    p3='<p style="margin:0">반대로 이는 <b>성적을 빠르게 안정시킬 수 있다</b>는 뜻이기도 합니다. 지금 '+nm+' 학생에게 필요한 것은 새로 실력을 쌓는 것이 아니라, 이미 가진 이해력과 의지를 <b>꾸준한 실행으로 옮기는 것</b>입니다. 이번 방학에는 '+((smg&&smg.label==='밀착 관리형')?'혼자 공부량을 조절하기보다 분량과 마감을 촘촘히 정해 끌어 주는 관리 아래에서 ':'')+'매일의 학습량을 확보하고, 틀린 이유를 한 줄로 남겨 다음 시험에 반영하며 '+rxChain+'을 꾸준히 쌓아야 합니다. 실행이 쌓이는 순간, 잘 볼 때의 성적이 \'어쩌다\'가 아니라 \'늘\'이 됩니다.</p>';
   } else if(topSk&&topSk[1]>=70){
     /* 뚜렷한 실력 강점 = 지렛대 */
     p1='<p style="margin:0 0 10px">'+nm+' 학생은 <b>'+topSk[0]+' '+topSk[1]+'점</b>으로, '+STRENGTH[topSk[0]]+'이 이미 뚜렷한 강점입니다.'+(attBase?' '+attBase:'')+' 그런데 '+w0[0]+' '+w0[1]+'점'+((w1&&w1[1]<45)?', '+w1[0]+' '+w1[1]+'점':'')+'으로, '+NEED[w0[0]]+'이 아직 받쳐 주지 못합니다.</p>';
@@ -2070,7 +2080,7 @@ function buildComprehensiveReport(t){
     if(patSent) body+='<p class="p" style="margin-top:6px">'+patSent+'</p>';
     return '<div class="sec"><div class="sec-t">④ 여름방학 학습 진단</div>'+body+'</div>';
   })():'';
-  const closing=(v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`;
+  const closing=(v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note,summer):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`;
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${e(t.name)} 종합 통신문 — 가경T</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
