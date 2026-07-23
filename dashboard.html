@@ -1626,8 +1626,17 @@ function spRisks(t){
 let SP_VIEW='date', SP_DATE=null, SP_CAL_OPEN=false, SP_CAL_MONTH=null;
 const CLASS_ROSTER={
  '한티 MEXX 단과 고1':['장서아','장성주','황수민','신지우','윤상','정유진','최준혁'],
- '한티 MEXX 단과 고2':['백지호','장효민','김수민','김채량','김현서','민주아','박재현','박준성','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린']
+ '한티 MEXX 단과 고2':['백지호','장효민','김수민','김채량','김현서','민주아','박재현','박준성','배준서','배지환','성연서','왕혜성','유태연','이예린','이정빈','주하진','진현우','차진우','한승현','황서린'],
+ '한티 MEXX 종합 고1':['고은서','구자윤','권민재','김가영','김규리','김규린','김나율','김다희','김동건','김리원','김민주','김민준','김부성','김서현','김수민','김시후','김온유','김우찬','김재익','김지유','김태준','김택준','김하영','김한서','나지웅','나혜원','남윤호','남준희','문서연','박민아','박서범','박서정','박시연','박시은','박재성','박하진','박해인','박현우','박혜원','배윤찬','백승재','송시언','송예준','신강윤','신혜원','심민서','안준형','양경진','오우석','오채아','우승연','원주현','윤진서','이도경','이민혁','이서하','이서형','이수민','이승민','이우경','이정용','이주은','이준우','이진헌','장이안','정다은','정범석','정진우','조수아','조유현','조재희','조지율','차유찬','천세아','최서정','최순건','최예원','최지아','최현준','최홍미','하지윤','한채우'],
+ '한티 MEXX 종합 중3':['강지성','공리원','구희경','김민건','김은서','김좌현','김채윤','민지훈','박동휘','박장하','박하원','백지우','서준혁','송병헌','오연서','우승아','유아인','윤사라','윤채원','이남곤','이우진','이예린','이혜린','전린채','전유하','조아인','최현서','하정우','한강희','한주하']
 };
+// 반 이름의 학년으로 동명이인 구분 (예: '한티 MEXX 종합 고1' → 고1)
+function classGrade(cls){ const m=String(cls||'').match(/고\s*([1-3])|중\s*([1-3])/); if(!m) return ''; return m[1]?('고'+m[1]):('중'+m[2]); }
+function classLookup(cls){
+  const g=classGrade(cls); const byName={}, byNG={};
+  Object.values(STUDENT_INDEX||{}).forEach(t=>{ if(!t.name) return; if(!byName[t.name]) byName[t.name]=t; byNG[t.name+'|'+(t.grade||'')]=t; });
+  return n => (g && byNG[n+'|'+g]) || byName[n];
+}
 // 대면 상담지 작성 학생 (오프라인 상담지 수령) — 파일명 기준
 const MYEONDAM_DONE=[
  '장서아','장성주','황수민','신지우','윤상','정유진','최준혁',
@@ -1646,9 +1655,9 @@ const SMS_DIAGS=[
 let SMS_EDITED=false, SMS_LASTGEN='';
 function classStatus(cls){
   const roster=CLASS_ROSTER[cls]||[];
-  const by={}; Object.values(STUDENT_INDEX||{}).forEach(t=>{if(t.name)by[t.name]=t;});
+  const look=classLookup(cls);
   return roster.map(n=>{
-    const t=by[n]; const v2=(t&&t.v2)||[];
+    const t=look(n); const v2=(t&&t.v2)||[];
     return { name:n, responded:!!t,
       summer:v2.some(r=>r['버전']==='summer'),
       first:v2.some(r=>r['버전']==='재원생 첫'),
@@ -1751,13 +1760,14 @@ function renderClassView(){
   const V2KO={'비재원생':'비재원생','재원생 첫':'재원생 첫','재원생 심층':'재원생 심층','summer':'여름'};
   let h='',shown=0,tot=0;
   Object.entries(CLASS_ROSTER).forEach(([cls,names])=>{
+    const look=classLookup(cls);
     let list=names.slice().sort((a,b)=>a.localeCompare(b,'ko-KR')); if(q) list=list.filter(n=>n.includes(q)||cls.includes(q));
     if(!list.length) return;
-    const done=names.filter(n=>byName[n]).length; tot+=names.length;
-    const full=names.filter(n=>{const t=byName[n]; return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
+    const done=names.filter(n=>look(n)).length; tot+=names.length;
+    const full=names.filter(n=>{const t=look(n); return t && (t.v2||[]).some(r=>r['버전']==='summer') && (t.v2||[]).some(r=>r['버전']==='재원생 첫');}).length;
     shown++; const open=(shown===1||q)?' open':'';
     h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 문자 보내기${(names.length-full>0)?` · 미완료 ${names.length-full}`:''}</button><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
-    list.forEach(n=>{ const t=byName[n];
+    list.forEach(n=>{ const t=look(n);
       if(t){ h+=spCard(t); }
       else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span>${(typeof MYEONDAM_DONE!=='undefined'&&MYEONDAM_DONE.indexOf(n)>=0)?'<span class="sp-chip mg">대면</span>':''}</div></div>`; }
     });
