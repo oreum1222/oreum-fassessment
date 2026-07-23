@@ -1594,7 +1594,7 @@ async function loadStudentDirectory(){
 const NAME_ALIAS={'박재현A':'박재현'};
 function normName(n){ n=String(n||'').trim(); return NAME_ALIAS[n]||n; }
 function schoolNorm(sc){ return String(sc||'').trim().replace(/등학교$/,'').replace(/등학고$/,''); }
-function gradeNorm(g){ g=String(g||'').trim(); const m=g.match(/[1-3]/); return m?('고'+m[0]):g; }
+function gradeNorm(g){ g=String(g||'').trim(); const d=g.match(/[1-3]/); if(!d) return g; return (/중/.test(g)?'중':'고')+d[0]; }
 function skey(n,sc,g){ return normName(n)+'|'+schoolNorm(sc)+'|'+gradeNorm(g); }
 // ── 통신문 편집 저장(브라우저 localStorage) : 자식창이 window.opener로 호출 ──
 const REPORT_EDIT_LS='oreum_report_edits_v1';
@@ -1637,7 +1637,14 @@ function classGrade(cls){ const m=String(cls||'').match(/고\s*([1-3])|중\s*([1
 function classLookup(cls){
   const g=classGrade(cls); const byName={}, byNG={};
   Object.values(STUDENT_INDEX||{}).forEach(t=>{ if(!t.name) return; if(!byName[t.name]) byName[t.name]=t; byNG[t.name+'|'+(t.grade||'')]=t; });
-  return n => (g && byNG[n+'|'+g]) || byName[n];
+  return n => {
+    if(!g) return byName[n]||null;
+    const exact=byNG[n+'|'+g]; if(exact) return exact;
+    const any=byName[n];
+    // 같은 이름이 다른 학년으로 응답했다면 동명이인 — 끌어오지 않는다
+    if(any && any.grade && any.grade!==g) return null;
+    return any||null;
+  };
 }
 // 대면 상담지 작성 학생 (오프라인 상담지 수령) — 파일명 기준
 const MYEONDAM_DONE=[
