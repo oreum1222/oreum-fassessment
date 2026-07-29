@@ -2047,14 +2047,14 @@ function genDeepClosing(t, axes, S, W, persona, note, summer, parentAx){
     p2='<p style="margin:0 0 10px">성적은 좋은데 진단이 전반적으로 낮게 나온 것은 국어를 못한다는 뜻이 아니라, <b>스스로의 실력을 실제보다 박하게 평가하고 있다</b>는 신호일 수 있습니다. 잘 해내면서도 확신을 갖지 못하는 것입니다. <b>(진단은 자기 응답 기반이라, 다음 상담에서 실제 실행 수준을 함께 확인하겠습니다.)</b></p>';
   } else if(!contentTop.length){
     var lowOpen=amp?('시험에 따라 점수의 진폭이 큰 편입니다. 좋은 날 나오는 점수는 도달할 수 있는 높이가 분명히 있다는 뜻이지만, 그 높이가 매번 유지되지 않고 있습니다. '):'';
-    p2='<p style="margin:0 0 10px">'+lowOpen+'아직은 어느 한 축을 지렛대로 삼기보다, 국어를 읽어내는 기본 도구를 한 축씩 세워야 하는 단계입니다. 가장 낮은 '+verify[0][0]+'('+verify[0][1]+'점)부터 시작해 순서대로 올리면 여러 축이 함께 따라옵니다.</p>';
+    p2='<p style="margin:0 0 10px">'+lowOpen+'아직은 어느 하나를 지렛대로 삼기보다, 국어를 읽어내는 기본기를 하나씩 갖춰야 하는 단계입니다. 가장 낮은 '+verify[0][0]+'('+verify[0][1]+'점)부터 시작해 순서대로 올리면 나머지도 함께 따라옵니다.</p>';
   } else {
     p2='<p style="margin:0 0 10px">실력 축들이 대체로 고르게 자리를 잡아 가고 있으나, '+w0[0]+' '+w0[1]+'점이 상대적으로 낮아 '+NEED[w0[0]]+'을 한 단계 더 다지면 성적이 안정됩니다.</p>';
   }
   var sPos=[], sNeg=[];
   if(sEff!=null&&sEff>=3.3) sPos.push('해낼 수 있다는 자신감이 뚜렷한'); else if(sEff!=null&&sEff<=2.3) sNeg.push('스스로를 믿지 못해 자신감이 낮은');
   if(typeof ssc.value==='number'&&ssc.value>=3.4) sPos.push('국어 자체에 대한 흥미가 높은'); else if(typeof ssc.value==='number'&&ssc.value<=2.2) sNeg.push('국어의 재미를 아직 잘 느끼지 못하는');
-  if(sGrowth!=null&&sGrowth>=3.5) sPos.push('노력하면 는다는 믿음이 강한');
+  if(sGrowth!=null&&sGrowth>=3.5) sPos.push('노력한 만큼 오른다는 믿음이 강한');
   if(sEffort!=null&&sEffort<=2.3) sNeg.push('실제 학습에 들이는 노력이 아직 부족한');
   var toP=function(a){return a.slice(0,2).map(function(x){return x+' 점';}).join('과 ');};
   var sSent='';
@@ -2071,9 +2071,9 @@ function genDeepClosing(t, axes, S, W, persona, note, summer, parentAx){
     var solidOpenPool=['지금 '+nick+'에게 필요한 것은 새로 실력을 쌓는 것이 아니라, 이미 잘하고 있는 것을 더 정교하게 다듬어 <b>흔들리지 않는 상위권으로 굳히는 것</b>입니다.','이 단계에서 '+nick+'에게 필요한 것은 새 무기가 아니라, 이미 가진 강점을 더 촘촘히 벼려 <b>흔들리지 않는 상위권으로 굳히는 일</b>입니다.','남은 과제는 실력을 더 쌓는 것이 아니라, 잘하고 있는 것을 정교하게 다듬어 <b>상위권을 고정하는 것</b>입니다.'];
     p4='<p style="margin:0">'+pickV(solidOpenPool,seed,6)+' '+(weak?'상담에서 확인된 '+weak+'부터 메우면':NEED[w0[0]]+'을 조금 더 다지면')+', 컨디션이나 지문 난도에 상관없이 지금의 성적을 안정적으로 지켜 냅니다.'+willSent+'</p>';
   } else {
-    var closeTail=mismatch?'잘 읽고도 못 지키던 점수가 모의고사에서도 내신처럼 나타나기 시작합니다':(gap?'잘 볼 때의 성적이 늘 그 자리에서 나오기 시작합니다':(contentTop.length?'잘 읽고도 지키지 못하던 점수가 지켜지기 시작합니다':'한 축씩 자리를 잡으며 여러 축이 함께 올라가기 시작합니다'));
+    var closeTail=mismatch?'잘 읽고도 못 지키던 점수가 모의고사에서도 내신처럼 나타나기 시작합니다':(gap?'잘 볼 때의 성적이 늘 그 자리에서 나오기 시작합니다':(contentTop.length?'잘 읽고도 지키지 못하던 점수가 지켜지기 시작합니다':'기본기가 하나씩 자리를 잡으며 나머지도 함께 올라가기 시작합니다'));
     var finalLine=underrate?(' 이 확신이 붙는 순간, '+nick+josaIGa(nick)+' 이미 가진 실력이 성적으로 온전히 드러나기 시작합니다.'):(' 이 '+(verifyLow.length?'뒷단계가':'약점 축이')+' 채워지는 순간, '+closeTail+'.');
-    var rxCore=contentTop.length?('이미 가진 '+LEV[contentTop[0][0]]+' 위에 '+rxChain+'을 얹어 이해를 실제 점수로 잇는 것'):('국어를 읽어내는 기본기를 '+rxChain+'의 순서로 한 축씩 세우는 것');
+    var rxCore=contentTop.length?('이미 갖춘 '+LEV[contentTop[0][0]]+'에 '+rxChain+'을 더해 이해를 실제 점수로 잇는 것'):('국어를 읽어내는 기본기를 '+rxChain+'의 순서로 하나씩 갖추는 것');
     var rxOpenPool=['지금 '+nick+'에게 필요한 것은 새로 실력을 기르는 것이 아니라, '+rxCore+'입니다.','그래서 이번 방학의 방향은 문제 수를 늘리는 것이 아니라, '+rxCore+'입니다.','이제 남은 것은 실력을 새로 쌓는 일이 아니라, '+rxCore+'입니다.','지금 '+nick+'의 방학 과제는 실력을 새로 쌓는 것이 아니라, '+rxCore+'입니다.'];
     p4='<p style="margin:0">'+pickV(rxOpenPool,seed,7)+(weak?' 상담에서 확인된 '+weak+'도 함께 메우면 좋습니다.':'')+finalLine+willSent+'</p>';
   }
