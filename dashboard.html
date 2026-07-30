@@ -610,6 +610,7 @@ body::before{
     <div class="sp-seg"><button id="sp-seg-date" class="on" onclick="spSetView('date')">날짜별</button><button id="sp-seg-class" onclick="spSetView('class')">학원·반별</button></div>
     <input type="search" id="sp-search" placeholder="학생 이름 / 학교 검색" oninput="renderStudentDirectory()">
     <div class="count-info" style="font-size:12px;color:var(--ink-muted)">누적 <strong id="sp-count">0</strong>명 · 이름 클릭, 종합 프로필</div>
+    <button id="sp-migrate-btn" onclick="migrateLocalEditsToServer()" title="이 브라우저에 저장된 소견서 편집본을 서버로 올려 다른 기기·다른 사람도 볼 수 있게 합니다" style="margin-left:auto;background:#1F3A5F;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer">💾 이 기기 편집본 서버로 올리기</button>
   </div>
   <div id="student-directory"><div style="padding:22px;color:var(--ink-muted);font-size:13px">불러오는 중…</div></div>
     </div><!-- /tab-general -->
@@ -1588,7 +1589,7 @@ let STUDENT_SOURCES=null, STUDENT_INDEX={}, DATE_GROUPS={};
 async function loadStudentDirectory(){
   const key=localStorage.getItem(STORAGE_KEY); if(!key) return;
   const get=async(x)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${x}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
-  const [gen,v2,sp,mi]=await Promise.all([get('list'),get('v2List'),get('specialList'),get('mirrorList')]);
+  const [gen,v2,sp,mi]=await Promise.all([get('list'),get('v2List'),get('specialList'),get('mirrorList'),loadReportEdits()]);
   STUDENT_SOURCES={gen,v2,sp,mi};
   buildStudentIndex(); renderStudentDirectory();
 }
@@ -1597,13 +1598,58 @@ function normName(n){ n=String(n||'').trim(); return NAME_ALIAS[n]||n; }
 function schoolNorm(sc){ return String(sc||'').trim().replace(/등학교$/,'').replace(/등학고$/,''); }
 function gradeNorm(g){ g=String(g||'').trim(); const d=g.match(/[1-3]/); if(!d) return g; return (/중/.test(g)?'중':'고')+d[0]; }
 function skey(n,sc,g){ return normName(n)+'|'+schoolNorm(sc)+'|'+gradeNorm(g); }
-// ── 통신문 편집 저장(브라우저 localStorage) : 자식창이 window.opener로 호출 ──
+// ── 통신문 편집 저장 : 서버(구글 시트 '통신문_편집') + 브라우저 localStorage 백업. 자식창이 window.opener로 호출 ──
 const REPORT_EDIT_LS='oreum_report_edits_v1';
+let REPORT_SERVER_EDITS={};      // {key:{html,ts,editor}} 서버 동기화본
+let REPORT_SERVER_READY=false;   // 백엔드(reportEdits 액션) 배포 완료 여부
 function _reportEdits(){ try{ return JSON.parse(localStorage.getItem(REPORT_EDIT_LS)||'{}'); }catch(e){ return {}; } }
-function getReportEditByKey(key){ return _reportEdits()[key]||null; }
-function saveReportEdit(key,html){ try{ const m=_reportEdits(); m[key]={html:html,ts:Date.now()}; localStorage.setItem(REPORT_EDIT_LS,JSON.stringify(m)); return true; }catch(e){ return false; } }
-function clearReportEdit(key){ try{ const m=_reportEdits(); delete m[key]; localStorage.setItem(REPORT_EDIT_LS,JSON.stringify(m)); }catch(e){} }
+function _localSet(key,html,ts){ try{ const m=_reportEdits(); m[key]={html:html,ts:ts}; localStorage.setItem(REPORT_EDIT_LS,JSON.stringify(m)); return true; }catch(e){ return false; } }
+// 불러오기 우선순위: 서버 vs 로컬 중 최신(ts) → 둘 다 없으면 원본(null)
+function getReportEditByKey(key){
+  const sv=REPORT_SERVER_EDITS[key], lo=_reportEdits()[key];
+  if(sv&&lo) return (Number(sv.ts||0)>=Number(lo.ts||0))?sv:lo;
+  return sv||lo||null;
+}
+// 대시보드 로드 시 서버 편집본 일괄 조회. 구버전 백엔드면 {error} → 로컬 전용으로 폴백(회귀 없음)
+function loadReportEdits(){
+  const key=localStorage.getItem(STORAGE_KEY); if(!key) return Promise.resolve();
+  return fetch(CURRENT_URL+'?key='+encodeURIComponent(key)+'&action=reportEdits')
+    .then(r=>r.json()).then(d=>{ if(d&&!d.error){ REPORT_SERVER_EDITS=d||{}; REPORT_SERVER_READY=true; } else { REPORT_SERVER_READY=false; } })
+    .catch(()=>{ REPORT_SERVER_READY=false; });
+}
+// 저장: 항상 로컬 백업 + (백엔드 준비됐으면) 서버 저장. 반환=Promise<{ok,server,notReady}>
+function saveReportEdit(key,html){
+  const ts=Date.now();
+  const localOk=_localSet(key,html,ts);
+  if(!REPORT_SERVER_READY) return Promise.resolve({ok:localOk,server:false,notReady:true});
+  REPORT_SERVER_EDITS[key]={html:html,ts:ts};   // 낙관적 반영(내 대시보드는 즉시 최신)
+  const akey=localStorage.getItem(STORAGE_KEY), editor=localStorage.getItem('oreum_editor_name')||'';
+  return fetch(CURRENT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'reportEditSave',auth:akey,key:key,html:html,ts:ts,editor:editor})})
+    .then(r=>r.json()).then(d=>({ok:localOk,server:!(d&&d.error)}))
+    .catch(()=>({ok:localOk,server:false}));
+}
+function clearReportEdit(key){
+  try{ const m=_reportEdits(); delete m[key]; localStorage.setItem(REPORT_EDIT_LS,JSON.stringify(m)); }catch(e){}
+  delete REPORT_SERVER_EDITS[key];
+  if(REPORT_SERVER_READY){ const akey=localStorage.getItem(STORAGE_KEY);
+    fetch(CURRENT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'reportEditDelete',auth:akey,key:key})}).catch(()=>{}); }
+}
 function reportEditCount(){ return Object.keys(_reportEdits()).length; }
+// 이 기기 로컬 편집본을 전부 서버로 올리기(마이그레이션)
+function migrateLocalEditsToServer(){
+  if(!REPORT_SERVER_READY){ alert('서버 백엔드가 아직 준비되지 않았습니다.\nCode.gs 새 버전을 먼저 배포해 주세요.'); return; }
+  const m=_reportEdits(), keys=Object.keys(m);
+  if(!keys.length){ alert('이 기기에 저장된 편집본이 없습니다.'); return; }
+  if(!confirm('이 기기에 저장된 편집본 '+keys.length+'개를 서버로 올릴까요?\n(다른 기기·다른 사람이 열어도 보이게 됩니다)')) return;
+  const akey=localStorage.getItem(STORAGE_KEY), editor=localStorage.getItem('oreum_editor_name')||'';
+  let done=0, fail=0;
+  const jobs=keys.map(k=>fetch(CURRENT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'reportEditSave',auth:akey,key:k,html:m[k].html,ts:m[k].ts||Date.now(),editor:editor})})
+    .then(r=>r.json()).then(d=>{ if(d&&d.error){fail++;} else { done++; REPORT_SERVER_EDITS[k]={html:m[k].html,ts:m[k].ts||Date.now()}; } }).catch(()=>{fail++;}));
+  Promise.all(jobs).then(()=>alert('서버 업로드 완료 ✅\n성공 '+done+'개'+(fail?('\n실패 '+fail+'개 — 인터넷 확인 후 다시 눌러 주세요'):'')));
+}
 function buildStudentIndex(){
   const S={}; const src=STUDENT_SOURCES||{};
   const ens=(n,sc,g)=>{ const k=skey(n,sc,g); const scT=String(sc||'').trim(); if(!S[k]) S[k]={key:k,name:normName(n),school:scT,grade:gradeNorm(g),gen:[],v2:[],sp:[],mi:[],parent:[]}; else if(scT.length>String(S[k].school||'').length) S[k].school=scT; return S[k]; };
@@ -2217,7 +2263,7 @@ ${sectionsHtml}
 var _RKEY=${JSON.stringify(RKEY)}, _SAVED=${JSON.stringify((_savedEdit&&_savedEdit.html)||'').replace(/<\//g,'<\\/')}, _TS=${_savedTs};
 if(_SAVED){ try{ document.querySelector('.doc').innerHTML=_SAVED; var _b=document.getElementById('_sb'); if(_b){ _b.className='edithint noprint'; _b.style.cssText='background:#e7f6ec;border:1px solid #b6dfc4;color:#1f6b3b'; _b.innerHTML='💾 저장해 둔 편집본을 불러왔습니다'+(_TS?' ('+new Date(_TS).toLocaleString('ko-KR')+' 저장)':'')+'. 계속 고치고 다시 저장하거나, 아래 ‘↩ 원본으로’로 초기화할 수 있어요.'; } }catch(e){} }
 function _toast(m){ var d=document.createElement('div'); d.textContent=m; d.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#1F3A5F;color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;z-index:99999;box-shadow:0 4px 14px rgba(0,0,0,.25)'; document.body.appendChild(d); setTimeout(function(){ d.remove(); },2800); }
-function _saveEdit(){ try{ if(window.opener&&!window.opener.closed&&window.opener.saveReportEdit){ var ok=window.opener.saveReportEdit(_RKEY, document.querySelector('.doc').innerHTML); _toast(ok?'저장됐습니다. 다음에 열어도 이 편집본이 유지돼요.':'저장 실패(용량 초과).'); }else{ _toast('저장 실패: 대시보드 창을 닫지 마세요.'); } }catch(e){ _toast('저장 실패'); } }
+function _saveEdit(){ try{ if(!(window.opener&&!window.opener.closed&&window.opener.saveReportEdit)){ _toast('저장 실패: 대시보드 창을 닫지 마세요.'); return; } _toast('저장 중…'); Promise.resolve(window.opener.saveReportEdit(_RKEY, document.querySelector('.doc').innerHTML)).then(function(res){ res=res||{}; if(res.server){ _toast('✅ 서버에 저장됐습니다. 어느 기기에서 열어도 이 편집본이 보여요.'); } else if(res.ok){ _toast(res.notReady? '이 기기에 저장했어요(서버 저장은 백엔드 배포 후 자동 전환).' : '이 기기에 저장했어요. 서버 전송 실패 — 인터넷 확인 후 다시 저장하면 서버로 올라갑니다.'); } else { _toast('저장 실패(용량 초과).'); } }).catch(function(){ _toast('저장 실패'); }); }catch(e){ _toast('저장 실패'); } }
 function _revertEdit(){ if(confirm('저장한 편집을 지우고 자동 생성 원본으로 되돌릴까요?')){ try{ if(window.opener&&window.opener.clearReportEdit) window.opener.clearReportEdit(_RKEY); }catch(e){} _toast('원본으로 초기화했습니다. 학생을 다시 열어 주세요.'); } }
 <\/script>
 </body></html>`;
