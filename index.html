@@ -2938,6 +2938,21 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 #v2-info .info-row{ display:flex; gap:14px; }
 #v2-info .info-row .field{ flex:1; }
 #v2-info .screen-sub{ color:var(--o-mut); }
+/* 학부모 관찰 폼도 v2-info와 동일한 새(둥근 카드) 스타일 적용 */
+#v2-parent-info .info-form{ background:var(--o-card); border:1px solid var(--o-line); border-radius:16px; padding:26px 26px 22px; margin-top:24px; }
+#v2-parent-info .field{ margin-bottom:18px; }
+#v2-parent-info .field:last-child{ margin-bottom:0; }
+#v2-parent-info .field > label{ display:block; font-size:13px; font-weight:700; color:var(--o-ink); margin-bottom:9px; }
+#v2-parent-info .field > label small{ font-weight:400; color:var(--o-mut); }
+#v2-parent-info .field > label .required{ color:#a9a2ff; font-weight:700; margin-left:2px; }
+#v2-parent-info input, #v2-parent-info select{ width:100%; box-sizing:border-box; background:rgba(255,255,255,.03); border:1px solid var(--o-line); border-radius:11px; padding:12px 14px; color:var(--o-ink); font-size:15px; font-family:inherit; transition:border-color .15s,box-shadow .15s; }
+#v2-parent-info input:focus, #v2-parent-info select:focus{ outline:none; border-color:#a9a2ff; box-shadow:0 0 0 3px rgba(139,140,232,.15); }
+#v2-parent-info input::placeholder{ color:var(--o-mut); }
+#v2-parent-info select{ appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:38px; }
+#v2-parent-info .info-row{ display:flex; gap:14px; }
+#v2-parent-info .info-row .field{ flex:1; }
+#v2-parent-info .screen-sub{ color:var(--o-mut); }
+#v2-parent-info .info-error{ color:#e8756b; font-size:13px; margin-top:12px; padding:10px 13px; background:rgba(232,117,107,.08); border:1px solid rgba(232,117,107,.25); border-radius:9px; }
 #v2-enroll-block{ margin-bottom:18px; }
 #v2-enroll-block .field{ margin-bottom:14px; }
 #v2-enroll-block .field:last-child{ margin-bottom:0; }
