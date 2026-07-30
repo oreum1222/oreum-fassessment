@@ -2054,7 +2054,7 @@ function genDeepClosing(t, axes, S, W, persona, note, summer, parentAx){
   var sPos=[], sNeg=[];
   if(sEff!=null&&sEff>=3.3) sPos.push('해낼 수 있다는 자신감이 뚜렷한'); else if(sEff!=null&&sEff<=2.3) sNeg.push('스스로를 믿지 못해 자신감이 낮은');
   if(typeof ssc.value==='number'&&ssc.value>=3.4) sPos.push('국어 자체에 대한 흥미가 높은'); else if(typeof ssc.value==='number'&&ssc.value<=2.2) sNeg.push('국어의 재미를 아직 잘 느끼지 못하는');
-  if(sGrowth!=null&&sGrowth>=3.5) sPos.push('노력한 만큼 오른다는 믿음이 강한');
+  if(sGrowth!=null&&sGrowth>=3.5) sPos.push('노력하면 성적이 오른다는 믿음이 강한');
   if(sEffort!=null&&sEffort<=2.3) sNeg.push('실제 학습에 들이는 노력이 아직 부족한');
   var toP=function(a){return a.slice(0,2).map(function(x){return x+' 점';}).join('과 ');};
   var sSent='';
@@ -2140,7 +2140,7 @@ function buildComprehensiveReport(t){
       ['efficacy',2.3,3.3,'neg','스스로를 믿지 못해 자신감이 낮아 실제 실력을 저평가하고 있는','pos','어려워도 해낼 수 있다는 자신감이 뚜렷한'],
       ['anx_eval',-1,3.3,'','','neg','시험 불안이 높아 아는 것도 시험장에서 흔들리기 쉬운'],
       ['value',2.2,3.4,'neg','국어의 재미와 의미를 아직 잘 느끼지 못하는','pos','국어 자체에 대한 흥미가 높은'],
-      ['growth',2.3,3.5,'neg','노력의 효과를 아직 신뢰하지 못하는','pos','노력하면 는다는 성장의 믿음이 강한'],
+      ['growth',2.3,3.5,'neg','노력의 효과를 아직 신뢰하지 못하는','pos','노력하면 성적이 오른다는 믿음이 강한'],
       ['effort',2.3,-1,'neg','실제 학습에 들이는 노력이 부족한','',''],
       ['meta',2.3,-1,'neg','틀린 것을 스스로 되짚는 습관이 약한','',''],
       ['care',2.3,-1,'neg','발문과 조건을 꼼꼼히 확인하는 성실함이 부족한','','']
