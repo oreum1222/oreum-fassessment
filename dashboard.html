@@ -1684,7 +1684,9 @@ const CLASS_ROSTER={
 function classGrade(cls){ const m=String(cls||'').match(/고\s*([1-3])|중\s*([1-3])/); if(!m) return ''; return m[1]?('고'+m[1]):('중'+m[2]); }
 // 종합소견서 발송 완료 반 → 카드에 '종합소견서 발송' 뱃지 (이름+학년 키로 동명이인 구분)
 const SOGYEON_SENT_CLASSES=['한티 MEXX 단과 고1','한티 MEXX 단과 고2'];
-const SOGYEON_SENT_KEYS=(function(){ const s=new Set(); SOGYEON_SENT_CLASSES.forEach(function(cls){ const g=classGrade(cls); (CLASS_ROSTER[cls]||[]).forEach(function(n){ s.add(n+'|'+g); }); }); return s; })();
+// 개별 배부 완료(종합 고1 소견서 인쇄·배부 취합본 30명) — 이름|학년 키
+const SOGYEON_SENT_NAMES=['고은서|고1','구자윤|고1','권민재|고1','김규리|고1','김다희|고1','김동건|고1','김민준|고1','김서현|고1','김재익|고1','김지유|고1','김택준|고1','김한서|고1','나지웅|고1','나혜원|고1','문서연|고1','박민아|고1','박서정|고1','박시연|고1','박해인|고1','배윤찬|고1','송예준|고1','신강윤|고1','신혜원|고1','원주현|고1','이민혁|고1','이서형|고1','이우경|고1','조수아|고1','최지아|고1','최현준|고1'];
+const SOGYEON_SENT_KEYS=(function(){ const s=new Set(); SOGYEON_SENT_CLASSES.forEach(function(cls){ const g=classGrade(cls); (CLASS_ROSTER[cls]||[]).forEach(function(n){ s.add(n+'|'+g); }); }); SOGYEON_SENT_NAMES.forEach(function(k){ s.add(k); }); return s; })();
 function classLookup(cls){
   const g=classGrade(cls); const byName={}, byNG={};
   Object.values(STUDENT_INDEX||{}).forEach(t=>{ if(!t.name) return; if(!byName[t.name]) byName[t.name]=t; byNG[t.name+'|'+(t.grade||'')]=t; });
