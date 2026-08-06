@@ -1831,7 +1831,7 @@ function renderClassView(){
     h+=`<div class="sp-date${open}"><div class="sp-date-h" onclick="this.parentNode.classList.toggle('open')"><span class="sp-date-t">${cls}</span><span class="sp-date-n">완료 ${full} · 응답 ${done} / ${names.length}</span><button class="sp-sms-btn" onclick="event.stopPropagation();openSmsModal('${cls}')">✉ 문자 보내기${(names.length-full>0)?` · 미완료 ${names.length-full}`:''}</button><span class="sp-date-arw">▾</span></div><div class="sp-date-body"><div class="sp-date-grid">`;
     list.forEach(n=>{ const t=look(n);
       if(t){ h+=spCard(t); }
-      else { h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span>${hasMyeondam(n,classGrade(cls))?'<span class="sp-chip mg">대면</span>':''}</div></div>`; }
+      else { const _g=classGrade(cls); h+=`<div class="sp-card miss"><div class="sp-name">${n}</div><div class="sp-sub"><span class="sp-chip risk">미응답</span>${hasMyeondam(n,_g)?'<span class="sp-chip mg">대면</span>':''}</div><button onclick="printRosterComprehensive('${n.replace(/'/g,'')}','${_g}')" style="margin-top:9px;font-size:11px;font-weight:700;color:#8fc9e0;background:rgba(143,201,224,.12);border:1px solid rgba(143,201,224,.25);border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit">📄 통신문</button></div>`; }
     });
     h+=`</div></div></div>`;
   });
@@ -1981,6 +1981,13 @@ function comprehensiveEligible(t){
 }
 function printComprehensive(key){
   const t=STUDENT_INDEX[key]; if(!t) return;
+  const w=window.open('','_blank','width=920,height=1040');
+  if(!w){ alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.'); return; }
+  w.document.write(buildComprehensiveReport(t)); w.document.close(); w.focus();
+}
+// 온라인 진단 미응답(명단만/대면만 있는) 학생용 — 합성 t로 통신문 생성
+function printRosterComprehensive(name,grade){
+  const t={name:name,grade:grade||'',school:'',v2:[],parent:[],gen:[],sp:[],mi:[]};
   const w=window.open('','_blank','width=920,height=1040');
   if(!w){ alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.'); return; }
   w.document.write(buildComprehensiveReport(t)); w.document.close(); w.focus();
