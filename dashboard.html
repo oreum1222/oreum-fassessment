@@ -2140,6 +2140,44 @@ function genDeepClosing(t, axes, S, W, persona, note, summer, parentAx){
   }
   return [p1,p2,pRev,p3,p4].filter(Boolean).join('');
 }
+// 6축(성향 진단) 미참여 학생용 — 여름·대면·학부모 등 있는 데이터로 최대한 비벼 쓴다
+function genPartialClosing(t, summer, note){
+  var e=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});};
+  var nm=e(t.name), nick=e(nickOf(t.name));
+  var src=[];
+  if(summer) src.push('여름 학습 점검');
+  if(note) src.push('첫수업 대면 상담');
+  if(t.parent&&t.parent.length) src.push('학부모 관찰 진단');
+  var P=[];
+  var lead=nm+' 학생은 국어 학습 성향을 여섯 개 축으로 정밀하게 보는 진단에는 아직 참여하지 않았습니다. '+(src.length?('아래 내용은 '+src.join(', ')+'에서 확인된 정보를 바탕으로 정리한 것입니다.'):'현재까지 확보된 진단 정보가 없어, 성향 진단에 참여하면 구체적인 학습 방향을 정리해 드릴 수 있습니다.');
+  P.push('<p style="margin:0 0 10px">'+lead+'</p>');
+  if(summer){
+    var sj={}; try{ sj=JSON.parse(summer['분석_JSON']||'{}'); }catch(_e){}
+    var sc=sj.score||{}, mg=sj.mgmt||null;
+    var g=function(k){return typeof sc[k]==='number'?sc[k]:null;};
+    var pos=[], neg=[];
+    if(g('efficacy')!=null){ if(g('efficacy')>=3.3) pos.push('해낼 수 있다는 자신감'); else if(g('efficacy')<=2.3) neg.push('자신감'); }
+    if(g('value')!=null){ if(g('value')>=3.4) pos.push('국어에 대한 흥미'); else if(g('value')<=2.2) neg.push('국어에 대한 흥미'); }
+    if(g('growth')!=null && g('growth')>=3.5) pos.push('노력하면 성적이 오른다는 믿음');
+    if(g('effort')!=null && g('effort')<=2.3) neg.push('실제 학습에 들이는 노력');
+    if(g('care')!=null && g('care')<=2) neg.push('발문과 조건을 꼼꼼히 확인하는 태도');
+    var s2='';
+    if(pos.length){ var pstr=pos.slice(0,2).join('과 '); s2+='여름 진단에서는 '+pstr+josaIGa(pstr)+' 강점으로 나타났습니다. '; }
+    if(neg.length){ var nstr=neg.slice(0,2).join('과 '); s2+='다만 '+nstr+josaEun(nstr)+' 아직 높게 나타나지 않아, 이 부분을 함께 다듬을 필요가 있습니다. '; }
+    if(mg&&mg.label) s2+=nick+josaEun(nick)+' '+e(mg.label)+'으로, '+({'밀착 관리형':'분량과 마감을 촘촘히 정해 줄 때','자율형':'큰 방향만 함께 정하고 방법은 맡길 때','혼합형':'큰 틀은 잡아 주되 세부는 맡길 때'}[mg.label]||'적절한 관리가 더해질 때')+' 가장 잘 따라오는 유형입니다.';
+    if(s2) P.push('<p style="margin:0 0 10px">'+s2+'</p>');
+  }
+  if(note){
+    var weak=''; try{ var wm=(note||'').match(/취약[:：]\s*([^\n]+)/); if(wm) weak=wm[1].trim(); }catch(_e){}
+    var hard=''; try{ var hm=(note||'').match(/어려[운웠][^:：\n]*[:：]\s*([^\n]+)/); if(hm) hard=hm[1].trim(); }catch(_e){}
+    var s3='';
+    if(hard) s3+='대면 상담에서는 ‘'+e(hard)+'’ 점이 어려움으로 확인됐습니다. ';
+    if(weak) s3+='취약 영역으로는 '+e(weak)+josaIGa(weak.replace(/[^가-힣]+$/,'')||weak)+' 꼽혔습니다. ';
+    if(s3){ s3+='이 부분은 개념과 해석 기준을 함께 쌓아 두면 도움이 됩니다.'; P.push('<p style="margin:0 0 10px">'+s3+'</p>'); }
+  }
+  P.push('<p style="margin:0">'+nick+josaIGa(nick)+' 성향 진단(여섯 개 축)까지 마치면, 어느 능력을 지렛대로 삼고 무엇부터 세울지 더 정확히 짚어 드릴 수 있습니다. 남은 방학 동안 위에서 확인된 부분부터 함께 잡아 가겠습니다.</p>');
+  return P.join('');
+}
 function buildComprehensiveReport(t){
   const e=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const V2RANK={'재원생 심층':3,'재원생 첫':2,'비재원생':1};
@@ -2219,12 +2257,18 @@ function buildComprehensiveReport(t){
     return '<div class="sec"><div class="sec-t">§N§ 여름방학 학습 진단</div>'+body+'</div>';
   })():'';
   let parentAx=null; if(t.parent&&t.parent.length){ try{ parentAx=computeParentAxes(JSON.parse(t.parent[0]['응답_JSON']||'{}')); }catch(_e){} }
-  const closing=DEEP_CLOSING[t.name]?DEEP_CLOSING[t.name]:((v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note,summer,parentAx):`${e(t.name)} 학생의 진단 결과를 종합해 이번 방학 학습 방향을 함께 설계하겠습니다.`);
+  const closing=DEEP_CLOSING[t.name]?DEEP_CLOSING[t.name]:((v2m&&S.length&&W.length)?genDeepClosing(t,axes,S,W,v2m['페르소나'],note,summer,parentAx):genPartialClosing(t,summer,note));
   const axisBlock=v2m?`<div class="sec"><div class="sec-t">§N§ 학습 성향과 6개 축</div><div class="persona"><b>유형: ${e(v2m['페르소나'])}</b> — ${pd}</div>${axBars}<div class="sw"><div class="box good"><div class="h">강점</div>${S.map(x=>x[0]+' '+x[1]).join(', ')}</div><div class="box warn"><div class="h">보완</div>${W.map(x=>x[0]+' '+x[1]).join(', ')}</div></div>${rx?`<div class="rx"><b>가장 먼저 잡을 지점 — ${W[0][0]}</b><br>${rx}</div>`:''}</div>`:'';
   const closingBlock=`<div class="sec"><div class="sec-t">§N§ 가경T 종합 소견</div><div class="closing">${closing}</div></div>`;
+  // 미응답 진단 영역은 생략하지 않고 '참여하지 않았습니다' 안내로 대체
+  const _miss=(ti,msg)=>`<div class="sec"><div class="sec-t">§N§ ${ti}</div><p class="p" style="color:#93a0b0">${msg}</p></div>`;
+  const axisBlockF   = axisBlock   || _miss('학습 성향과 6개 축','학생이 성향 진단(6개 축)에 참여하지 않아 이 영역은 분석할 수 없습니다.');
+  const parentBlockF = parentBlock || _miss('학생과 학부모 인식 비교', (t.parent&&t.parent.length)?'학생 성향 진단 응답이 없어 학부모 관찰과 나란히 비교할 수 없습니다.':'학부모 인식 진단에 응답이 없습니다.');
+  const daemyeonBlockF = daemyeonBlock || _miss('첫수업 대면 상담','대면 상담 기록이 없습니다.');
+  const summerBlockF = summerBlock || _miss('여름방학 학습 진단','학생이 여름방학 학습 진단에 참여하지 않았습니다.');
   const _CIRC=['①','②','③','④','⑤','⑥','⑦'];
   let _sn=0;
-  const sectionsHtml=[axisBlock,parentBlock,daemyeonBlock,summerBlock,closingBlock].map(function(h){return h?h.replace('§N§',_CIRC[_sn++]):'';}).join('');
+  const sectionsHtml=[axisBlockF,parentBlockF,daemyeonBlockF,summerBlockF,closingBlock].map(function(h){return h?h.replace('§N§',_CIRC[_sn++]):'';}).join('');
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${e(t.name)} 종합 통신문 — 가경T</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
@@ -2282,7 +2326,11 @@ function openStudentProfile(key){
   const enc=encodeURIComponent(t.name);
   const d=synthDefine(t);
   let h=`<div class="sp-def">${d.txt}</div>`;
-  if(comprehensiveEligible(t)) h=`<button onclick="printComprehensive('${key.replace(/'/g,'')}')" style="width:100%;background:linear-gradient(135deg,#1F3A5F,#2C4A6E);color:#fff;border:0;border-radius:10px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:14px;font-family:inherit">\ud83d\udcc4 \uc885\ud569 \ud1b5\uc2e0\ubb38 \uc778\uc1c4</button>`+h;
+  // \uc885\ud569 \ud1b5\uc2e0\ubb38 \uc778\uc1c4 \u2014 \ubd80\ubd84 \uc751\ub2f5\uc790\ub3c4 \ud56d\uc0c1 \uc0dd\uc131 \uac00\ub2a5(\ubbf8\ucc38\uc5ec \uc601\uc5ed\uc740 '\ucc38\uc5ec\ud558\uc9c0 \uc54a\uc74c'\uc73c\ub85c \ud45c\uae30)
+  const _dg=[['\uc131\ud5a5 6\ucd95',(t.v2||[]).some(r=>r['\ubc84\uc804']!=='summer'&&r['\ud398\ub974\uc18c\ub098'])],['\uc5ec\ub984',(t.v2||[]).some(r=>r['\ubc84\uc804']==='summer')],['\ud559\ubd80\ubaa8',!!(t.parent&&t.parent.length)],['\ub300\uba74',hasMyeondam(t.name,t.grade)||!!myeondamNote(t.name,t.grade)]];
+  const _missDg=_dg.filter(x=>!x[1]).map(x=>x[0]);
+  const _btnCap=_missDg.length?`<div style="font-size:11px;color:#8a97a6;margin:-9px 0 14px;text-align:center;line-height:1.4">\ubbf8\ucc38\uc5ec: ${_missDg.join(', ')} \u2192 \ud1b5\uc2e0\ubb38\uc5d0 '\ucc38\uc5ec\ud558\uc9c0 \uc54a\uc74c'\uc73c\ub85c \ud45c\uae30\ub429\ub2c8\ub2e4</div>`:'';
+  h=`<button onclick="printComprehensive('${key.replace(/'/g,'')}')" style="width:100%;background:linear-gradient(135deg,#1F3A5F,#2C4A6E);color:#fff;border:0;border-radius:10px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:${_missDg.length?'6px':'14px'};font-family:inherit">\ud83d\udcc4 \uc885\ud569 \ud1b5\uc2e0\ubb38 \uc778\uc1c4</button>`+_btnCap+h;
   if(d.risks.length) h+=`<div class="sp-risk"><b>주의 신호</b> · ${d.risks.map(e).join(' / ')}</div>`;
   h+=synthInterpretBlock(t);
   h+=`<div class="sp-h4">응시한 진단</div>`;
