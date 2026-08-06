@@ -2196,7 +2196,8 @@ function buildComprehensiveReport(t){
   const S=sorted.slice(0,2), W=sorted.slice(-2).reverse();
   const pd=v2m?(PERSONA_DESC[v2m['페르소나']]||''):'';
   const rx=W.length?(AX_RX[W[0][0]]||''):'';
-  const school=v2m?(v2m['학교']||''):'', grade=v2m?(v2m['학년']||''):'';
+  const _anyRow=v2m||summer||(t.v2&&t.v2[0])||null;
+  const school=(v2m&&v2m['학교'])||(summer&&summer['학교'])||(t.school)||(_anyRow&&_anyRow['학교'])||'', grade=(v2m&&v2m['학년'])||(summer&&summer['학년'])||(t.grade)||(_anyRow&&_anyRow['학년'])||'';
   const RKEY=skey(t.name,school,grade);
   const _savedEdit=getReportEditByKey(RKEY);
   const _savedTs=(_savedEdit&&_savedEdit.ts)||0;
