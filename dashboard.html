@@ -1987,7 +1987,8 @@ function printComprehensive(key){
 }
 // 온라인 진단 미응답(명단만/대면만 있는) 학생용 — 합성 t로 통신문 생성
 function printRosterComprehensive(name,grade){
-  const t={name:name,grade:grade||'',school:'',v2:[],parent:[],gen:[],sp:[],mi:[]};
+  const _nt=myeondamNote(name,grade)||''; let _sch=''; const _sm=_nt.match(/학교[:：]\s*([^/\n]+)/); if(_sm) _sch=_sm[1].trim();
+  const t={name:name,grade:grade||'',school:_sch,v2:[],parent:[],gen:[],sp:[],mi:[]};
   const w=window.open('','_blank','width=920,height=1040');
   if(!w){ alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.'); return; }
   w.document.write(buildComprehensiveReport(t)); w.document.close(); w.focus();
