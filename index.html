@@ -5710,7 +5710,7 @@ function rptLevelBar(label, v){
   const e=x=>String(x==null?'':x).replace(/</g,'&lt;');
   return `<div class="rpt-lb"><div class="rpt-lb-top"><span class="rpt-lb-name">${e(label)}</span><span class="rpt-lb-lv ${lv.c}">${lv.w}</span></div><div class="rpt-lb-track"><span class="tk"></span><span class="tk"></span><span class="tk"></span><div class="rpt-lb-fill ${lv.c}" style="width:${pct}%"></div></div></div>`;
 }
-function rptEnroll(info){ if(!info||!info.className) return ''; const e=x=>String(x==null?'':x).replace(/</g,'&lt;'); return `<div class="rpt-enroll">수강 <b>${e(info.academy||'')}</b> ${e(info.className)}</div>`; }
+function rptEnroll(info){ if(!info||!info.className) return ''; const e=x=>String(x==null?'':x).replace(/</g,'&lt;'); return `<div class="rpt-enroll">수강 <b>${e((info.academy||'').replace(/^한티\s*/,''))}</b> ${e(info.className)}</div>`; }
 function v2CmpInterp(pc, AX){
   const over=pc.rows.filter(r=>r.diff>=12), under=pc.rows.filter(r=>r.diff<=-12);
   const it=[];
