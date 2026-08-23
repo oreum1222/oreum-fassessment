@@ -4022,7 +4022,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
         <label>수강 학원 <span class="required">*</span></label>
         <div class="v2-seg" id="v2-academy-seg">
           <button type="button" onclick="v2PickAcademy('오름')">[오름] 국어</button>
-          <button type="button" onclick="v2PickAcademy('한티')">한티 MEXX</button>
+          <button type="button" onclick="v2PickAcademy('한티')">MEXX</button>
         </div>
       </div>
       <div class="field" id="v2-class-field" style="display:none">
@@ -5125,7 +5125,7 @@ const v2State = { ver:'brief', info:{}, items:[], idx:0, responses:{}, phase:'st
 
 const V2_ACADEMY = {
   '오름':{label:'[오름] 국어', classes:['(수) 현대문법','(수) 고전문법','(금) 수능 정규반','(토) 수능 정규반']},
-  '한티':{label:'한티 MEXX', classes:['(일) 고1 단과 고전영역','(일) 고2 단과 화법과언어','(월) 중3 종합','(금) 고1 종합']}
+  '한티':{label:'MEXX', classes:['(일) 수능 국어','(일) 화법과 언어']}
 };
 function v2PickAcademy(key){
   v2State.academy=key; v2State.className='';
