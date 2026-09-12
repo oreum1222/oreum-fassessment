@@ -2252,9 +2252,8 @@ function buildComprehensiveReport(t){
   const noteHtml=note?note.split('\n').map(ln=>{ln=ln.trim();return ln?`<div style="margin:3px 0">– ${e(ln)}</div>`:'';}).join(''):'';
   const have=[];
   if(v2m) have.push('재원생 첫 진단');
-  if(summer) have.push('여름방학 학습 진단');
-  if(t.parent&&t.parent.length) have.push('학부모 관찰 진단');
   if(note) have.push('첫수업 대면 상담');
+  if(t.parent&&t.parent.length) have.push('학부모 관찰 진단');
   const CNTW={2:'두 가지',3:'세 가지',4:'네 가지'};
   const leadSummary=have.length>=2?`<b>${have.join(', ')}</b> ${CNTW[have.length]}를 종합했습니다`:(have.length===1?`<b>${have[0]}</b> 결과를 정리했습니다`:`진행된 진단 결과를 정리했습니다`);
   const daemyeonBlock=note?`<div class="sec"><div class="sec-t">§N§ 첫수업 대면 상담</div><p class="p">첫 수업에서 진행한 1:1 대면 상담에서 관찰된 내용입니다.</p><div style="background:#eef3fa;border:1px solid #cfdcec;border-radius:8px;padding:11px 14px;margin-top:7px;font-size:9.8pt;color:#2a3b4d;line-height:1.55">${noteHtml}</div></div>`:'';
@@ -2305,7 +2304,7 @@ function buildComprehensiveReport(t){
   const summerBlockF = summerBlock || _miss('여름방학 학습 진단','학생이 여름방학 학습 진단에 참여하지 않았습니다.');
   const _CIRC=['①','②','③','④','⑤','⑥','⑦'];
   let _sn=0;
-  const sectionsHtml=[axisBlockF,parentBlockF,daemyeonBlockF,summerBlockF,closingBlock].map(function(h){return h?h.replace('§N§',_CIRC[_sn++]):'';}).join('');
+  const sectionsHtml=[axisBlockF,parentBlockF,daemyeonBlockF,closingBlock].map(function(h){return h?h.replace('§N§',_CIRC[_sn++]):'';}).join('');
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${e(t.name)} 종합 통신문 — 가경T</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
@@ -2341,7 +2340,7 @@ body{font-family:Pretendard,-apple-system,sans-serif;color:#242424;font-size:10.
 <div class="hdr"><div class="brand">김가경 국어 연구소 학습 성향 종합 통신문</div>
 <div class="title">${e(t.name)} 학생 학습 성향 종합</div>
 <div class="meta">${e(school)} ${e(grade)}, 발행 ${today}, 김가경 국어 연구소</div></div>
-<div class="lead">안녕하세요, 학부모님. 이번 여름 <b>${e(t.name)}</b> 학생에 대해 ${leadSummary}. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
+<div class="lead">안녕하세요, 학부모님. 이번 학기 <b>${e(t.name)}</b> 학생의 ${leadSummary}. 아래는 그 결과를 한 장으로 정리한 소견입니다.</div>
 ${sectionsHtml}
 <div class="foot">본 통신문은 국어를 대하는 성향과 습관, 태도의 프로필이며 학생의 능력에 대한 평가가 아닙니다. 진행된 진단과 상담 결과를 종합해 김가경 국어 연구소가 작성했습니다. 물론 학생과 학부모님께서 응답한 결과를 바탕으로 아이에 대해서 알아보고자 노력한 결과물이므로, 아이의 모습과 100% 일치하지 않을 수는 있으니 그 부분 역시 참고 부탁드리겠습니다. 만약 다른 모습이 관찰된다면 그 역시 전달해주시면 빠른 교정으로 아이에 대해 더 깊이 알 수 있는 기회가 되므로 적극적으로 연락주시면 좋습니다.</div>
 </div>
