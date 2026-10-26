@@ -3167,6 +3167,9 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   .vt-badge.new{background:rgba(45,212,191,.16);color:#6EE7D6}
   .vt-badge.sp{background:rgba(45,212,191,.12);color:#6EE7D6;border:1px solid rgba(45,212,191,.3)}
   .vt-badge.vp{background:rgba(143,201,224,.14);color:#8fc9e0;border:1px solid rgba(143,201,224,.38)}
+  .seolmyeong-note{margin-top:9px;font-size:13.5px;line-height:1.6;color:#bcd6ff;background:rgba(143,201,224,.1);border:1px solid rgba(143,201,224,.3);border-radius:10px;padding:10px 13px}
+  .seolmyeong-note b{color:#e3edff}
+  @media(max-width:560px){.seolmyeong-note{font-size:13px;padding:9px 11px}}
   .vt-desc{font-size:14px;color:#828e8a;line-height:1.62;margin-top:11px}
   .vt-ptag{margin-top:auto;padding-top:12px;font-size:12.5px;color:#8fc9e0;font-weight:600}
   .vsel-sec{display:flex;align-items:center;gap:11px;margin:38px 0 16px;font-size:14px;color:#b7c2be;font-weight:700;font-family:'Nanum Myeongjo',serif}
@@ -3424,6 +3427,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     <div class="field">
       <label>학생 이름 <span class="required">*</span></label>
       <input type="text" id="mirror-info-name" placeholder="예: 홍길동" required>
+      <div class="seolmyeong-note" style="display:none">설명회 참여라면 실명이 부담스러우실 때 <b>닉네임으로 적으셔도 됩니다.</b> 결과는 적어 주신 이름으로 바로 확인됩니다.</div>
     </div>
     <div class="info-row">
       <div class="field">
@@ -4043,6 +4047,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     <div class="field">
       <label>학생 이름 <span class="required">*</span></label>
       <input type="text" id="v2-info-name" placeholder="예: 홍길동" required>
+      <div class="seolmyeong-note" style="display:none">설명회 참여라면 실명이 부담스러우실 때 <b>닉네임으로 적으셔도 됩니다.</b> 결과는 적어 주신 이름으로 바로 확인됩니다.</div>
     </div>
     <div class="info-row">
       <div class="field">
@@ -4128,6 +4133,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     <div class="field">
       <label>자녀 이름 <span class="required">*</span></label>
       <input type="text" id="v2p-name" placeholder="예: 홍길동" required>
+      <div class="seolmyeong-note" style="display:none">설명회 참여라면 실명이 부담스러우실 때 <b>닉네임으로 적으셔도 됩니다.</b> 결과는 적어 주신 이름으로 바로 확인됩니다.</div>
     </div>
     <div class="info-row">
       <div class="field">
@@ -4542,9 +4548,13 @@ document.querySelectorAll('.version-card, .vtile').forEach(c=>{
 
     // ★ 설명회 특별판 — 응답자(학생/학부모/함께) 선택 화면으로
     if(ver === 'seolmyeong'){
+      smCount('open');
       goScreen('seolmyeong-choice');
       return;
     }
+    // 그 외 경로에서는 설명회 닉네임 안내 숨김
+    state.seolmyeong = false;
+    try{ document.querySelectorAll('.seolmyeong-note').forEach(function(n){ n.style.display='none'; }); }catch(e){}
 
     // ★ 거울 진단은 별도 흐름으로
     if(ver === 'mirror'){
@@ -5202,11 +5212,22 @@ function v2PickClass(name){
   if(w){ if(grade && !v2GradeMatch(grade,name)){ w.textContent=`⚠ 선택한 학년(${grade})과 이 반(${v2ClassGrade(name)})이 달라 보여요. 학년 또는 반을 다시 확인해 주세요.`; w.style.display=''; } else { w.style.display='none'; } }
 }
 function v2RecheckGrade(){ if(v2State.className) v2PickClass(v2State.className); }
+// 설명회 방문자 카운트 (무신호 트래킹 픽셀, 실패해도 진단엔 영향 없음)
+function smCount(key){
+  try{
+    if(!key) return;
+    var im=new Image();
+    im.src='https://abacus.jasoncameron.dev/hit/oreum-seolmyeong-yb2/'+encodeURIComponent(key)+'?_='+Date.now();
+  }catch(e){}
+}
 // 설명회 특별판 — 응답자 선택 → 기존 진단 흐름으로 분기(학생=비재원생, 학부모=학부모 관찰, 함께=거울)
 function seolmyeongGo(role){
+  state.seolmyeong = true;
+  smCount(role);
   if(role==='student'){ state.version='brief'; startV2('brief'); }
   else if(role==='parent'){ state.version='parentObserve'; v2StartParentObserve(); }
   else if(role==='mirror'){ state.version='mirror'; startMirrorDiagnosis(); }
+  try{ document.querySelectorAll('.seolmyeong-note').forEach(function(n){ n.style.display=''; }); }catch(e){}
 }
 
 function startV2(ver){
