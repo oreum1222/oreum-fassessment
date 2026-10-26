@@ -3594,44 +3594,79 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
 
 <!-- ═══════════════════════════════════ 설명회 특별판 응답자 선택 ═══════════════════════════════════ -->
 <section id="seolmyeong-choice" class="screen">
-  <p class="hero-meta special-tag" style="text-align:center">[오름] 국어 예비 고2 설명회</p>
-  <h1 class="title-serif hero-title">설명회 특별판 진단</h1>
-  <p class="hero-meta" style="text-align:center;font-style:italic">누가 응답하시나요? 응답자에 맞춰 진단을 안내해 드립니다</p>
+  <style>
+  #seolmyeong-choice{max-width:660px;margin:0 auto}
+  #seolmyeong-choice .sm-head{text-align:center;margin-bottom:30px}
+  #seolmyeong-choice .sm-eyebrow{display:inline-block;font-size:11.5px;letter-spacing:.16em;font-weight:700;color:#9fb6ff;background:rgba(143,176,255,.1);border:1px solid rgba(143,176,255,.26);border-radius:999px;padding:6px 15px;margin-bottom:20px}
+  #seolmyeong-choice .sm-h1{font-family:var(--serif);font-weight:800;font-size:38px;letter-spacing:-.02em;color:var(--ink);margin:0 0 13px;text-shadow:0 2px 26px rgba(20,184,166,.14)}
+  #seolmyeong-choice .sm-sub{font-size:15px;color:var(--ink-muted);line-height:1.65;margin:0}
+  #seolmyeong-choice .sm-kicker{font-size:12.5px;letter-spacing:.06em;color:var(--ink-faint);text-align:center;margin:0 0 15px;font-weight:600}
+  #seolmyeong-choice .sm-wrap{display:flex;flex-direction:column;gap:14px}
+  #seolmyeong-choice .sm-card{position:relative;display:flex;align-items:center;gap:18px;padding:22px 24px;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.012));border:1px solid var(--line-strong);cursor:pointer;overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .28s ease,background .18s ease;-webkit-tap-highlight-color:transparent}
+  #seolmyeong-choice .sm-card::before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:0 3px 3px 0;background:var(--acc)}
+  #seolmyeong-choice .sm-card:hover{transform:translateY(-2px);border-color:var(--acc-ln);box-shadow:0 14px 34px -14px var(--acc-gl);background:linear-gradient(135deg,var(--acc-bg),rgba(255,255,255,.015))}
+  #seolmyeong-choice .sm-card:active{transform:translateY(0)}
+  #seolmyeong-choice .sm-seal{flex:0 0 54px;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:800;font-size:24px;color:var(--acc);background:var(--acc-bg);border:1.5px solid var(--acc-ln);box-shadow:inset 0 0 20px -9px var(--acc)}
+  #seolmyeong-choice .sm-body{flex:1;min-width:0}
+  #seolmyeong-choice .sm-title{font-size:18.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin-bottom:5px}
+  #seolmyeong-choice .sm-desc{font-size:13.5px;line-height:1.55;color:var(--ink-muted)}
+  #seolmyeong-choice .sm-meta{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  #seolmyeong-choice .sm-tag{font-size:11.5px;font-weight:700;border-radius:999px;padding:4px 11px;white-space:nowrap;color:var(--acc);background:var(--acc-bg);border:1px solid var(--acc-ln)}
+  #seolmyeong-choice .sm-tag.min{color:var(--ink-soft);background:rgba(255,255,255,.045);border-color:var(--line)}
+  #seolmyeong-choice .sm-stu{--acc:#2DD4BF;--acc-ln:rgba(45,212,191,.42);--acc-bg:rgba(45,212,191,.1);--acc-gl:rgba(45,212,191,.4)}
+  #seolmyeong-choice .sm-par{--acc:#8fb0ff;--acc-ln:rgba(143,176,255,.44);--acc-bg:rgba(143,176,255,.1);--acc-gl:rgba(143,176,255,.4)}
+  #seolmyeong-choice .sm-tog{--acc:#a9e0d6;--acc-ln:rgba(143,176,255,.44);--acc-bg:rgba(45,212,191,.07);--acc-gl:rgba(120,180,220,.4)}
+  #seolmyeong-choice .sm-tog::before{background:linear-gradient(180deg,#2DD4BF,#8fb0ff)}
+  #seolmyeong-choice .sm-tog .sm-seal{background:linear-gradient(135deg,rgba(45,212,191,.14),rgba(143,176,255,.16));border-color:rgba(143,176,255,.42);color:#d4efe9}
+  #seolmyeong-choice .sm-tog .sm-tag{color:#bfe0d9}
+  #seolmyeong-choice .sm-foot{text-align:center;margin-top:30px}
+  @media(max-width:560px){
+    #seolmyeong-choice .sm-h1{font-size:29px}
+    #seolmyeong-choice .sm-sub{font-size:14px}
+    #seolmyeong-choice .sm-card{flex-wrap:wrap;gap:13px;padding:18px}
+    #seolmyeong-choice .sm-seal{flex-basis:46px;width:46px;height:46px;font-size:21px}
+    #seolmyeong-choice .sm-body{flex:1 1 60%;order:2}
+    #seolmyeong-choice .sm-title{font-size:17px}
+    #seolmyeong-choice .sm-meta{order:3;flex-basis:100%;flex-direction:row;align-items:center;justify-content:flex-start;gap:7px;margin-top:3px}
+  }
+  </style>
+  <div class="sm-head">
+    <span class="sm-eyebrow">[오름] 국어 예비 고2 설명회</span>
+    <h1 class="sm-h1">설명회 특별판 진단</h1>
+    <p class="sm-sub">누가 응답하시나요? 응답자에 맞춰 진단을 안내해 드립니다.</p>
+  </div>
 
-  <div class="divider-dot">◆</div>
-
-  <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">응답 방식을 골라주세요</h3>
-
-  <div class="role-choice">
-    <div class="version-card" onclick="seolmyeongGo('student')">
-      <div class="version-num">학생</div>
-      <div class="version-info">
-        <h4>학생이 직접 응답합니다</h4>
-        <p>장면을 고르며 나의 국어 학습 성향을 빠르게 진단합니다. 약 5분.</p>
+  <p class="sm-kicker">응답 방식을 골라주세요</p>
+  <div class="sm-wrap">
+    <div class="sm-card sm-stu" onclick="seolmyeongGo('student')">
+      <div class="sm-seal">학</div>
+      <div class="sm-body">
+        <div class="sm-title">학생이 직접 응답합니다</div>
+        <div class="sm-desc">장면을 고르며 나의 국어 학습 성향을 빠르게 진단합니다.</div>
       </div>
-      <div class="version-meta"><strong>20</strong><br>문항</div>
+      <div class="sm-meta"><span class="sm-tag min">약 5분</span><span class="sm-tag">20문항</span></div>
     </div>
 
-    <div class="version-card special parent" onclick="seolmyeongGo('parent')">
-      <div class="version-num">학부모</div>
-      <div class="version-info">
-        <h4>학부모님이 직접 응답합니다</h4>
-        <p>가정에서 관찰한 자녀의 모습으로 응답합니다. 이름과 학교, 학년으로 결과를 매칭합니다. 약 3분.</p>
+    <div class="sm-card sm-par" onclick="seolmyeongGo('parent')">
+      <div class="sm-seal">부</div>
+      <div class="sm-body">
+        <div class="sm-title">학부모님이 직접 응답합니다</div>
+        <div class="sm-desc">가정에서 관찰한 자녀의 모습으로 응답합니다. 이름과 학교, 학년으로 결과를 매칭합니다.</div>
       </div>
-      <div class="version-meta"><strong>10</strong><br>문항</div>
+      <div class="sm-meta"><span class="sm-tag min">약 3분</span><span class="sm-tag">10문항</span></div>
     </div>
 
-    <div class="version-card special parent" onclick="seolmyeongGo('mirror')">
-      <div class="version-num">함께</div>
-      <div class="version-info">
-        <h4>학생과 학부모가 함께 응답합니다</h4>
-        <p>자녀가 보는 자신과 부모님이 보는 자녀를 나란히 비교하는 거울 진단입니다.</p>
+    <div class="sm-card sm-tog" onclick="seolmyeongGo('mirror')">
+      <div class="sm-seal">함</div>
+      <div class="sm-body">
+        <div class="sm-title">학생과 학부모가 함께 응답합니다</div>
+        <div class="sm-desc">자녀가 보는 자신과 부모님이 보는 자녀를 나란히 비교하는 거울 진단입니다.</div>
       </div>
-      <div class="version-meta"><strong>30</strong><br>문항</div>
+      <div class="sm-meta"><span class="sm-tag">30문항</span></div>
     </div>
   </div>
 
-  <div class="btn-row" style="margin-top:36px">
+  <div class="sm-foot">
     <button class="btn btn-ghost" onclick="goScreen('welcome')">← 뒤로</button>
   </div>
 </section>
