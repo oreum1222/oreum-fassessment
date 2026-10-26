@@ -3179,7 +3179,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   @media(max-width:560px){.vsel,.vsel.special{grid-template-columns:1fr;gap:12px}.vtile,.vsel.special .vtile{min-height:0;padding:18px 18px 16px}.vt-num{font-size:28px}.vt-title{font-size:19px}.vt-desc{font-size:13.5px}.vsel-sec{margin:28px 0 14px}}
   </style>
   <div class="vsel">
-    <div class="vtile" data-version="summer"><div class="vt-top"><span class="vt-num">1</span><span class="vt-q"><b>30</b> 문항</span></div><div class="vt-title">여름방학 학습 점검 <span class="vt-badge new">여름</span></div><div class="vt-desc">관리 강도·막힘 대처·정서 신호 종합 점검 · 약 10분</div></div>
+    <div class="vtile reco" data-version="seolmyeong"><div class="vt-top"><span class="vt-num">1</span><span class="vt-q"><b>설명회</b></span></div><div class="vt-title">설명회 특별판 <span class="vt-badge new">예비 고2</span></div><div class="vt-desc">예비 고2 설명회 참여자용, 응답자에 맞춰 진단을 안내합니다</div></div>
     <div class="vtile reco" data-version="standard"><div class="vt-top"><span class="vt-num">2</span><span class="vt-q"><b>39</b> 문항</span></div><div class="vt-title">재원생 첫 진단</div><div class="vt-desc">선별 장면 + 미니 과제 + 상담 · 반 배치·전략용 · 약 13분</div></div>
     <div class="vtile" data-version="brief"><div class="vt-top"><span class="vt-num">3</span><span class="vt-q"><b>20</b> 문항</span></div><div class="vt-title">비재원생 진단</div><div class="vt-desc">장면 선택 · 첫 상담 전 빠른 성향 파악 · 약 5분</div></div>
     <div class="vtile" data-version="precision"><div class="vt-top"><span class="vt-num">4</span><span class="vt-q"><b>38</b> 문항</span></div><div class="vt-title">재원생 심층 진단</div><div class="vt-desc">장면 + 미니 과제 + 오답 기록 · 정체 원인·처방 · 약 14분</div></div>
@@ -3587,6 +3587,50 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     <p class="special-access-hint">설명회에 참여하셨다면 안내문에 적힌 인증 코드를 입력해주세요.<br>코드가 없으시다면 가경T로 문의 부탁드립니다.</p>
   </div>
 </div>
+
+<!-- ═══════════════════════════════════ 설명회 특별판 응답자 선택 ═══════════════════════════════════ -->
+<section id="seolmyeong-choice" class="screen">
+  <p class="hero-meta special-tag" style="text-align:center">[오름] 국어 예비 고2 설명회</p>
+  <h1 class="title-serif hero-title">설명회 특별판 진단</h1>
+  <p class="hero-meta" style="text-align:center;font-style:italic">누가 응답하시나요? 응답자에 맞춰 진단을 안내해 드립니다</p>
+
+  <div class="divider-dot">◆</div>
+
+  <h3 class="title-serif" style="font-size:16px;margin-bottom:18px;color:var(--ink-soft)">응답 방식을 골라주세요</h3>
+
+  <div class="role-choice">
+    <div class="version-card" onclick="seolmyeongGo('student')">
+      <div class="version-num">학생</div>
+      <div class="version-info">
+        <h4>학생이 직접 응답합니다</h4>
+        <p>장면을 고르며 나의 국어 학습 성향을 빠르게 진단합니다. 약 5분.</p>
+      </div>
+      <div class="version-meta"><strong>20</strong><br>문항</div>
+    </div>
+
+    <div class="version-card special parent" onclick="seolmyeongGo('parent')">
+      <div class="version-num">학부모</div>
+      <div class="version-info">
+        <h4>학부모님이 직접 응답합니다</h4>
+        <p>가정에서 관찰한 자녀의 모습으로 응답합니다. 이름과 학교, 학년으로 결과를 매칭합니다. 약 3분.</p>
+      </div>
+      <div class="version-meta"><strong>10</strong><br>문항</div>
+    </div>
+
+    <div class="version-card special parent" onclick="seolmyeongGo('mirror')">
+      <div class="version-num">함께</div>
+      <div class="version-info">
+        <h4>학생과 학부모가 함께 응답합니다</h4>
+        <p>자녀가 보는 자신과 부모님이 보는 자녀를 나란히 비교하는 거울 진단입니다.</p>
+      </div>
+      <div class="version-meta"><strong>30</strong><br>문항</div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:36px">
+    <button class="btn btn-ghost" onclick="goScreen('welcome')">← 뒤로</button>
+  </div>
+</section>
 
 <!-- ═══════════════════════════════════ 특별판 역할 선택 ═══════════════════════════════════ -->
 <section id="special-role-select" class="screen">
@@ -4496,6 +4540,12 @@ document.querySelectorAll('.version-card, .vtile').forEach(c=>{
     const ver = c.dataset.version;
     state.version = ver;
 
+    // ★ 설명회 특별판 — 응답자(학생/학부모/함께) 선택 화면으로
+    if(ver === 'seolmyeong'){
+      goScreen('seolmyeong-choice');
+      return;
+    }
+
     // ★ 거울 진단은 별도 흐름으로
     if(ver === 'mirror'){
       startMirrorDiagnosis();
@@ -5152,6 +5202,13 @@ function v2PickClass(name){
   if(w){ if(grade && !v2GradeMatch(grade,name)){ w.textContent=`⚠ 선택한 학년(${grade})과 이 반(${v2ClassGrade(name)})이 달라 보여요. 학년 또는 반을 다시 확인해 주세요.`; w.style.display=''; } else { w.style.display='none'; } }
 }
 function v2RecheckGrade(){ if(v2State.className) v2PickClass(v2State.className); }
+// 설명회 특별판 — 응답자 선택 → 기존 진단 흐름으로 분기(학생=비재원생, 학부모=학부모 관찰, 함께=거울)
+function seolmyeongGo(role){
+  if(role==='student'){ state.version='brief'; startV2('brief'); }
+  else if(role==='parent'){ state.version='parentObserve'; v2StartParentObserve(); }
+  else if(role==='mirror'){ state.version='mirror'; startMirrorDiagnosis(); }
+}
+
 function startV2(ver){
   v2State.ver = ver; v2State.info = {}; v2State.responses = {}; v2State.idx = 0; v2State.phase = 'student';
   const cfg = V2_VERSIONS[ver];
