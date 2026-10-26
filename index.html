@@ -3606,7 +3606,8 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   #seolmyeong-choice .sm-card::before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:0 3px 3px 0;background:var(--acc)}
   #seolmyeong-choice .sm-card:hover{transform:translateY(-2px);border-color:var(--acc-ln);box-shadow:0 14px 34px -14px var(--acc-gl);background:linear-gradient(135deg,var(--acc-bg),rgba(255,255,255,.015))}
   #seolmyeong-choice .sm-card:active{transform:translateY(0)}
-  #seolmyeong-choice .sm-seal{flex:0 0 54px;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:27px;line-height:1;background:var(--acc-bg);border:1.5px solid var(--acc-ln);box-shadow:inset 0 0 20px -9px var(--acc)}
+  #seolmyeong-choice .sm-seal{flex:0 0 54px;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--acc);background:var(--acc-bg);border:1.5px solid var(--acc-ln);box-shadow:inset 0 0 20px -9px var(--acc)}
+  #seolmyeong-choice .sm-seal svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   #seolmyeong-choice .sm-body{flex:1;min-width:0}
   #seolmyeong-choice .sm-title{font-size:18.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin-bottom:5px}
   #seolmyeong-choice .sm-desc{font-size:13.5px;line-height:1.55;color:var(--ink-muted)}
@@ -3639,7 +3640,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
   <p class="sm-kicker">응답 방식을 골라주세요</p>
   <div class="sm-wrap">
     <div class="sm-card sm-stu" onclick="seolmyeongGo('student')">
-      <div class="sm-seal">🧑‍🎓</div>
+      <div class="sm-seal"><svg viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></div>
       <div class="sm-body">
         <div class="sm-title">학생이 직접 응답합니다</div>
         <div class="sm-desc">장면을 고르며 나의 국어 학습 성향을 빠르게 진단합니다.</div>
@@ -3648,7 +3649,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     </div>
 
     <div class="sm-card sm-par" onclick="seolmyeongGo('parent')">
-      <div class="sm-seal">👨‍👩‍👧</div>
+      <div class="sm-seal"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
       <div class="sm-body">
         <div class="sm-title">학부모님이 직접 응답합니다</div>
         <div class="sm-desc">가정에서 관찰한 자녀의 모습으로 응답합니다. 이름과 학교, 학년으로 결과를 매칭합니다.</div>
@@ -3657,7 +3658,7 @@ body.v2-report #v2-results .report{ padding:22px 10px 60px; }
     </div>
 
     <div class="sm-card sm-tog" onclick="seolmyeongGo('mirror')">
-      <div class="sm-seal">🤝</div>
+      <div class="sm-seal"><svg viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></div>
       <div class="sm-body">
         <div class="sm-title">학생과 학부모가 함께 응답합니다</div>
         <div class="sm-desc">자녀가 보는 자신과 부모님이 보는 자녀를 나란히 비교하는 거울 진단입니다.</div>
