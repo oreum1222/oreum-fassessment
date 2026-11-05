@@ -4941,6 +4941,14 @@ function computeOreumAnalysis(){
   const ax = oreumAxisScores();
   const bonhyeong = ax[1] >= ax[2] ? 'A' : 'B';
 
+  // ── 학습 준비도 게이트 ──
+  // 전체 평균이 낮거나(프로파일 자체가 낮음), 성실성(1·4)과 독해·문법(2·3)이 함께 낮으면
+  // 특정 학교로 단정하지 않고 '기본 습관 먼저' 단계로 분기한다.
+  // (독해·문법이 받쳐 주는 진짜 감각형은 성실성이 낮아도 게이트에 걸리지 않게 둔다.)
+  const overall = Math.round((ax[1] + ax[2] + ax[3] + ax[4] + ax[5]) / 5);
+  const diligence = Math.round((ax[1] + ax[4]) / 2);
+  const lowReadiness = overall < 38 || (diligence < 28 && ax[2] < 45 && ax[3] < 45);
+
   const fits = Object.entries(OREUM_SCHOOLS).map(([key, s]) => {
     let num = 0, den = 0;
     for(let a=1; a<=5; a++){ num += ax[a]*s.weights[a]; den += s.weights[a]*100; }
@@ -4954,7 +4962,7 @@ function computeOreumAnalysis(){
   const pr = (id) => { const v = oreumState.responses[id]; return typeof v === 'number' && v >= 4; };
   const risks = OREUM_RISK_DEFS.filter(d => d.test(ax, pr));
 
-  return { ax, bonhyeong, fits, top, second, risks, role: oreumState.role, info: oreumState.info };
+  return { ax, bonhyeong, fits, top, second, risks, overall, diligence, lowReadiness, role: oreumState.role, info: oreumState.info };
 }
 
 // ─── 결과지 렌더 ───
@@ -4966,12 +4974,17 @@ function renderOreumResults(){
   document.getElementById('oreum-r-meta').textContent = `${info.school || ''} · ${info.date || ''} · 김가경 국어 연구소`;
 
   // 본형 카드
-  const typeLabel = a.bonhyeong === 'A' ? 'Type A · 성실/노력형' : 'Type B · 언어/감각형';
-  const typeDesc = a.bonhyeong === 'A'
-    ? '방대한 범위를 꼼꼼하게 암기하고 끝까지 소화하는 끈기가 강점인 학생입니다. 자체 범위가 넓고 암기 비중이 큰 학교에서 유리합니다.'
-    : '낯선 지문을 두려워하지 않고 원리를 이해해 적용하는 감각이 강점인 학생입니다. 외부 지문과 고난도 변별이 많은 학교에서 유리합니다.';
+  const low = a.lowReadiness;
+  const typeLabel = low
+    ? '지금은 — 국어 학습 방법을 세워 갈 단계'
+    : (a.bonhyeong === 'A' ? 'Type A · 성실/노력형' : 'Type B · 언어/감각형');
+  const typeDesc = low
+    ? '아직 국어 공부에 본격적으로 몰입해 본 경험이 많지 않아, 성향이 또렷하게 드러나기 전 단계입니다. 지금은 어느 한 유형으로 단정하기보다, 국어를 어떻게 공부하는지 그 방법과 습관을 먼저 자리 잡게 하는 것이 중요한 때입니다. 이 시기를 잘 보내면 성향이 분명해지고, 잘 맞는 학교도 또렷하게 보이기 시작합니다.'
+    : (a.bonhyeong === 'A'
+      ? '방대한 범위를 꼼꼼하게 암기하고 끝까지 소화하는 끈기가 강점인 학생입니다. 자체 범위가 넓고 암기 비중이 큰 학교에서 유리합니다.'
+      : '낯선 지문을 두려워하지 않고 원리를 이해해 적용하는 감각이 강점인 학생입니다. 외부 지문과 고난도 변별이 많은 학교에서 유리합니다.');
   document.getElementById('oreum-verdict-card').innerHTML = `
-    <div class="verdict-stamp">김가경 국어 연구소 성향 판정 — ${info.name || '학생'}</div>
+    <div class="verdict-stamp">김가경 국어 연구소 ${low ? '학습 단계 안내' : '성향 판정'} — ${info.name || '학생'}</div>
     <div class="verdict-name">${typeLabel}</div>
     <p class="verdict-desc">${typeDesc}</p>
   `;
@@ -4988,15 +5001,31 @@ function renderOreumResults(){
       <p class="o-style">${f.style}</p>
     </div>
   `;
-  let matchHtml = schoolCard(a.top, 1);
-  if(a.second && a.second.key !== a.top.key) matchHtml += schoolCard(a.second, 2);
-  if(info.interest && OREUM_SCHOOLS[info.interest]){
-    const wf = a.fits.find(f => f.key === info.interest);
-    if(wf && wf.key !== a.top.key && (!a.second || wf.key !== a.second.key)){
-      matchHtml += `<div class="o-interest">
-        <div class="o-rank">관심 학교 매칭 — ${wf.key}</div>
-        <p>관심 학교의 성향 적합도는 <strong>${wf.fit}%</strong>입니다. ${wf.wants}이(가) 필요합니다.</p>
+  // 먼저 다질 축(점수 낮은 순 2개) — 완곡 안내·처방에 공통 사용
+  const focusAxes = [1,2,3,4,5].slice().sort((x,y) => a.ax[x] - a.ax[y]).slice(0,2);
+
+  let matchHtml;
+  if(low){
+    matchHtml = `
+      <div class="o-school-card rank1">
+        <div class="o-school-head">
+          <div class="o-rank">학교 매칭 — 잠시 보류</div>
+        </div>
+        <div class="o-school-name">아직 ‘딱 맞는 학교’를 정하기엔 이른 단계예요</div>
+        <p class="o-wants">지금 응답만으로는 성향이 한 방향으로 또렷하게 모이지 않았습니다. 관내 6개교 모두 올해 난도가 오르는 흐름이라, 학교를 고르기 전에 <strong>국어 공부의 기본 습관</strong>부터 세우는 것이 먼저입니다.</p>
+        <p class="o-style">아래 ‘먼저 세울 힘’을 한 학기만 다지면, 다음 진단에서 성향과 잘 맞는 학교가 또렷하게 드러납니다.</p>
       </div>`;
+  } else {
+    matchHtml = schoolCard(a.top, 1);
+    if(a.second && a.second.key !== a.top.key) matchHtml += schoolCard(a.second, 2);
+    if(info.interest && OREUM_SCHOOLS[info.interest]){
+      const wf = a.fits.find(f => f.key === info.interest);
+      if(wf && wf.key !== a.top.key && (!a.second || wf.key !== a.second.key)){
+        matchHtml += `<div class="o-interest">
+          <div class="o-rank">관심 학교 매칭 — ${wf.key}</div>
+          <p>관심 학교의 성향 적합도는 <strong>${wf.fit}%</strong>입니다. ${wf.wants}이(가) 필요합니다.</p>
+        </div>`;
+      }
     }
   }
   document.getElementById('oreum-school-match').innerHTML = matchHtml;
@@ -5005,12 +5034,18 @@ function renderOreumResults(){
   const topW = a.top.weights;
   const axHtml = [1,2,3,4,5].map(k => {
     const v = a.ax[k];
-    const need = topW[k];
-    const needLabel = need >= 3 ? '핵심' : need >= 2 ? '중요' : need >= 1 ? '보조' : '영향 적음';
+    let tag;
+    if(low){
+      tag = focusAxes.includes(k) ? '먼저 세울 힘' : '';
+    } else {
+      const need = topW[k];
+      const needLabel = need >= 3 ? '핵심' : need >= 2 ? '중요' : need >= 1 ? '보조' : '영향 적음';
+      tag = `${a.top.key} 기준 ${needLabel}`;
+    }
     return `
       <div class="o-axis-row">
         <div class="o-axis-top">
-          <span class="o-axis-label"><strong>${OREUM_AXIS_NAMES[k]}</strong> <span class="o-axis-need">· ${a.top.key} 기준 ${needLabel}</span></span>
+          <span class="o-axis-label"><strong>${OREUM_AXIS_NAMES[k]}</strong>${tag ? ` <span class="o-axis-need">· ${tag}</span>` : ''}</span>
           <span class="o-axis-val">${v}</span>
         </div>
         <div class="o-bar-track"><div class="o-bar-fill" style="width:${v}%"></div></div>
@@ -5022,7 +5057,9 @@ function renderOreumResults(){
   // 위험 신호
   const riskEl = document.getElementById('oreum-risk-signals');
   if(a.risks.length === 0){
-    riskEl.innerHTML = `<div class="o-ok">뚜렷한 위험 신호가 감지되지 않았습니다. 추천 학교의 성향을 꾸준히 다져 가면 됩니다.</div>`;
+    riskEl.innerHTML = low
+      ? `<div class="o-ok">걱정할 만한 위험 신호는 보이지 않습니다. 지금은 아래 ‘먼저 세울 힘’을 꾸준히 다지는 데 집중하면 됩니다.</div>`
+      : `<div class="o-ok">뚜렷한 위험 신호가 감지되지 않았습니다. 추천 학교의 성향을 꾸준히 다져 가면 됩니다.</div>`;
   } else {
     riskEl.innerHTML = a.risks.map(r => `
       <div class="o-risk">
@@ -5034,7 +5071,15 @@ function renderOreumResults(){
   }
 
   // 처방
-  document.getElementById('oreum-prescription').innerHTML = `
+  document.getElementById('oreum-prescription').innerHTML = low
+    ? `
+    <div class="o-rx-card">
+      <p style="margin:0 0 10px"><strong>${info.name || '학생'}</strong> 학생은 지금 국어 학습의 <strong>방법과 습관을 세워 갈 단계</strong>입니다. 아직 특정 학교로 성향이 또렷하게 모이지 않았지만, 이는 ‘못한다’가 아니라 ‘국어를 본격적으로 다뤄 본 경험이 더 필요하다’는 뜻입니다.</p>
+      <p style="margin:0 0 10px">먼저 <strong>${OREUM_AXIS_NAMES[focusAxes[0]]}</strong>·<strong>${OREUM_AXIS_NAMES[focusAxes[1]]}</strong>부터 다지면 좋습니다. 교과서·유인물을 빠짐없이 챙겨 끝까지 읽고, 외운 내용을 스스로 확인하고, 답을 쓰기 전 조건을 짚는 — 이 기본기를 한 학기만 쌓으면 점수와 성향이 함께 또렷해집니다.</p>
+      <p class="o-sol" style="margin:0">김가경 국어 연구소가 이 과정을 1:1로 함께 잡아 드립니다. 관내 6개교 기출 기반 콘텐츠로, 지금 수준에서 시작해 ‘맞는 학교가 보이는’ 단계까지 끌어올립니다.</p>
+    </div>
+  `
+    : `
     <div class="o-rx-card">
       <p style="margin:0 0 10px"><strong>${info.name || '학생'}</strong> 학생은 <strong>${typeLabel}</strong>으로, <strong>${a.top.key}</strong>의 출제 스타일과 가장 잘 맞습니다(적합도 ${a.top.fit}%).</p>
       <p style="margin:0 0 10px">${a.risks.length ? '다만 위에 표시된 위험 신호를 보완하면 추천 학교에서의 안정성이 크게 높아집니다.' : '강점이 고르게 받쳐 주어, 추천 학교에서 안정적으로 상위권을 노릴 수 있습니다.'}</p>
@@ -5059,8 +5104,9 @@ async function sendOreumToBackend(){
     params.append('responses', JSON.stringify(oreumState.responses));
     params.append('analysis', JSON.stringify({
       bonhyeong: a.bonhyeong, axisScores: a.ax,
-      top: a.top ? { key:a.top.key, fit:a.top.fit } : null,
-      second: a.second ? { key:a.second.key, fit:a.second.fit } : null,
+      overall: a.overall, diligence: a.diligence, lowReadiness: a.lowReadiness,
+      top: a.lowReadiness ? null : (a.top ? { key:a.top.key, fit:a.top.fit } : null),
+      second: a.lowReadiness ? null : (a.second ? { key:a.second.key, fit:a.second.fit } : null),
       risks: a.risks.map(r => r.title),
     }));
     params.append('apiKey', CONFIG.apiKey || '');
