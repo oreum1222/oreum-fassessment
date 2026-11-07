@@ -454,6 +454,9 @@ body::before{
     <button class="tab-btn" data-tab="special" onclick="switchTab('special')">
       특별판 진단 <span class="tab-count" id="tab-count-special">0</span>
     </button>
+    <button class="tab-btn" data-tab="oreum" onclick="switchTab('oreum')">
+      오름 학교추천 <span class="tab-count" id="tab-count-oreum">0</span>
+    </button>
     <button class="tab-btn" data-tab="mirror" onclick="switchTab('mirror')">
       거울 진단 <span class="tab-count" id="tab-count-mirror">0</span>
     </button>
@@ -720,6 +723,14 @@ body::before{
 
   </div><!-- /tab-special -->
 
+  <!-- ════════ 오름 특별판(학교추천) 탭 ════════ -->
+  <div id="tab-oreum" class="tab-pane">
+    <div style="margin-bottom:16px;color:var(--ink-muted);font-size:13px">[오름] 국어 · 군포 관내 6개교 성향별 추천 — 설명회 유입 응답이 최신순으로 쌓입니다.</div>
+    <div id="oreum-table-box">
+      <div style="text-align:center;padding:48px 20px;color:var(--ink-muted)"><h3 style="margin:0;color:var(--ink-soft)">불러오는 중…</h3></div>
+    </div>
+  </div><!-- /tab-oreum -->
+
   <!-- ════════ 거울 진단 탭 ════════ -->
   <div id="tab-mirror" class="tab-pane">
 
@@ -953,9 +964,9 @@ const V2_VER_KO = { brief:'비재원생', standard:'재원생 첫', precision:'�
 async function loadRecentPanel(){
   const key = localStorage.getItem(STORAGE_KEY);
   const get = async (a)=>{ try{ const r=await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=${a}`); const j=await r.json(); return Array.isArray(j)?j:[]; }catch(e){ return []; } };
-  const [v2, sp, mi] = await Promise.all([get('v2List'), get('specialList'), get('mirrorList')]);
+  const [v2, sp, mi, or] = await Promise.all([get('v2List'), get('specialList'), get('mirrorList'), get('oreumList')]);
   const setC=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent=n; };
-  setC('tab-count-v2', v2.filter(x=>String(x['버전'])!=='학부모관찰').length); setC('tab-count-special', sp.length); setC('tab-count-mirror', mi.length);
+  setC('tab-count-v2', v2.filter(x=>String(x['버전'])!=='학부모관찰').length); setC('tab-count-special', sp.length); setC('tab-count-mirror', mi.length); setC('tab-count-oreum', or.length);
   const e = v => String(v==null?'':v);
   const d10 = v => e(v).slice(0,10);
   const rows = [];
@@ -990,6 +1001,13 @@ async function loadRecentPanel(){
     rows.push({ date:d10(s['제출시각']), name:e(s['학생이름']), school:e(s['학교']), grade:e(s['학년']),
       kind:'거울', col:'#c79bf0', bg:'rgba(45,212,191,.15)', summary:(e(s['역할'])==='parent'?'학부모 응답':'학생 응답'), warn:'',
       url:'result-viewer.html?mirrorCode='+encodeURIComponent(e(s['가족코드'])) });
+  });
+  or.forEach(s=>{
+    const low = String(s['저준비도'])==='Y';
+    const rec = low ? '준비도 낮음(학교 보류)' : (s['추천1'] ? `${e(s['추천1'])} (${e(s['추천1적합도'])}%)` : '');
+    rows.push({ date:d10(s['제출시각']), name:e(s['이름']), school:e(s['학교']), grade:e(s['학년']),
+      kind:'오름추천', col:'#2DD4BF', bg:'rgba(45,212,191,.16)',
+      summary:[(e(s['응답자'])==='parent'?'학부모':'학생'), rec].filter(Boolean).join(' · '), warn:e(s['위험신호']), url:'' });
   });
   rows.sort((a,b)=> b.date.localeCompare(a.date));
   recentRows = rows;
@@ -1592,6 +1610,7 @@ const TAB_DESC = {
   general: '학생 이름을 누르면 그 학생이 응시한 모든 진단을 종합해 한눈에 보여줍니다.',
   v2: '장면형 문항으로 학습 성향과 필요한 관리 방식을 보는 진단 (비재원생, 재원생, 여름 점검)',
   special: '특별판 — 한티 MEXX 설명회용 / 오름 관내 학교 추천',
+  oreum: '오름 특별판 — [오름] 국어, 군포 관내 6개교 성향별 추천 (설명회 유입). 응답이 최신순으로 쌓입니다.',
   mirror: '학부모와 자녀의 인식 차이를 비교하는 거울 진단'
 };
 // ═══════════ 학생 종합 (모든 진단 통합 프로필) ═══════════
@@ -2429,6 +2448,9 @@ function switchTab(tab) {
   if (tab === 'special' && !specialChartsRendered) {
     loadSpecialData();
   }
+  if (tab === 'oreum' && !oreumRendered) {
+    loadOreumData();
+  }
   if (tab === 'mirror' && !mirrorChartsRendered) {
     loadMirrorData();
   }
@@ -2530,6 +2552,53 @@ function renderV2Table() {
 function openV2Result(name){
   if(!name) return;
   window.open('result-viewer.html?v2Name=' + encodeURIComponent(name), '_blank');
+}
+
+// ═══════════ 오름 특별판 (군포 6개교 학교추천) ═══════════
+let oreumList = [];
+let oreumRendered = false;
+async function loadOreumData(){
+  const key = localStorage.getItem(STORAGE_KEY);
+  if(!key) return;
+  const box = document.getElementById('oreum-table-box');
+  try{
+    const r = await fetch(`${CURRENT_URL}?key=${encodeURIComponent(key)}&action=oreumList`);
+    oreumList = await r.json();
+    if(!Array.isArray(oreumList)) oreumList = [];
+    const c = document.getElementById('tab-count-oreum'); if(c) c.textContent = oreumList.length;
+    renderOreumTable();
+    oreumRendered = true;
+  }catch(err){
+    console.error('오름 데이터 로드 실패:', err);
+    if(box) box.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--crimson)">데이터 로드 실패: ${err.message}<br><span style="color:var(--ink-muted);font-size:13px">Apps Script에 오름 저장·조회(oreumSave / oreumList) 배포가 필요합니다.</span></div>`;
+  }
+}
+function renderOreumTable(){
+  const box = document.getElementById('oreum-table-box');
+  if(!box) return;
+  if(!oreumList.length){
+    box.innerHTML = `<div style="text-align:center;padding:48px 20px;color:var(--ink-muted)"><h3 style="margin:0 0 6px;color:var(--ink-soft)">오름 특별판 응답이 아직 없습니다</h3><p style="margin:0;font-size:13px">학생·학부모가 응답하면 여기에 실시간으로 쌓입니다. (백엔드 oreumSave / oreumList 배포 후부터 집계)</p></div>`;
+    return;
+  }
+  const e = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const fmt = t => { try{ const d=new Date(t); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }catch(_){ return ''; } };
+  const bon = b => b==='A'?'성실형':b==='B'?'감각형':'—';
+  const rec = r => String(r['저준비도'])==='Y' ? '<span style="color:var(--gold)">준비도 낮음 · 학교 보류</span>' : (r['추천1'] ? `<strong>${e(r['추천1'])}</strong> <span style="color:var(--ink-muted)">${e(r['추천1적합도'])}%</span>` : '—');
+  const body = oreumList.map(r => `<tr>
+    <td>${fmt(r['제출시각'])}</td>
+    <td>${e(r['응답자'])==='parent'?'학부모':'학생'}</td>
+    <td><strong>${e(r['이름'])}</strong></td>
+    <td>${e(r['학교'])}</td>
+    <td>${e(r['학년'])}</td>
+    <td>${bon(r['본형'])}</td>
+    <td>${rec(r)}</td>
+    <td>${e(r['준비도'])}</td>
+    <td>${warnPill(r['위험신호'])}</td>
+    <td>${e(r['학부모연락처'])}</td>
+  </tr>`).join('');
+  box.innerHTML = `<table class="data-table"><thead><tr>
+    <th>시각</th><th>응답자</th><th>이름</th><th>학교</th><th>학년</th><th>본형</th><th>추천 학교</th><th>준비도</th><th>위험신호</th><th>학부모 연락처</th>
+  </tr></thead><tbody>${body}</tbody></table>`;
 }
 
 async function loadSpecialData() {
