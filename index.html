@@ -4785,10 +4785,18 @@ const OREUM_RISK_DEFS = [
 // ─── 김가경 국어 연구소 state ───
 const oreumState = { info:{}, responses:{}, qIdx:0, role:'student' };
 
-function startOreumDiagnosis(){ goScreen('oreum-role-select'); }
+// ─── 오름 특별판 방문/완료 카운터 (abacus 무료 카운터, 트래킹 픽셀) ───
+// 네임스페이스 oreum-hakgyo-1107 (2026-11-07 설명회 시작). 리셋하려면 네임스페이스만 바꾸면 됨.
+// 조회: https://abacus.jasoncameron.dev/get/oreum-hakgyo-1107/<key>  (key = open / student / parent / done)
+function oreumCount(key){
+  try{ if(!key) return; var im=new Image(); im.src='https://abacus.jasoncameron.dev/hit/oreum-hakgyo-1107/'+encodeURIComponent(key)+'?_='+Date.now(); }catch(e){}
+}
+
+function startOreumDiagnosis(){ oreumCount('open'); goScreen('oreum-role-select'); }
 
 function oreumChooseRole(role){
   oreumState.role = role;
+  oreumCount(role === 'parent' ? 'parent' : 'student');
   const d = document.getElementById('oreum-info-date');
   if(d && !d.value){ d.value = new Date().toISOString().slice(0,10); }
   goScreen('oreum-info');
@@ -4897,6 +4905,7 @@ function oreumNextQ(){
 async function finishOreumQuiz(){
   try { renderOreumResults(); goScreen('oreum-results'); }
   catch(e){ console.error('김가경 국어 연구소 결과지 렌더 실패:', e); alert('결과 분석 중 오류가 발생했습니다. 다시 시도해주세요.'); return; }
+  oreumCount('done');
   sendOreumToBackend();
 }
 
